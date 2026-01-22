@@ -1,14 +1,13 @@
 {
-  "name": "Super Treino App",
+  "name": "Super Treino",
   "short_name": "SuperTreino",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#121212",
   "theme_color": "#00ff88",
-  "orientation": "portrait",
   "icons": [
     {
-      "src": "./icon.png",
+      "src": "icon.png",
       "sizes": "512x512",
       "type": "image/png"
     }
