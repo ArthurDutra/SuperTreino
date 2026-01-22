@@ -19,6 +19,7 @@
             --success: #00ff88;
             --danger: #ff4444;
             --edit-mode: #ffb700;
+            --primary: #2575fc;
             
             /* Temas */
             --color-1: #00d4ff; --color-2: #ff007f; --color-3: #9d4edd;
@@ -55,11 +56,10 @@
             text-align: left; display: flex; justify-content: space-between; align-items: center;
         }
         
-        /* Inputs de Edição */
         .edit-input { background: rgba(0,0,0,0.2); border: 1px solid #555; color: #fff; padding: 5px; border-radius: 4px; font-family: inherit; font-size: inherit; width: 100%; }
         .edit-input-inline { width: 50px; text-align: center; margin: 0 2px; }
 
-        /* CARD SELEÇÃO */
+        /* CARDS */
         .workout-select-card {
             background: var(--card); border: 2px solid #333; color: #fff;
             padding: 20px; border-radius: 16px; cursor: pointer;
@@ -72,7 +72,7 @@
             font-size: 10px; font-weight: bold; padding: 4px 8px; border-radius: 4px; animation: pulse 2s infinite;
         }
 
-        /* CARD EXERCÍCIO */
+        /* EXERCÍCIOS */
         .workout-container { padding-bottom: 100px; }
         .exercise-card { background: var(--card); border-radius: 16px; padding: 20px; margin-bottom: 15px; border-left: 5px solid #555; position: relative; }
         .exercise-header { display: flex; align-items: flex-start; gap: 15px; margin-bottom: 15px; }
@@ -89,62 +89,38 @@
         .badge { background: #333; padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 12px; }
         .btn-video { color: #ff5555; text-decoration: none; font-weight: bold; border: 1px solid #ff5555; padding: 2px 8px; border-radius: 4px; font-size: 11px; text-transform: uppercase; }
 
-        /* CONTROLE DE PESO */
+        /* PESO */
         .weight-control { margin-top: 15px; background: #252525; padding: 10px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
         .weight-label { color: #aaa; font-size: 12px; margin-right: auto; padding-left: 5px; }
-        .btn-weight {
-            width: 45px; height: 45px; background: #444; border: none; border-radius: 8px;
-            color: #fff; font-size: 24px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center;
-        }
+        .btn-weight { width: 45px; height: 45px; background: #444; border: none; border-radius: 8px; color: #fff; font-size: 24px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .btn-weight:active { background: #666; transform: scale(0.95); }
-        .weight-display {
-            flex-grow: 1; text-align: center; font-size: 18px; font-weight: bold; 
-            color: var(--success); font-family: monospace; cursor: pointer;
-            border: 1px solid transparent; padding: 5px; border-radius: 6px;
-        }
+        .weight-display { flex-grow: 1; text-align: center; font-size: 18px; font-weight: bold; color: var(--success); font-family: monospace; cursor: pointer; border: 1px solid transparent; padding: 5px; border-radius: 6px; }
         .no-load { color: #888; font-size: 14px; font-family: sans-serif; letter-spacing: 1px; }
 
-        /* MODO EDIÇÃO */
-        .edit-controls-floating {
-            position: absolute; right: -10px; top: -10px; display: flex; flex-direction: column; gap: 5px; z-index: 10;
-            animation: popIn 0.2s; pointer-events: none; opacity: 0; transition: 0.2s;
-        }
+        /* EDIÇÃO */
+        .edit-controls-floating { position: absolute; right: -10px; top: -10px; display: flex; flex-direction: column; gap: 5px; z-index: 10; animation: popIn 0.2s; pointer-events: none; opacity: 0; transition: 0.2s; }
         .editing .edit-controls-floating { opacity: 1; pointer-events: auto; }
-        
-        .btn-float { 
-            width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-weight: bold; border: 2px solid #fff; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.5); color: #fff; font-size: 14px;
-        }
+        .btn-float { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #fff; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.5); color: #fff; font-size: 14px; }
         .btn-del { background: var(--danger); }
         .btn-reorder { background: #444; border-color: #888; }
-
         @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
-
         .btn-add-item { display: none; } 
-
-        .editing .btn-add-item {
-            display: block; width: 100%; max-width: 400px; padding: 20px;
-            background: rgba(255, 255, 255, 0.05); border: 2px dashed var(--edit-mode);
-            color: var(--edit-mode); border-radius: 16px; cursor: pointer; font-size: 16px; font-weight: bold;
-            margin-top: 15px; text-align: center;
-        }
-        .editing .btn-large, .editing .workout-select-card, .editing .exercise-card { 
-            border: 1px dashed #555;
-        }
-        .editing .card-wrapper > button, 
-        .editing .workout-select-card,
-        .editing .exercise-card { pointer-events: none; }
+        .editing .btn-add-item { display: block; width: 100%; max-width: 400px; padding: 20px; background: rgba(255, 255, 255, 0.05); border: 2px dashed var(--edit-mode); color: var(--edit-mode); border-radius: 16px; cursor: pointer; font-size: 16px; font-weight: bold; margin-top: 15px; text-align: center; }
+        .editing .btn-large, .editing .workout-select-card, .editing .exercise-card { border: 1px dashed #555; }
+        .editing .card-wrapper > button, .editing .workout-select-card, .editing .exercise-card { pointer-events: none; }
         .editing .edit-input, .editing .edit-controls-floating, .editing .weight-display, .editing .btn-video { pointer-events: auto; }
 
-        /* BOTÃO DE INSTALAÇÃO */
+        /* BOTÃO DE INSTALAÇÃO (IMPORTANTE) */
         #btn-install-app {
-            display: none; width: 100%; max-width: 400px; padding: 15px; margin-top: 20px;
+            display: none; /* Controlado via JS */
+            width: 100%; max-width: 400px; padding: 15px; margin-top: 20px;
             background: #2575fc; color: white; border: none; border-radius: 12px;
             font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(37, 117, 252, 0.3);
-            text-transform: uppercase; letter-spacing: 1px;
+            text-transform: uppercase; letter-spacing: 1px; animation: pulseBtn 2s infinite;
         }
+        @keyframes pulseBtn { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
 
-        /* FOOTER FINALIZAR */
+        /* FOOTER */
         .footer-fixed { position: fixed; bottom: 0; left: 0; width: 100%; padding: 20px; background: linear-gradient(to top, var(--bg) 80%, transparent); display: flex; justify-content: center; z-index: 90; pointer-events: none; }
         .btn-finish { width: 100%; max-width: 400px; padding: 18px; background: var(--success); color: #000; font-weight: 800; border: none; border-radius: 50px; font-size: 16px; text-transform: uppercase; box-shadow: 0 5px 20px rgba(0, 255, 136, 0.3); cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; pointer-events: auto; }
         .btn-finish:disabled { background: #333; color: #555; box-shadow: none; cursor: default; }
@@ -188,10 +164,10 @@
             </div>
         </div>
         
+        <button id="btn-install-app">📲 INSTALAR APP</button>
+
         <div id="user-list"></div>
         <button id="btn-add-user" class="btn-add-item" onclick="window.app.addUser()">+ NOVA PESSOA</button>
-        
-        <button id="btn-install-app">📲 INSTALAR APP</button>
     </div>
 
     <div id="screen-workout-select" class="screen">
@@ -245,6 +221,7 @@
         import { getDatabase, ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
+        // CONFIGURAÇÃO DO FIREBASE (JÁ CONFIGURADA)
         const firebaseConfig = {
             apiKey: "AIzaSyBXpjF-2oGF3RrfqT9KjthB4NVZXUGtsCg",
             authDomain: "supertreino-e20ee.firebaseapp.com",
@@ -280,44 +257,41 @@
       let deferredPrompt;
       const installBtn = document.getElementById('btn-install-app');
 
-      // 1. Detectar suporte a instalação (Android/Chrome)
+      // 1. Detectar Android/Desktop
       window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        installBtn.style.display = 'block'; 
-        console.log("Evento de instalação disparado!");
+        installBtn.style.display = 'block'; // Mostra botão se for instalável
+        installBtn.textContent = "📲 INSTALAR APP";
       });
 
-      // 2. Ação do botão
-      installBtn.addEventListener('click', (e) => {
-        // Se for iOS, mostramos alerta manual
-        const isIos = /iPhone|iPad|iPod/.test(navigator.userAgent);
-        if (isIos) {
-            alert("No iPhone: Toque no botão de Compartilhar (quadrado com seta) e escolha 'Adicionar à Tela de Início'.");
-            return;
-        }
+      // 2. Detectar se é iPhone (iOS não dispara evento automático)
+      const isIos = /iPhone|iPad|iPod/.test(navigator.userAgent);
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
 
-        // Se for Android/Chrome e tivermos o evento salvo
-        if (deferredPrompt) {
-            installBtn.style.display = 'none';
+      if (isIos && !isStandalone) {
+          installBtn.style.display = 'block';
+          installBtn.textContent = "📲 INSTALAR (iOS)";
+      }
+
+      // 3. Ação do Botão
+      installBtn.addEventListener('click', (e) => {
+        if (isIos) {
+            alert("No iPhone: Toque no botão de Compartilhar (quadrado com seta ⬆️) e escolha 'Adicionar à Tela de Início'.");
+        } else if (deferredPrompt) {
             deferredPrompt.prompt();
             deferredPrompt.userChoice.then((choiceResult) => {
                 if (choiceResult.outcome === 'accepted') {
-                    console.log('Usuário aceitou instalar');
+                    installBtn.style.display = 'none';
                 }
                 deferredPrompt = null;
             });
+        } else {
+            alert("Para instalar: Toque nos 3 pontinhos do navegador e escolha 'Adicionar à Tela Inicial' ou 'Instalar App'.");
         }
       });
 
-      // 3. Fallback para iOS (Se não for instalado e for iOS, mostra botão igual)
-      const isIos = /iPhone|iPad|iPod/.test(navigator.userAgent);
-      const isInStandaloneMode = ('standalone' in window.navigator) && (window.navigator.standalone);
-      if (isIos && !isInStandaloneMode) {
-          installBtn.style.display = 'block';
-      }
-
-      // 4. Registro do Service Worker
+      // 4. Registrar Service Worker
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('./sw.js').then(reg => console.log('SW ok')).catch(err => console.log('SW falhou'));
@@ -326,7 +300,7 @@
     </script>
 
     <script>
-    const quotes = ["Tá pago!", "A dor é temporária.", "Hoje foi pago com juros!", "Sem dor, sem ganho.", "Parabéns monstro!"];
+    const quotes = ["Tá pago!", "A dor é temporária.", "Hoje foi pago com juros!", "Sem dor, sem ganho.", "Parabéns monstro!", "O corpo alcança o que a mente acredita.", "Treino difícil, luta fácil."];
     const GYM_LAT = -19.8285; const GYM_LON = -40.3735; const GYM_RADIUS_KM = 0.1;
 
     window.app = {
@@ -350,7 +324,7 @@
                     this.historyData = val ? Object.keys(val).map(k => ({...val[k], firebaseId: k})).sort((a,b) => b.id - a.id) : [];
                 });
             } else {
-                this.data = JSON.parse(localStorage.getItem('gymData_v23')) || {};
+                this.data = JSON.parse(localStorage.getItem('gymData_v25')) || {};
                 this.historyData = JSON.parse(localStorage.getItem('gymHistory')) || [];
                 this.refreshCurrentScreen();
             }
@@ -358,7 +332,7 @@
 
         save: function() { 
             if(window.dbInstance) window.dbSet(window.dbRef(window.dbInstance, 'users'), this.data);
-            else localStorage.setItem('gymData_v23', JSON.stringify(this.data)); 
+            else localStorage.setItem('gymData_v25', JSON.stringify(this.data)); 
         },
 
         // --- NAVEGAÇÃO ---
@@ -470,8 +444,8 @@
                 let titleDisplay = `<h3>${w.title}</h3>`;
                 if(this.isSelectEditing) {
                     const parts = w.title.split(' - ');
-                    const prefix = parts[0] + ' - ';
-                    const name = parts.slice(1).join(' - ');
+                    const prefix = parts.length > 1 ? parts[0] + ' - ' : '';
+                    const name = parts.length > 1 ? parts.slice(1).join(' - ') : w.title;
                     titleDisplay = `<h3>${prefix}<input type="text" class="edit-input" style="width:auto;display:inline-block" value="${name}" onclick="event.stopPropagation()" onchange="window.app.renameWorkout(${idx}, '${prefix}', this.value)"></h3>`;
                 }
 
@@ -684,13 +658,8 @@
         },
         delHist: function(id, fid) { if(confirm('Apagar?')) { if(window.dbInstance && fid) window.dbRemove(window.dbRef(window.dbInstance, `history/${fid}`)); else { this.historyData = this.historyData.filter(x=>x.id!==id); localStorage.setItem('gymHistory', JSON.stringify(this.historyData)); this.renderHistoryList(); } } },
         clearAllHistory: function() { if(confirm('Tudo?')) window.dbInstance ? window.dbRemove(window.dbRef(window.dbInstance, 'history')) : (localStorage.removeItem('gymHistory') || this.renderHistoryList()); },
-        goHome: function() { 
-            this.navigate('screen-menu'); 
-        },
-        toggleScreen: function(id) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('visible'));
-            document.getElementById(id).classList.add('visible');
-        }
+        goHome: function() { this.navigate('screen-menu'); },
+        toggleScreen: function(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('visible')); document.getElementById(id).classList.add('visible'); }
     };
 
     window.onload = function() { if(window.app && window.app.init) window.app.init(); };
