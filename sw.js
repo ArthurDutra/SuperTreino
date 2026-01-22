@@ -1,9 +1,9 @@
-const CACHE_NAME = 'super-treino-v42-install-fix';
+const CACHE_NAME = 'super-treino-v44-save-fix';
 const urlsToCache = [
-  './',
-  './index.html',
-  './manifest.json',
-  './icon.png'
+  '/SuperTreino/',
+  '/SuperTreino/index.html',
+  '/SuperTreino/manifest.json',
+  '/SuperTreino/icon.png'
 ];
 
 self.addEventListener('install', event => {
