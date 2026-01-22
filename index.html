@@ -6,12 +6,12 @@
     <title>Super Treino App</title>
     
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
-    <meta name="theme-color" content="#121212">
+    <link rel="icon" type="image/png" href="icon.png">
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#121212">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -320,28 +320,29 @@
     window.app = {
         data: {}, historyData: [], currentUser: null, currentWorkoutIndex: null, startTime: null,
         isMenuEditing: false, isSelectEditing: false, isActiveEditing: false,
-        quitAttempts: 0, // Contador de tentativas de fuga
+        quitAttempts: 0, 
 
         init: function() {
-            // Garante estado inicial LIMPO
+            // Estado inicial limpo
             if (!history.state) history.replaceState({ screen: 'screen-menu' }, '');
             
-            // Lógica do Fujão (LOOP INFINITO NO CELULAR)
+            // Lógica do Fujão Corrigida para Loop
             window.onpopstate = (event) => {
-                // Se estiver treinando e tentar voltar:
                 if (document.getElementById('screen-active-workout').classList.contains('visible') && this.startTime) {
                     const randomMsg = quitMessages[Math.floor(Math.random() * quitMessages.length)];
                     
                     if (confirm(`🚨 ${randomMsg}\n\nO treino está rolando. Sair cancela o tempo. Deseja realmente sair?`)) {
-                        // CONFIRMOU SAIR:
+                        // Se confirmou sair:
                         this.startTime = null; 
                         window.onbeforeunload = null;
-                        this.returnToMenu(); // Limpa histórico e vai pro menu
+                        
+                        // Atualiza a tela para a anterior (que deve ser o estado atual do evento)
+                        if (event.state) this.restoreScreen(event.state);
+                        else this.toggleScreen('screen-workout-select');
                     } else {
-                        // CANCELOU (FICOU):
-                        // O segredo do loop: Empurra o estado DE NOVO para o topo.
-                        // Assim, se ele apertar voltar de novo, o evento dispara novamente.
+                        // Se cancelou (ficou):
                         this.quitAttempts++;
+                        // Truque do Loop: Empurra o estado DE NOVO para bloquear o próximo "voltar"
                         history.pushState({ 
                             screen: 'screen-active-workout', 
                             userId: this.currentUser, 
@@ -351,10 +352,7 @@
                 } else {
                     // Fora do treino, navegação normal
                     if (event.state) this.restoreScreen(event.state);
-                    else {
-                        // Se acabou o histórico, garante que estamos no menu (e deixa fechar)
-                        this.toggleScreen('screen-menu');
-                    }
+                    else this.toggleScreen('screen-menu'); 
                 }
             };
 
@@ -371,7 +369,7 @@
                     }
                 });
             } else {
-                this.data = JSON.parse(localStorage.getItem('gymData_v38')) || {};
+                this.data = JSON.parse(localStorage.getItem('gymData_v41')) || {};
                 this.historyData = JSON.parse(localStorage.getItem('gymHistory')) || [];
                 this.refreshCurrentScreen();
             }
@@ -379,7 +377,7 @@
 
         save: function() { 
             if(window.dbInstance) window.dbSet(window.dbRef(window.dbInstance, 'users'), this.data);
-            else localStorage.setItem('gymData_v38', JSON.stringify(this.data)); 
+            else localStorage.setItem('gymData_v41', JSON.stringify(this.data)); 
         },
 
         handleBack: function() { window.history.back(); },
@@ -390,13 +388,12 @@
             this.restoreScreen(newState);
         },
 
-        // Função que limpa o "lixo" do histórico ao voltar pro menu
+        // Função de retorno limpo ao menu
         returnToMenu: function() {
             document.getElementById('modal-msg').style.display='none';
-            // Volta tudo que empilhamos (telas normais + tentativas de fuga)
+            // Volta tudo que foi empilhado
             const jumps = 2 + this.quitAttempts;
             this.quitAttempts = 0;
-            // Volta no histórico real
             window.history.go(-jumps);
         },
 
