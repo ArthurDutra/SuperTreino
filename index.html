@@ -76,7 +76,7 @@
         }
         .btn-large:active { transform: scale(0.98); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         
-        /* INPUTS DE EDIÇÃO (CORRIGIDO TAMANHO) */
+        /* INPUTS DE EDIÇÃO */
         .edit-input { 
             background: rgba(255,255,255,0.1); 
             border: 1px solid #555; 
@@ -86,7 +86,7 @@
             font-family: inherit; 
             font-size: inherit; 
             width: 100%; 
-            box-sizing: border-box; /* Garante que padding não estoure */
+            box-sizing: border-box; 
             font-weight: bold; 
             margin-bottom: 5px;
         }
@@ -157,7 +157,6 @@
         .editing .btn-add-item { display: block; width: 100%; max-width: 400px; padding: 20px; background: rgba(250, 204, 21, 0.1); border: 2px dashed var(--edit-mode); color: var(--edit-mode); border-radius: 16px; cursor: pointer; font-size: 16px; font-weight: 800; margin-top: 15px; text-align: center; }
         
         .editing .btn-large, .editing .workout-select-card, .editing .exercise-card { border: 1px dashed #555; opacity: 0.8; }
-        /* AQUI: Garantimos que o clique no card não funciona, mas no input sim */
         .editing .card-wrapper > button, .editing .workout-select-card, .editing .exercise-card { pointer-events: none; }
         .editing .edit-input, .editing .edit-controls-floating, .editing .weight-display, .editing .btn-video { pointer-events: auto; }
 
@@ -260,7 +259,7 @@
             <h2 id="modal-title" style="color: var(--success); font-weight:800; font-size:24px;">TREINO CONCLUÍDO! 🔥</h2>
             <p id="quote-text" style="color:#ddd; margin: 20px 0; font-style: italic; font-size: 16px; line-height:1.5;">...</p>
             <span id="gps-status" style="font-size:12px; color:#aaa; font-weight:600;"></span>
-            <button class="btn-finish" style="margin-top:20px; width:100%" onclick="document.getElementById('modal-msg').style.display='none'; window.app.goHome()">Fechar</button>
+            <button class="btn-finish" style="margin-top:20px; width:100%" onclick="window.app.returnToMenu()">Fechar</button>
         </div>
     </div>
 
@@ -345,7 +344,7 @@
                     }
                 });
             } else {
-                this.data = JSON.parse(localStorage.getItem('gymData_v34')) || {};
+                this.data = JSON.parse(localStorage.getItem('gymData_v35')) || {};
                 this.historyData = JSON.parse(localStorage.getItem('gymHistory')) || [];
                 this.refreshCurrentScreen();
             }
@@ -353,7 +352,7 @@
 
         save: function() { 
             if(window.dbInstance) window.dbSet(window.dbRef(window.dbInstance, 'users'), this.data);
-            else localStorage.setItem('gymData_v34', JSON.stringify(this.data)); 
+            else localStorage.setItem('gymData_v35', JSON.stringify(this.data)); 
         },
 
         handleBack: function() { window.history.back(); },
@@ -362,6 +361,11 @@
             const newState = { screen: screenId, ...stateData };
             history.pushState(newState, '');
             this.restoreScreen(newState);
+        },
+
+        returnToMenu: function() {
+            document.getElementById('modal-msg').style.display='none';
+            this.navigate('screen-menu');
         },
 
         restoreScreen: function(state) {
@@ -393,7 +397,6 @@
                 
                 let content = `<span>${u.name}</span> <span style="font-size:14px">➜</span>`;
                 if(this.isMenuEditing) {
-                    // STOP PROPAGATION HERE
                     content = `<input type="text" class="edit-input" value="${u.name}" onclick="event.stopPropagation()" onchange="window.app.renameUser('${id}', this.value)">`;
                 }
 
@@ -446,7 +449,6 @@
                     const parts = w.title.split(' - ');
                     const prefix = parts.length > 1 ? parts[0] + ' - ' : '';
                     const name = parts.length > 1 ? parts.slice(1).join(' - ') : w.title;
-                    // FIX: INPUT WIDTH + STOP PROPAGATION
                     titleDisplay = `<h3>${prefix}<input type="text" class="edit-input" style="width:100%; display:block; margin-top:5px" value="${name}" onclick="event.stopPropagation()" onchange="window.app.renameWorkout(${idx}, '${prefix}', this.value)"></h3>`;
                 }
 
