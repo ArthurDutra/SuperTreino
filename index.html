@@ -5,7 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Super Treino App</title>
     
+    <link rel="manifest" href="manifest.json">
+    
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+    
+    <meta name="theme-color" content="#121212">
 
     <style>
         :root { 
@@ -124,7 +128,7 @@
             color: var(--edit-mode); border-radius: 16px; cursor: pointer; font-size: 16px; font-weight: bold;
             margin-top: 15px; text-align: center;
         }
-        /* Desabilita clique nos cards durante edição para focar nos inputs */
+        
         .editing .btn-large, .editing .workout-select-card, .editing .exercise-card { 
             border: 1px dashed #555;
         }
@@ -264,6 +268,16 @@
     </script>
 
     <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('Service Worker registrado!', reg.scope))
+            .catch(err => console.log('Falha ao registrar Service Worker:', err));
+        });
+      }
+    </script>
+
+    <script>
     const quotes = ["Tá pago!", "A dor é temporária.", "Hoje foi pago com juros!", "Sem dor, sem ganho.", "Parabéns monstro!"];
     const GYM_LAT = -19.8285; const GYM_LON = -40.3735; const GYM_RADIUS_KM = 0.1;
 
@@ -374,7 +388,7 @@
             const idx = entries.findIndex(([id]) => id === currentId);
             if ((direction === -1 && idx === 0) || (direction === 1 && idx === entries.length - 1)) return;
             const temp = entries[idx]; entries[idx] = entries[idx + direction]; entries[idx + direction] = temp;
-            this.data = {}; entries.forEach(([id, val]) => this.data[id] = val); // Rebuild object
+            this.data = {}; entries.forEach(([id, val]) => this.data[id] = val); 
             this.save(); this.renderMenu();
         },
 
@@ -504,7 +518,7 @@
         reorderEx: function(exIdx, direction) {
             const exs = this.data[this.currentUser].workouts[this.currentWorkoutIndex].exercises;
             if ((direction === -1 && exIdx === 0) || (direction === 1 && exIdx === exs.length - 1)) return;
-            [exs[exIdx], exs[exIdx + direction]] = [exs[exIdx + direction], exs[exIdx]]; // Swap
+            [exs[exIdx], exs[exIdx + direction]] = [exs[exIdx + direction], exs[exIdx]]; 
             this.save(); this.renderActiveWorkout();
         },
 
