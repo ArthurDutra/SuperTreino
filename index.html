@@ -82,13 +82,11 @@
         /* CONTROLE DE PESO (BOTÕES) */
         .weight-control { margin-top: 15px; background: #252525; padding: 10px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
         .weight-label { color: #aaa; font-size: 12px; margin-right: auto; padding-left: 5px; }
-        
         .btn-weight {
             width: 40px; height: 40px; background: #444; border: none; border-radius: 8px;
             color: #fff; font-size: 24px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center;
         }
         .btn-weight:active { background: #666; transform: scale(0.95); }
-        
         .weight-input {
             width: 70px; background: transparent; border: 2px solid #333; border-radius: 6px;
             color: var(--success); font-size: 22px; font-weight: bold; text-align: center;
@@ -113,7 +111,6 @@
             color: var(--edit-mode); border-radius: 16px; cursor: pointer; font-size: 16px; font-weight: bold;
             margin-top: 15px; text-align: center;
         }
-        
         .editing .btn-large, .editing .workout-select-card, .editing .exercise-card { 
             opacity: 0.8; border: 1px dashed #555; pointer-events: none; 
         }
@@ -157,7 +154,7 @@
         <div class="header-bar">
             <div class="app-title"><span class="app-logo">⚡</span> SUPERTREINO</div>
             <div class="header-actions">
-                <button class="btn-icon" onclick="window.app.showHistory()" title="Histórico">📅</button>
+                <button class="btn-icon" onclick="window.app.showHistory()" title="Histórico">📋</button>
                 <button class="btn-icon" id="btn-edit-menu" onclick="window.app.toggleMenuEdit()" title="Editar">✏️</button>
             </div>
         </div>
@@ -234,7 +231,6 @@
                 const app = initializeApp(firebaseConfig);
                 const auth = getAuth();
                 await signInAnonymously(auth);
-                console.log("Autenticado anonimamente");
                 db = getDatabase(app);
                 document.getElementById('db-status').innerText = "🟢 Online (Seguro)";
                 document.getElementById('db-status').classList.add('status-online');
@@ -243,7 +239,6 @@
                 if(window.app) window.app.init();
             } catch(e) {
                 console.error("Erro Conexão:", e);
-                // Inicia offline se der erro
                 if(window.app) window.app.init();
             }
         }
@@ -255,24 +250,17 @@
     const GYM_LAT = -19.8285; const GYM_LON = -40.3735; const GYM_RADIUS_KM = 0.1;
 
     window.app = {
-        data: {}, // Começa vazio
-        historyData: [], 
-        currentUser: null, 
-        currentWorkoutIndex: null, 
-        startTime: null,
+        data: {}, historyData: [], currentUser: null, currentWorkoutIndex: null, startTime: null,
         isMenuEditing: false, isSelectEditing: false, isActiveEditing: false,
 
         init: function() {
             if (window.dbInstance) {
-                // Modo Online: Ouve Firebase
                 window.dbOnValue(window.dbRef(window.dbInstance, 'users'), (snap) => {
-                    this.data = snap.val() || {}; // Se null, vira objeto vazio
+                    this.data = snap.val() || {}; 
                     this.renderMenu();
                     if(this.currentUser && this.data[this.currentUser]) {
                         this.renderWorkoutSelectScreen();
-                        if(this.currentWorkoutIndex !== null && this.data[this.currentUser].workouts) {
-                            this.renderActiveWorkout();
-                        }
+                        if(this.currentWorkoutIndex !== null) this.renderActiveWorkout();
                     }
                 });
                 window.dbOnValue(window.dbRef(window.dbInstance, 'history'), (snap) => {
@@ -280,8 +268,7 @@
                     this.historyData = val ? Object.keys(val).map(k => ({...val[k], firebaseId: k})).sort((a,b) => b.id - a.id) : [];
                 });
             } else {
-                // Modo Offline (Fallback local)
-                this.data = JSON.parse(localStorage.getItem('gymData_v16')) || {};
+                this.data = JSON.parse(localStorage.getItem('gymData_v17')) || {};
                 this.historyData = JSON.parse(localStorage.getItem('gymHistory')) || [];
                 this.renderMenu();
             }
@@ -289,16 +276,13 @@
 
         save: function() { 
             if(window.dbInstance) window.dbSet(window.dbRef(window.dbInstance, 'users'), this.data);
-            else localStorage.setItem('gymData_v16', JSON.stringify(this.data)); 
+            else localStorage.setItem('gymData_v17', JSON.stringify(this.data)); 
         },
 
-        // --- MENU PRINCIPAL ---
+        // --- MENU ---
         renderMenu: function() {
             const list = document.getElementById('user-list'); list.innerHTML = '';
-            
-            if (Object.keys(this.data).length === 0) {
-                list.innerHTML = '<p style="color:#666; margin-top:20px;">Nenhum usuário. Clique na caneta para adicionar.</p>';
-            }
+            if (Object.keys(this.data).length === 0) list.innerHTML = '<p style="color:#666; margin-top:20px;">Nenhum usuário. Clique na caneta para adicionar.</p>';
             
             Object.keys(this.data).forEach(id => {
                 const u = this.data[id];
@@ -324,9 +308,8 @@
             const u = this.data[this.currentUser];
             document.getElementById('select-user-title').innerText = u.name;
             const list = document.getElementById('workout-select-list'); list.innerHTML = '';
-
-            // Garante que array de treinos existe
-            if (!u.workouts) u.workouts = [];
+            
+            if(!u.workouts) u.workouts = [];
 
             const lastEntry = this.historyData.find(h => h.user === u.name);
             let recIdx = 0;
@@ -357,8 +340,14 @@
 
         // --- TREINO ATIVO ---
         startWorkout: function(idx) {
-            this.currentWorkoutIndex = idx; this.startTime = Date.now();
-            this.renderActiveWorkout(); this.toggleScreen('screen-active-workout');
+            this.currentWorkoutIndex = idx; 
+            this.startTime = Date.now();
+            
+            // Ativa confirmação de saída
+            window.onbeforeunload = function() { return "Treino em andamento. Sair?"; };
+            
+            this.renderActiveWorkout(); 
+            this.toggleScreen('screen-active-workout');
         },
         renderActiveWorkout: function() {
             if(!this.currentUser || this.currentWorkoutIndex === null) return;
@@ -372,7 +361,6 @@
             document.getElementById('active-title').className = `user-title txt-${u.themeId}`;
             cont.innerHTML = '';
 
-            // Garante array de exercícios
             if (!w.exercises) w.exercises = [];
 
             w.exercises.forEach((ex, i) => {
@@ -400,7 +388,6 @@
         },
         toggleActiveEditMode: function() { this.isActiveEditing = !this.isActiveEditing; this.renderActiveWorkout(); },
 
-        // --- UTILITÁRIOS DE ÍCONE ---
         updateEditIcon: function(btnId, screenId, isEditing) {
             const btn = document.getElementById(btnId);
             const screen = document.getElementById(screenId);
@@ -411,14 +398,14 @@
             }
         },
 
-        // --- FLUXOS DE ADIÇÃO (Corrigidos) ---
+        // --- FLUXOS DE ADIÇÃO (SEM NAVEGAÇÃO AUTOMÁTICA) ---
         addUser: function() { 
             const n = prompt("Nome da nova pessoa:"); 
             if(n) { 
                 const newId = 'u_'+Date.now();
                 this.data[newId] = { name: n, themeId: `theme-${Math.floor(Math.random()*6)+1}`, workouts:[] }; 
                 this.save();
-                this.currentUser = newId; this.renderWorkoutSelectScreen(); this.toggleScreen('screen-workout-select');
+                this.renderMenu(); // Apenas atualiza a lista
             } 
         },
         addWorkout: function() {
@@ -430,7 +417,7 @@
             if(name) { 
                 user.workouts.push({ id: nextId, title: `${nextId} - ${name}`, exercises: [] }); 
                 this.save();
-                this.currentWorkoutIndex = user.workouts.length - 1; this.renderActiveWorkout(); this.toggleScreen('screen-active-workout');
+                this.renderWorkoutSelectScreen(); // Apenas atualiza a lista
             }
         },
         addExercise: function() {
@@ -439,15 +426,18 @@
             const n = prompt("Nome do Exercício:"); 
             if(n) { 
                 w.exercises.push({ name: n, sets: prompt("Séries:", "3")||"3", reps: prompt("Repetições:", "10")||"10", weight: 0 });
-                this.save(); this.renderActiveWorkout(); setTimeout(() => window.scrollTo(0, document.body.scrollHeight), 100);
+                this.save(); 
+                this.renderActiveWorkout(); // Apenas atualiza a lista
+                setTimeout(() => window.scrollTo(0, document.body.scrollHeight), 100);
             }
         },
 
-        // --- CONTROLES DE DADOS ---
         chgWeight: function(i, delta) {
             const ex = this.data[this.currentUser].workouts[this.currentWorkoutIndex].exercises[i];
             let w = (parseInt(ex.weight) || 0) + delta; if(w < 0) w = 0;
             ex.weight = w; this.save();
+            // Não re-renderiza tudo para não perder foco, atualiza apenas input se possível, mas aqui re-renderiza seguro
+            this.renderActiveWorkout();
         },
         setWeight: function(i, val) {
             const ex = this.data[this.currentUser].workouts[this.currentWorkoutIndex].exercises[i];
@@ -457,10 +447,10 @@
             if(confirm('Apagar exercício?')) { 
                 this.data[this.currentUser].workouts[this.currentWorkoutIndex].exercises.splice(i,1); 
                 this.save(); 
+                this.renderActiveWorkout();
             } 
         },
 
-        // --- FINALIZAÇÃO & GPS ---
         finishWorkout: function() {
             const skipped = []; document.querySelectorAll('.ex-check').forEach(c => { if(!c.checked) skipped.push(c.getAttribute('data-name')) });
             if(skipped.length && !confirm(`Faltam ${skipped.length}. Finalizar?`)) return;
@@ -471,6 +461,9 @@
 
             const dur = (Date.now() - this.startTime)/60000;
             const wName = this.data[this.currentUser].workouts[this.currentWorkoutIndex].title;
+
+            // Remove proteção de saída
+            window.onbeforeunload = null;
 
             if(navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(p => {
@@ -494,8 +487,8 @@
             document.getElementById('btn-finish-main').innerText = "🏁 Finalizar"; document.getElementById('btn-finish-main').disabled = false;
         },
 
-        // --- NAVEGAÇÃO ---
         showHistory: function() {
+            if(this.startTime && !confirm("Sair do treino?")) return;
             this.toggleScreen('screen-history');
             const list = document.getElementById('history-list'); list.innerHTML = '';
             if(!this.historyData.length) list.innerHTML = '<p style="text-align:center;color:#666">Vazio.</p>';
@@ -516,8 +509,17 @@
         delHist: function(id, fid) { if(confirm('Apagar?')) { if(window.dbInstance && fid) window.dbRemove(window.dbRef(window.dbInstance, `history/${fid}`)); else { this.historyData = this.historyData.filter(x=>x.id!==id); localStorage.setItem('gymHistory', JSON.stringify(this.historyData)); this.showHistory(); } } },
         clearAllHistory: function() { if(confirm('Tudo?')) window.dbInstance ? window.dbRemove(window.dbRef(window.dbInstance, 'history')) : (localStorage.removeItem('gymHistory') || this.showHistory()); },
         toggleScreen: function(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('visible')); document.getElementById(id).classList.add('visible'); window.scrollTo(0,0); },
-        goHome: function() { this.toggleScreen('screen-menu'); this.currentUser=null; this.isMenuEditing=false; this.renderMenu(); },
-        goBackToSelect: function() { if(confirm('Sair?')) this.toggleScreen('screen-workout-select'); }
+        
+        goHome: function() { 
+            if(this.startTime && !confirm("O contador está rodando. Sair cancela o treino. Continuar?")) return;
+            window.onbeforeunload = null; this.startTime = null;
+            this.toggleScreen('screen-menu'); this.currentUser=null; this.isMenuEditing=false; this.renderMenu(); 
+        },
+        goBackToSelect: function() { 
+            if(this.startTime && !confirm("Sair do treino ativo?")) return;
+            window.onbeforeunload = null; this.startTime = null;
+            this.toggleScreen('screen-workout-select'); 
+        }
     };
 
     window.onload = function() { if(window.app && window.app.init) window.app.init(); };
