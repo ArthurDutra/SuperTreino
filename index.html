@@ -6,19 +6,22 @@
     <title>Super Treino App</title>
     
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+    <link rel="icon" type="image/png" href="icon.png">
     <meta name="theme-color" content="#121212">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
     <style>
         :root { 
             --bg: #121212; --card: #1e1e1e; --text: #ffffff; 
             --success: #00ff88; --danger: #ff4444; --edit-mode: #ffb700;
-            --primary: #2575fc;
+            
+            /* Temas */
             --color-1: #00d4ff; --color-2: #ff007f; --color-3: #9d4edd;
             --color-4: #ff9e00; --color-5: #00b4d8; --color-6: #80ed99;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Segoe UI', Roboto, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; padding-bottom: 50px; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; padding-bottom: 80px; }
         
         /* GERAL */
         .screen { display: none; padding: 20px; animation: fadeIn 0.3s; min-height: 100vh; flex-direction: column; position: relative; }
@@ -31,20 +34,20 @@
         .app-title { font-size: 20px; font-weight: bold; color: var(--text); letter-spacing: 1px; display: flex; align-items: center; }
         .user-title { font-size: 18px; font-weight: bold; text-transform: uppercase; }
         .header-actions { display: flex; gap: 15px; }
-        .btn-icon { background: none; border: none; font-size: 24px; cursor: pointer; color: #fff; padding: 0; }
+        .btn-icon { background: none; border: none; font-size: 24px; cursor: pointer; color: #fff; transition: transform 0.2s; padding: 0; }
+        .btn-icon:active { transform: scale(0.9); }
         .icon-active { color: var(--edit-mode); transform: scale(1.1); }
 
-        /* LISTAS */
+        /* BOTÃO DE INSTALAÇÃO (Header) */
+        #btn-install-header { animation: pulse 2s infinite; color: var(--success); }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+
+        /* LISTAS & CARDS */
         #user-list, #workout-select-list { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 20px; }
         .card-wrapper { position: relative; width: 100%; max-width: 400px; }
         .btn-large { width: 100%; padding: 25px 20px; border: none; border-radius: 16px; font-size: 20px; font-weight: bold; cursor: pointer; color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.3); text-transform: uppercase; text-align: left; display: flex; justify-content: space-between; align-items: center; }
-        .edit-input { background: rgba(0,0,0,0.2); border: 1px solid #555; color: #fff; padding: 5px; border-radius: 4px; font-family: inherit; font-size: inherit; width: 100%; }
-        .edit-input-inline { width: 50px; text-align: center; margin: 0 2px; }
-
-        /* CARDS */
-        .workout-select-card { background: var(--card); border: 2px solid #333; color: #fff; padding: 20px; border-radius: 16px; cursor: pointer; width: 100%; text-align: left; position: relative; transition: 0.2s; }
+        .workout-select-card { background: var(--card); border: 2px solid #333; color: #fff; padding: 20px; border-radius: 16px; cursor: pointer; width: 100%; text-align: left; position: relative; }
         .workout-select-card:active { transform: scale(0.98); }
-        .suggested-workout { border: 2px solid var(--success); box-shadow: 0 0 15px rgba(0, 255, 136, 0.15); }
         .suggested-badge { position: absolute; right: 15px; top: 15px; background: var(--success); color: #000; font-size: 10px; font-weight: bold; padding: 4px 8px; border-radius: 4px; animation: pulse 2s infinite; }
 
         /* EXERCÍCIOS */
@@ -66,27 +69,35 @@
         .weight-control { margin-top: 15px; background: #252525; padding: 10px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
         .weight-label { color: #aaa; font-size: 12px; margin-right: auto; padding-left: 5px; }
         .btn-weight { width: 45px; height: 45px; background: #444; border: none; border-radius: 8px; color: #fff; font-size: 24px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .btn-weight:active { background: #666; transform: scale(0.95); }
         .weight-display { flex-grow: 1; text-align: center; font-size: 18px; font-weight: bold; color: var(--success); font-family: monospace; cursor: pointer; border: 1px solid transparent; padding: 5px; border-radius: 6px; }
         .no-load { color: #888; font-size: 14px; font-family: sans-serif; letter-spacing: 1px; }
 
         /* EDIÇÃO */
+        .edit-input { background: rgba(0,0,0,0.2); border: 1px solid #555; color: #fff; padding: 5px; border-radius: 4px; font-family: inherit; font-size: inherit; width: 100%; }
+        .edit-input-inline { width: 50px; text-align: center; margin: 0 2px; }
         .edit-controls-floating { position: absolute; right: -10px; top: -10px; display: flex; flex-direction: column; gap: 5px; z-index: 10; animation: popIn 0.2s; pointer-events: none; opacity: 0; transition: 0.2s; }
         .editing .edit-controls-floating { opacity: 1; pointer-events: auto; }
         .btn-float { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #fff; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.5); color: #fff; font-size: 14px; }
         .btn-del { background: var(--danger); }
         .btn-reorder { background: #444; border-color: #888; }
-        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
         .btn-add-item { display: none; } 
         .editing .btn-add-item { display: block; width: 100%; max-width: 400px; padding: 20px; background: rgba(255, 255, 255, 0.05); border: 2px dashed var(--edit-mode); color: var(--edit-mode); border-radius: 16px; cursor: pointer; font-size: 16px; font-weight: bold; margin-top: 15px; text-align: center; }
-        .editing .btn-large, .editing .workout-select-card, .editing .exercise-card { border: 1px dashed #555; }
-        .editing .card-wrapper > button, .editing .workout-select-card, .editing .exercise-card { pointer-events: none; }
-        .editing .edit-input, .editing .edit-controls-floating, .editing .weight-display, .editing .btn-video { pointer-events: auto; }
+        .editing .btn-large, .editing .workout-select-card, .editing .exercise-card { border: 1px dashed #555; pointer-events: none; }
+        .editing .edit-input, .editing .edit-controls-floating { pointer-events: auto; }
 
-        /* FOOTER */
+        /* FOOTER FINALIZAR */
         .footer-fixed { position: fixed; bottom: 0; left: 0; width: 100%; padding: 20px; background: linear-gradient(to top, var(--bg) 80%, transparent); display: flex; justify-content: center; z-index: 90; pointer-events: none; }
         .btn-finish { width: 100%; max-width: 400px; padding: 18px; background: var(--success); color: #000; font-weight: 800; border: none; border-radius: 50px; font-size: 16px; text-transform: uppercase; box-shadow: 0 5px 20px rgba(0, 255, 136, 0.3); cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; pointer-events: auto; }
         .btn-finish:disabled { background: #333; color: #555; box-shadow: none; cursor: default; }
+
+        /* HISTÓRICO */
+        .history-item { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; flex-direction: column; border-left: 4px solid #555; position: relative; }
+        .hist-top { display: flex; justify-content: space-between; width: 100%; }
+        .hist-date { font-weight: bold; color: #fff; }
+        .hist-status { font-size: 20px; }
+        .hist-loc { font-size: 12px; color: var(--success); background: rgba(0,255,136,0.1); padding: 4px 8px; border-radius: 4px; width: fit-content; margin-top: 8px; }
+        .loc-bad { color: #ffaa00; background: rgba(255, 170, 0, 0.1); }
+        .skipped-list { color: #ffaa00; font-size: 11px; margin-top: 8px; border-top: 1px solid #333; padding-top: 5px; }
 
         /* TEMAS */
         .theme-1 { background: linear-gradient(135deg, #005f73, var(--color-1)); } .bd-theme-1 { border-left-color: var(--color-1); }
@@ -96,19 +107,14 @@
         .theme-5 { background: linear-gradient(135deg, #005063, var(--color-5)); } .bd-theme-5 { border-left-color: var(--color-5); }
         .theme-6 { background: linear-gradient(135deg, #2b9348, var(--color-6)); } .bd-theme-6 { border-left-color: var(--color-6); }
 
-        /* HISTÓRICO */
-        .history-item { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; flex-direction: column; border-left: 4px solid #555; position: relative; }
-        .hist-top { display: flex; justify-content: space-between; width: 100%; }
-        .hist-date { font-weight: bold; color: #fff; }
-        .hist-status { font-size: 20px; }
-        .hist-user { font-weight: bold; font-size: 14px; margin-top: 5px; display: block; }
-        .hist-loc { font-size: 12px; color: var(--success); background: rgba(0,255,136,0.1); padding: 4px 8px; border-radius: 4px; width: fit-content; margin-top: 8px; }
-        .loc-bad { color: #ffaa00; background: rgba(255, 170, 0, 0.1); }
-        .skipped-list { color: #ffaa00; font-size: 11px; margin-top: 8px; border-top: 1px solid #333; padding-top: 5px; }
-
-        /* MODAL */
-        #modal-msg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; text-align: center; }
+        /* MODAIS */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; text-align: center; }
         .msg-content { background: #222; padding: 30px; border-radius: 15px; border: 2px solid var(--success); max-width: 400px; width: 100%; }
+        
+        /* MODAL DE INSTALAÇÃO (NOVO) */
+        #modal-install { border-color: #2575fc; }
+        .install-guide-ios { font-size: 16px; color: #ddd; margin: 20px 0; text-align: left; }
+        .ios-icon { font-size: 24px; vertical-align: middle; margin: 0 5px; }
         
         #db-status { position: fixed; bottom: 5px; right: 5px; font-size: 10px; color: #555; z-index: 200; }
         .status-online { color: var(--success) !important; }
@@ -122,8 +128,7 @@
         <div class="header-bar">
             <div class="app-title"><span class="app-logo">⚡</span> SUPERTREINO</div>
             <div class="header-actions">
-                <button class="btn-icon" id="btn-smart-install" title="Instalar ou Atualizar">🔄</button>
-                
+                <button class="btn-icon" id="btn-install-header" title="Instalar/Atualizar">📲</button>
                 <button class="btn-icon" onclick="window.app.showHistory()" title="Histórico">📋</button>
                 <button class="btn-icon" id="btn-edit-menu" onclick="window.app.toggleMenuEdit()" title="Editar">✏️</button>
             </div>
@@ -170,12 +175,32 @@
         <div id="history-list"></div>
     </div>
 
-    <div id="modal-msg">
+    <div id="modal-msg" class="modal-overlay">
         <div class="msg-content">
             <h2 id="modal-title" style="color: var(--success)">TREINO CONCLUÍDO! 🔥</h2>
             <p id="quote-text" style="color:#ddd; margin: 20px 0; font-style: italic;">...</p>
             <span id="gps-status" style="font-size:12px; color:#aaa;"></span>
             <button class="btn-finish" style="margin-top:20px; width:100%" onclick="document.getElementById('modal-msg').style.display='none'; window.app.goHome()">Fechar</button>
+        </div>
+    </div>
+
+    <div id="modal-install" class="modal-overlay">
+        <div class="msg-content" style="border-color: #2575fc;">
+            <h2 style="color: #2575fc">COMO INSTALAR 📲</h2>
+            
+            <div id="install-guide-ios" style="display:none; text-align:left; color:#ddd; margin-top:20px;">
+                <p>1. Toque no botão de <strong>Compartilhar</strong> do navegador (quadrado com seta).</p>
+                <p>2. Role para baixo e escolha <strong>"Adicionar à Tela de Início"</strong> <span style="font-size:20px">➕</span>.</p>
+                <p>3. Confirme em <strong>Adicionar</strong>.</p>
+            </div>
+
+            <div id="install-guide-android" style="display:none; text-align:left; color:#ddd; margin-top:20px;">
+                <p>Se a janela automática não abriu:</p>
+                <p>1. Toque nos <strong>3 pontinhos</strong> do navegador.</p>
+                <p>2. Escolha <strong>"Instalar aplicativo"</strong> ou "Adicionar à Tela Inicial".</p>
+            </div>
+
+            <button class="btn-finish" style="background:#333; margin-top:20px;" onclick="document.getElementById('modal-install').style.display='none'">Fechar</button>
         </div>
     </div>
 
@@ -195,7 +220,6 @@
         };
 
         let db;
-        
         async function startFirebase() {
             try {
                 const app = initializeApp(firebaseConfig);
@@ -217,55 +241,51 @@
 
     <script>
       let deferredPrompt;
-      const smartBtn = document.getElementById('btn-smart-install');
+      const installBtn = document.getElementById('btn-install-header');
+      const modalInstall = document.getElementById('modal-install');
+      const guideIOS = document.getElementById('install-guide-ios');
+      const guideAndroid = document.getElementById('install-guide-android');
 
-      // Estado Padrão: Botão de Atualizar (Se já instalado ou não suportado)
-      smartBtn.innerText = "🔄";
-      smartBtn.title = "Atualizar App / Limpar Cache";
-
-      // 1. Se o navegador disser que pode instalar, mudamos o botão para Instalar
+      // 1. Captura evento de instalação (Android/Chrome)
       window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        smartBtn.innerText = "📲"; // Muda ícone para celular
-        smartBtn.title = "Instalar Aplicativo";
-        console.log("Modo Instalação Ativado");
+        installBtn.innerText = "📲"; // Ícone de instalar
+        installBtn.style.color = "#00ff88"; // Verde destaque
       });
 
-      // 2. Ação do Botão
-      smartBtn.addEventListener('click', (e) => {
-        // Se temos o evento de instalação, instalamos
+      // 2. Clique no Botão
+      installBtn.addEventListener('click', () => {
+        const isIos = /iPhone|iPad|iPod/.test(navigator.userAgent);
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+        // Se já instalado, atua como "Atualizar"
+        if (isStandalone) {
+            if(confirm("App já instalado. Deseja buscar atualizações e recarregar?")) {
+                window.location.reload(true);
+            }
+            return;
+        }
+
+        // Cenário 1: Android com evento pronto
         if (deferredPrompt) {
             deferredPrompt.prompt();
             deferredPrompt.userChoice.then((choiceResult) => {
                 if (choiceResult.outcome === 'accepted') {
-                    // Se instalou, volta a ser botão de atualizar
-                    smartBtn.innerText = "🔄";
                     deferredPrompt = null;
                 }
             });
-        } 
-        // Se NÃO temos evento (já instalado ou iOS), forçamos atualização
-        else {
-            const isIos = /iPhone|iPad|iPod/.test(navigator.userAgent);
-            const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+            return;
+        }
 
-            if (isIos && !isStandalone) {
-                alert("Para instalar no iPhone:\nToque em Compartilhar ⬆️ e escolha 'Adicionar à Tela de Início'.");
-            } else {
-                if(confirm("Deseja forçar a atualização do App e recarregar?")) {
-                    // Força limpeza de cache do Service Worker
-                    if ('serviceWorker' in navigator) {
-                        navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                            for(let registration of registrations) { registration.unregister(); }
-                        });
-                        caches.keys().then(names => {
-                            for (let name of names) caches.delete(name);
-                        });
-                    }
-                    window.location.reload(true);
-                }
-            }
+        // Cenário 2: iOS ou Android sem evento (Abre Modal de Ajuda)
+        modalInstall.style.display = 'flex';
+        if (isIos) {
+            guideIOS.style.display = 'block';
+            guideAndroid.style.display = 'none';
+        } else {
+            guideIOS.style.display = 'none';
+            guideAndroid.style.display = 'block';
         }
       });
 
@@ -302,7 +322,7 @@
                     this.historyData = val ? Object.keys(val).map(k => ({...val[k], firebaseId: k})).sort((a,b) => b.id - a.id) : [];
                 });
             } else {
-                this.data = JSON.parse(localStorage.getItem('gymData_v27')) || {};
+                this.data = JSON.parse(localStorage.getItem('gymData_v28')) || {}; // v28 limpa cache antigo
                 this.historyData = JSON.parse(localStorage.getItem('gymHistory')) || [];
                 this.refreshCurrentScreen();
             }
@@ -310,7 +330,7 @@
 
         save: function() { 
             if(window.dbInstance) window.dbSet(window.dbRef(window.dbInstance, 'users'), this.data);
-            else localStorage.setItem('gymData_v27', JSON.stringify(this.data)); 
+            else localStorage.setItem('gymData_v28', JSON.stringify(this.data)); 
         },
 
         // --- NAVEGAÇÃO ---
