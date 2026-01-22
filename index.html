@@ -19,22 +19,14 @@
             --bg: #121212; 
             --card: #1f1f23; 
             --text: #ffffff; 
-            
-            /* Roxo do Peso */
             --primary: #c084fc; 
-            --primary-dark: #a855f7;
-            
-            /* Laranja do Braço */
             --secondary: #fb923c;
-            
-            /* Amarelo do Raio */
             --accent: #facc15;
-            
             --success: #4ade80;
             --danger: #ef4444;
-            --edit-mode: #facc15; /* Amarelo Raio */
+            --edit-mode: #facc15;
             
-            /* Temas de Usuário (Mantidos mas suavizados) */
+            /* Temas de Usuário */
             --color-1: #38bdf8; --color-2: #f472b6; --color-3: #a78bfa;
             --color-4: #fb923c; --color-5: #22d3ee; --color-6: #4ade80;
         }
@@ -42,7 +34,7 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body { 
-            font-family: 'Poppins', sans-serif; /* Fonte Nova */
+            font-family: 'Poppins', sans-serif; 
             background-color: var(--bg); 
             color: var(--text); 
             margin: 0; padding: 0; padding-bottom: 50px; 
@@ -63,25 +55,12 @@
             z-index: 50; padding: 15px 0; border-bottom: 1px solid #333; 
         }
         .app-title { font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: 0.5px; display: flex; align-items: center; text-transform: uppercase; font-style: italic; }
-        .app-logo { margin-right: 5px; color: var(--accent); text-shadow: 0 0 10px rgba(250, 204, 21, 0.5); }
         .user-title { font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
         
         .header-actions { display: flex; gap: 15px; }
         .btn-icon { background: none; border: none; font-size: 24px; cursor: pointer; color: #fff; padding: 0; transition: transform 0.2s; }
         .btn-icon:active { transform: scale(0.9); }
         .icon-active { color: var(--edit-mode); transform: scale(1.1); text-shadow: 0 0 10px var(--edit-mode); }
-
-        /* LOGO NA TELA PRINCIPAL */
-        .main-logo-container {
-            display: flex; flex-direction: column; align-items: center; margin-bottom: 30px;
-        }
-        .app-logo-img {
-            width: 120px; height: 120px; border-radius: 20px; 
-            box-shadow: 0 0 20px rgba(192, 132, 252, 0.3); /* Brilho Roxo */
-            object-fit: cover; margin-bottom: 10px;
-            animation: float 3s ease-in-out infinite;
-        }
-        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
 
         /* LISTAS & CARDS */
         #user-list, #workout-select-list { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 10px; }
@@ -97,9 +76,23 @@
         }
         .btn-large:active { transform: scale(0.98); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         
-        .edit-input { background: rgba(255,255,255,0.1); border: 1px solid #555; color: #fff; padding: 8px; border-radius: 8px; font-family: inherit; font-size: inherit; width: 100%; font-weight: bold; }
+        /* Correção dos Inputs de Edição */
+        .edit-input { 
+            background: rgba(255,255,255,0.1); 
+            border: 1px solid #555; 
+            color: #fff; 
+            padding: 10px; 
+            border-radius: 8px; 
+            font-family: inherit; 
+            font-size: inherit; 
+            width: 100%; /* Ocupa 100% do pai */
+            max-width: 100%; /* Garante que não estoure */
+            box-sizing: border-box; /* Inclui padding no cálculo da largura */
+            font-weight: bold; 
+            margin-bottom: 5px;
+        }
         .edit-input:focus { border-color: var(--accent); outline: none; }
-        .edit-input-inline { width: 50px; text-align: center; margin: 0 2px; background: #333; border: none; }
+        .edit-input-inline { width: 50px; text-align: center; margin: 0 2px; background: #333; border: none; display: inline-block; }
 
         /* CARDS DE TREINO */
         .workout-select-card {
@@ -108,7 +101,7 @@
             width: 100%; text-align: left; position: relative; transition: 0.2s;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-        .workout-select-card h3 { margin: 0 0 5px 0; font-size: 20px; }
+        .workout-select-card h3 { margin: 0 0 5px 0; font-size: 20px; overflow-wrap: break-word; } /* Quebra texto longo */
         .workout-select-card p { margin: 0; color: #888; font-size: 14px; font-weight: 400; }
         .workout-select-card:active { transform: scale(0.98); background: #25252a; }
         
@@ -137,9 +130,9 @@
         input:checked + .custom-chk { background: var(--success); border-color: var(--success); transform: scale(1.1); }
         input:checked + .custom-chk::after { content: '✔'; color: #000; position: absolute; left: 7px; top: 1px; font-weight: 800; font-size: 20px; }
 
-        .ex-info { flex-grow: 1; }
-        .ex-name { font-size: 18px; font-weight: 600; display: block; margin-bottom: 6px; color: #fff; }
-        .ex-meta { display: flex; gap: 10px; align-items: center; font-size: 14px; color: #bbb; font-weight: 500; }
+        .ex-info { flex-grow: 1; min-width: 0; /* Impede overflow flex */ }
+        .ex-name { font-size: 18px; font-weight: 600; display: block; margin-bottom: 6px; color: #fff; word-wrap: break-word; }
+        .ex-meta { display: flex; gap: 10px; align-items: center; font-size: 14px; color: #bbb; font-weight: 500; flex-wrap: wrap; }
         .badge { background: #333; padding: 4px 12px; border-radius: 8px; font-weight: 700; font-size: 12px; color: #fff; }
         .btn-video { color: var(--secondary); text-decoration: none; font-weight: 800; border: 2px solid var(--secondary); padding: 2px 10px; border-radius: 8px; font-size: 10px; text-transform: uppercase; transition: 0.2s; }
         .btn-video:hover { background: var(--secondary); color: #000; }
@@ -160,22 +153,13 @@
         .btn-del { background: var(--danger); }
         .btn-reorder { background: var(--secondary); border-color: #fff; }
         @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+        
         .btn-add-item { display: none; } 
         .editing .btn-add-item { display: block; width: 100%; max-width: 400px; padding: 20px; background: rgba(250, 204, 21, 0.1); border: 2px dashed var(--edit-mode); color: var(--edit-mode); border-radius: 16px; cursor: pointer; font-size: 16px; font-weight: 800; margin-top: 15px; text-align: center; }
+        
         .editing .btn-large, .editing .workout-select-card, .editing .exercise-card { border: 1px dashed #555; opacity: 0.8; }
         .editing .card-wrapper > button, .editing .workout-select-card, .editing .exercise-card { pointer-events: none; }
         .editing .edit-input, .editing .edit-controls-floating, .editing .weight-display, .editing .btn-video { pointer-events: auto; }
-
-        /* BOTÃO DE INSTALAÇÃO (Header) */
-        #btn-install-header { 
-            animation: pulseColor 3s infinite; 
-            color: var(--success); 
-            background: rgba(74, 222, 128, 0.1); 
-            border-radius: 8px;
-            width: 35px; height: 35px;
-            display: flex; align-items: center; justify-content: center;
-        }
-        @keyframes pulseColor { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
 
         /* FOOTER */
         .footer-fixed { position: fixed; bottom: 0; left: 0; width: 100%; padding: 20px; background: linear-gradient(to top, var(--bg) 80%, transparent); display: flex; justify-content: center; z-index: 90; pointer-events: none; }
@@ -207,11 +191,9 @@
         .loc-bad { color: var(--secondary); background: rgba(251, 146, 60, 0.1); }
         .skipped-list { color: var(--secondary); font-size: 11px; margin-top: 8px; border-top: 1px solid #333; padding-top: 5px; font-weight: 600; }
 
-        /* MODAIS */
+        /* MODAL */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; text-align: center; backdrop-filter: blur(5px); }
         .msg-content { background: #1a1a1a; padding: 30px; border-radius: 25px; border: 2px solid var(--success); max-width: 400px; width: 100%; box-shadow: 0 0 30px rgba(74, 222, 128, 0.2); }
-        #modal-install { border-color: var(--primary); box-shadow: 0 0 30px rgba(192, 132, 252, 0.2); }
-        .install-guide-ios { font-size: 16px; color: #ddd; margin: 20px 0; text-align: left; }
         #db-status { position: fixed; bottom: 5px; right: 5px; font-size: 10px; color: #555; z-index: 200; font-weight: bold; }
         .status-online { color: var(--success) !important; }
 
@@ -233,24 +215,18 @@
         <div class="header-bar">
             <div class="app-title"><span class="app-logo">⚡</span> SUPERTREINO</div>
             <div class="header-actions">
-                <button class="btn-icon" id="btn-install-header" title="Instalar/Atualizar">📲</button>
                 <button class="btn-icon" onclick="window.app.showHistory()" title="Histórico">📋</button>
                 <button class="btn-icon" id="btn-edit-menu" onclick="window.app.toggleMenuEdit()" title="Editar">✏️</button>
             </div>
         </div>
         
-        <div class="main-logo-container">
-            <img src="icon.png" class="app-logo-img" alt="Logo">
-            <p style="color:#666; margin:0; font-size:12px; font-weight:600">SELECIONE O PERFIL</p>
-        </div>
-
         <div id="user-list"></div>
         <button id="btn-add-user" class="btn-add-item" onclick="window.app.addUser()">+ NOVA PESSOA</button>
     </div>
 
     <div id="screen-workout-select" class="screen">
         <div class="header-bar">
-            <button class="btn-icon" onclick="window.history.back()">⬅️</button>
+            <button class="btn-icon" onclick="window.app.goHome()">⬅️</button>
             <span class="user-title" id="select-user-title">...</span>
             <button class="btn-icon" id="btn-edit-select" onclick="window.app.toggleSelectEditMode()" title="Editar">✏️</button>
         </div>
@@ -260,7 +236,7 @@
 
     <div id="screen-active-workout" class="screen">
         <div class="header-bar">
-            <button class="btn-icon" onclick="window.history.back()">⬅️</button>
+            <button class="btn-icon" onclick="window.app.handleBack()">⬅️</button>
             <span class="user-title" id="active-title">Treino A</span>
             <button class="btn-icon" id="btn-edit-active" onclick="window.app.toggleActiveEditMode()" title="Editar">✏️</button>
         </div>
@@ -273,7 +249,7 @@
 
     <div id="screen-history" class="screen">
         <div class="header-bar">
-            <button class="btn-icon" onclick="window.history.back()">⬅️</button>
+            <button class="btn-icon" onclick="window.app.goHome()">⬅️</button>
             <span class="user-title">Histórico</span>
             <button class="btn-icon" onclick="window.app.clearAllHistory()">🗑️</button>
         </div>
@@ -286,22 +262,6 @@
             <p id="quote-text" style="color:#ddd; margin: 20px 0; font-style: italic; font-size: 16px; line-height:1.5;">...</p>
             <span id="gps-status" style="font-size:12px; color:#aaa; font-weight:600;"></span>
             <button class="btn-finish" style="margin-top:20px; width:100%" onclick="document.getElementById('modal-msg').style.display='none'; window.app.goHome()">Fechar</button>
-        </div>
-    </div>
-
-    <div id="modal-install" class="modal-overlay">
-        <div class="msg-content" style="border-color: var(--primary);">
-            <h2 style="color: var(--primary); font-weight:800;">COMO INSTALAR 📲</h2>
-            <div id="install-guide-ios" style="display:none; text-align:left; color:#ddd; margin-top:20px;">
-                <p>1. Toque no botão de <strong>Compartilhar</strong> (quadrado com seta).</p>
-                <p>2. Escolha <strong>"Adicionar à Tela de Início"</strong>.</p>
-                <p>3. Confirme em <strong>Adicionar</strong>.</p>
-            </div>
-            <div id="install-guide-android" style="display:none; text-align:left; color:#ddd; margin-top:20px;">
-                <p>1. Toque nos <strong>3 pontinhos</strong> do navegador.</p>
-                <p>2. Escolha <strong>"Instalar aplicativo"</strong> ou "Adicionar à Tela Inicial".</p>
-            </div>
-            <button class="btn-finish" style="background:#333; margin-top:20px;" onclick="document.getElementById('modal-install').style.display='none'">Fechar</button>
         </div>
     </div>
 
@@ -338,36 +298,6 @@
     </script>
 
     <script>
-      let deferredPrompt;
-      const installBtn = document.getElementById('btn-install-header');
-      const modalInstall = document.getElementById('modal-install');
-      const guideIOS = document.getElementById('install-guide-ios');
-      const guideAndroid = document.getElementById('install-guide-android');
-
-      window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault(); deferredPrompt = e;
-        installBtn.style.display = "flex"; // Mostra se puder instalar
-      });
-
-      installBtn.addEventListener('click', () => {
-        const isIos = /iPhone|iPad|iPod/.test(navigator.userAgent);
-        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-
-        if (isStandalone) {
-            if(confirm("App já instalado. Deseja recarregar para atualizar?")) window.location.reload(true);
-            return;
-        }
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => { if (choiceResult.outcome === 'accepted') deferredPrompt = null; });
-            return;
-        }
-        // Fallback manual
-        modalInstall.style.display = 'flex';
-        if (isIos) { guideIOS.style.display = 'block'; guideAndroid.style.display = 'none'; } 
-        else { guideIOS.style.display = 'none'; guideAndroid.style.display = 'block'; }
-      });
-
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); });
       }
@@ -448,23 +378,32 @@
         isMenuEditing: false, isSelectEditing: false, isActiveEditing: false,
 
         init: function() {
+            // Define o estado inicial como MENU
             if (!history.state) history.replaceState({ screen: 'screen-menu' }, '');
             
             // LÓGICA DE VOLTAR (POPSTATE)
             window.onpopstate = (event) => {
+                // Se estiver treinando e tentar voltar:
                 if (document.getElementById('screen-active-workout').classList.contains('visible') && this.startTime) {
                     const randomMsg = quitMessages[Math.floor(Math.random() * quitMessages.length)];
                     
                     if (confirm(`🚨 ${randomMsg}\n\nO treino está rolando. Sair cancela o tempo. Deseja realmente sair?`)) {
                         this.startTime = null; window.onbeforeunload = null;
+                        // Se confirmou, volta para o estado anterior (Workout Select)
                         if (event.state) this.restoreScreen(event.state);
-                        else this.toggleScreen('screen-workout-select', false);
+                        else this.toggleScreen('screen-workout-select');
                     } else {
+                        // Se cancelou, empurra o estado de volta para ficar na tela
                         history.pushState({ screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex }, '');
                     }
                 } else {
-                    if (event.state) this.restoreScreen(event.state);
-                    else this.toggleScreen('screen-menu', false);
+                    // Navegação normal
+                    if (event.state) {
+                        this.restoreScreen(event.state);
+                    } else {
+                        // Se o histórico acabou, supomos que é para sair (Menu) ou o navegador fecha
+                        // Não fazemos nada para permitir o fechamento do browser/aba se estiver no root
+                    }
                 }
             };
 
@@ -481,7 +420,7 @@
                     }
                 });
             } else {
-                this.data = JSON.parse(localStorage.getItem('gymData_v32')) || {};
+                this.data = JSON.parse(localStorage.getItem('gymData_v33')) || {};
                 this.historyData = JSON.parse(localStorage.getItem('gymHistory')) || [];
                 this.refreshCurrentScreen();
             }
@@ -489,10 +428,15 @@
 
         save: function() { 
             if(window.dbInstance) window.dbSet(window.dbRef(window.dbInstance, 'users'), this.data);
-            else localStorage.setItem('gymData_v32', JSON.stringify(this.data)); 
+            else localStorage.setItem('gymData_v33', JSON.stringify(this.data)); 
         },
 
         // --- NAVEGAÇÃO ---
+        handleBack: function() {
+            // Função manual para o botão de voltar da UI
+            window.history.back();
+        },
+
         navigate: function(screenId, stateData = {}) {
             const newState = { screen: screenId, ...stateData };
             history.pushState(newState, '');
@@ -802,47 +746,10 @@
             document.getElementById('btn-finish-main').disabled = false;
         },
 
-        showHistory: function() { this.navigate('screen-history'); },
-        renderHistoryList: function() {
-            const list = document.getElementById('history-list'); list.innerHTML = '';
-            if(!this.historyData.length) list.innerHTML = '<p style="text-align:center;color:#666">Vazio.</p>';
-            this.historyData.forEach(h => {
-                const uColor = this.data && Object.values(this.data).find(u=>u.name===h.user)?.themeId.includes('1') ? '#00d4ff' : '#fff'; 
-                const div = document.createElement('div'); div.className = 'history-item';
-                div.innerHTML = `
-                    <div class="hist-top">
-                        <div><span class="hist-date">${h.date}</span><span class="hist-user" style="color:${uColor}">${h.user}</span><span>${h.workoutTitle}</span></div>
-                        <div style="text-align:right"><span class="hist-status">${h.cheat?'🤥':'🏆'}</span><br><button style="background:none;border:none;margin-top:5px" onclick="window.app.delHist(${h.id}, '${h.firebaseId||''}')">🗑️</button></div>
-                    </div>
-                    <div class="hist-loc ${h.location.includes('Fora')?'loc-bad':''}">📍 ${h.location}</div>
-                    ${h.skipped && h.skipped.length ? `<div class="skipped-list">⚠️ Pulou: ${h.skipped.join(', ')}</div>` : ''}
-                `;
-                list.appendChild(div);
-            });
+        goHome: function() { 
+            this.navigate('screen-menu'); 
         },
-        delHist: function(id, fid) { 
-            if(confirm('Apagar?')) { 
-                if(window.dbInstance && fid) {
-                    window.dbRemove(window.dbRef(window.dbInstance, `history/${fid}`)); 
-                } else { 
-                    this.historyData = this.historyData.filter(x=>x.id!==id); 
-                    localStorage.setItem('gymHistory', JSON.stringify(this.historyData)); 
-                    this.renderHistoryList(); 
-                } 
-            } 
-        },
-        clearAllHistory: function() { 
-            if(confirm('Tudo?')) {
-                if(window.dbInstance) {
-                    window.dbRemove(window.dbRef(window.dbInstance, 'history'));
-                } else {
-                    localStorage.removeItem('gymHistory'); 
-                    this.historyData = [];
-                    this.renderHistoryList(); 
-                }
-            } 
-        },
-        goHome: function() { this.navigate('screen-menu'); },
+        
         toggleScreen: function(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('visible'));
             document.getElementById(id).classList.add('visible');
