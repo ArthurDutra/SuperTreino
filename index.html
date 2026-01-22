@@ -243,6 +243,7 @@
                 if(window.app) window.app.init();
             } catch(e) {
                 console.error("Erro Conexão:", e);
+                // Inicia offline se der erro
                 if(window.app) window.app.init();
             }
         }
@@ -250,56 +251,37 @@
     </script>
 
     <script>
-    // --- DADOS RESTAURADOS COMPLETOS ---
-    const defaultDB = {
-        arthur: {
-            name: 'Arthur', themeId: 'theme-1',
-            workouts: [
-                { id: 'A', title: 'A - Costas, Ombro e Bíceps', exercises: [ { name: 'Pulley frente', sets: 3, reps: '8', weight: 0 }, { name: 'Remada curvada', sets: 3, reps: '8', weight: 0 }, { name: 'Remada unilateral', sets: 3, reps: '8', weight: 0 }, { name: 'Elevação lateral polia', sets: 3, reps: '8', weight: 0 }, { name: 'Rosca direta', sets: 3, reps: '8', weight: 0 }, { name: 'Rosca Scott', sets: 3, reps: '8', weight: 0 }, { name: 'Desenv. máquina', sets: 3, reps: '8', weight: 0 }, { name: 'Desenv. Arnold', sets: 3, reps: '8', weight: 0 } ] },
-                { id: 'B', title: 'B - Peito, Ombro e Tríceps', exercises: [ { name: 'Crossover alto', sets: 3, reps: '8', weight: 0 }, { name: 'Crossover baixo', sets: 3, reps: '8', weight: 0 }, { name: 'Supino reto', sets: 3, reps: '8', weight: 0 }, { name: 'Supino 45º', sets: 3, reps: '8', weight: 0 }, { name: 'Elevação lateral', sets: 3, reps: '8', weight: 0 }, { name: 'Elevação frontal', sets: 3, reps: '8', weight: 0 }, { name: 'Tríceps polia', sets: 3, reps: '8', weight: 0 }, { name: 'Tríceps corda', sets: 3, reps: '8', weight: 0 } ] },
-                { id: 'C', title: 'C - Pernas', exercises: [ { name: 'Agachamento livre', sets: 3, reps: '12', weight: 0 }, { name: 'Afundo', sets: 3, reps: '12', weight: 0 }, { name: 'Stiff', sets: 3, reps: '12', weight: 0 }, { name: 'Extensora', sets: 3, reps: '12', weight: 0 }, { name: 'Panturrilha leg 45', sets: 3, reps: '12', weight: 0 }, { name: 'Panturrilha banco', sets: 3, reps: '12', weight: 0 } ] }
-            ]
-        },
-        dani: {
-            name: 'Daniele', themeId: 'theme-2',
-            workouts: [
-                { id: 'A', title: 'A - Inferiores I', exercises: [ { name: 'Afundo TRX', sets: 4, reps: '10', weight: 0 }, { name: 'Agach. Barra Hexa', sets: 4, reps: '15', weight: 0 }, { name: 'Extensora', sets: 4, reps: '12', weight: 0 }, { name: 'Leg 45°', sets: 4, reps: '12', weight: 0 }, { name: 'Leg 180°', sets: 4, reps: '15', weight: 0 }, { name: 'Flexora Sentada', sets: 4, reps: '15', weight: 0 }, { name: 'Flexora Unilateral', sets: 4, reps: '10', weight: 0 }, { name: 'Panturrilha Banco', sets: 4, reps: '12', weight: 0 } ] },
-                { id: 'B', title: 'B - Superiores I', exercises: [ { name: 'Puxada Frontal', sets: 4, reps: '12', weight: 0 }, { name: 'Remada Unilateral', sets: 4, reps: '12', weight: 0 }, { name: 'Voador Inverso', sets: 4, reps: '10', weight: 0 }, { name: 'Supino 45°', sets: 4, reps: '12', weight: 0 }, { name: 'Elevação Lateral', sets: 4, reps: '12', weight: 0 }, { name: 'Elevação Frontal', sets: 4, reps: '10', weight: 0 }, { name: 'Tríceps Polia', sets: 4, reps: '15', weight: 0 }, { name: 'Tríceps Francês', sets: 4, reps: '10', weight: 0 }, { name: 'Rosca Direta', sets: 4, reps: '15', weight: 0 } ] },
-                { id: 'C', title: 'C - Inferiores II', exercises: [ { name: 'Adutora', sets: 4, reps: '15', weight: 0 }, { name: 'Abdutora', sets: 4, reps: '15', weight: 0 }, { name: 'Elevação Pélvica', sets: 4, reps: '15', weight: 0 }, { name: 'Sumô', sets: 4, reps: '10', weight: 0 }, { name: 'Leg 45°', sets: 4, reps: '12', weight: 0 }, { name: 'Extensora', sets: 4, reps: '12', weight: 0 }, { name: 'Stiff', sets: 4, reps: '15', weight: 0 }, { name: 'Panturrilha Máquina', sets: 4, reps: '15', weight: 0 } ] },
-                { id: 'D', title: 'D - Superiores II', exercises: [ { name: 'Pulldown', sets: 4, reps: '10', weight: 0 }, { name: 'Remada Curvada', sets: 4, reps: '12', weight: 0 }, { name: 'Voador Inverso', sets: 4, reps: '10', weight: 0 }, { name: 'Crucifixo 45°', sets: 4, reps: '10', weight: 0 }, { name: 'Voador', sets: 4, reps: '10', weight: 0 }, { name: 'Desenvolvimento', sets: 4, reps: '12', weight: 0 }, { name: 'Tríceps Polia', sets: 4, reps: '15', weight: 0 }, { name: 'Tríceps Testa', sets: 4, reps: '10', weight: 0 }, { name: 'Rosca Alternada', sets: 4, reps: '12', weight: 0 } ] }
-            ]
-        }
-    };
-
     const quotes = ["Tá pago!", "A dor é temporária.", "Hoje foi pago com juros!", "Sem dor, sem ganho.", "Parabéns monstro!"];
     const GYM_LAT = -19.8285; const GYM_LON = -40.3735; const GYM_RADIUS_KM = 0.1;
 
     window.app = {
-        data: null, historyData: [], currentUser: null, currentWorkoutIndex: null, startTime: null,
+        data: {}, // Começa vazio
+        historyData: [], 
+        currentUser: null, 
+        currentWorkoutIndex: null, 
+        startTime: null,
         isMenuEditing: false, isSelectEditing: false, isActiveEditing: false,
 
         init: function() {
             if (window.dbInstance) {
-                // Online: Checa Firebase. Se vazio, popula com defaultDB. Se não, usa Firebase.
+                // Modo Online: Ouve Firebase
                 window.dbOnValue(window.dbRef(window.dbInstance, 'users'), (snap) => {
-                    const val = snap.val();
-                    if(!val) {
-                        this.data = JSON.parse(JSON.stringify(defaultDB));
-                        this.save(); // Popula o Firebase na primeira vez
-                    } else {
-                        this.data = val;
-                    }
+                    this.data = snap.val() || {}; // Se null, vira objeto vazio
                     this.renderMenu();
-                    if(this.currentUser && this.data[this.currentUser]) this.renderWorkoutSelectScreen();
-                    if(this.currentWorkoutIndex !== null && this.data[this.currentUser]?.workouts[this.currentWorkoutIndex]) this.renderActiveWorkout();
+                    if(this.currentUser && this.data[this.currentUser]) {
+                        this.renderWorkoutSelectScreen();
+                        if(this.currentWorkoutIndex !== null && this.data[this.currentUser].workouts) {
+                            this.renderActiveWorkout();
+                        }
+                    }
                 });
                 window.dbOnValue(window.dbRef(window.dbInstance, 'history'), (snap) => {
                     const val = snap.val();
                     this.historyData = val ? Object.keys(val).map(k => ({...val[k], firebaseId: k})).sort((a,b) => b.id - a.id) : [];
                 });
             } else {
-                // Offline fallback
-                this.data = JSON.parse(localStorage.getItem('gymData_v15')) || JSON.parse(JSON.stringify(defaultDB));
+                // Modo Offline (Fallback local)
+                this.data = JSON.parse(localStorage.getItem('gymData_v16')) || {};
                 this.historyData = JSON.parse(localStorage.getItem('gymHistory')) || [];
                 this.renderMenu();
             }
@@ -307,13 +289,16 @@
 
         save: function() { 
             if(window.dbInstance) window.dbSet(window.dbRef(window.dbInstance, 'users'), this.data);
-            else localStorage.setItem('gymData_v15', JSON.stringify(this.data)); 
+            else localStorage.setItem('gymData_v16', JSON.stringify(this.data)); 
         },
 
         // --- MENU PRINCIPAL ---
         renderMenu: function() {
             const list = document.getElementById('user-list'); list.innerHTML = '';
-            if(!this.data) return;
+            
+            if (Object.keys(this.data).length === 0) {
+                list.innerHTML = '<p style="color:#666; margin-top:20px;">Nenhum usuário. Clique na caneta para adicionar.</p>';
+            }
             
             Object.keys(this.data).forEach(id => {
                 const u = this.data[id];
@@ -340,6 +325,9 @@
             document.getElementById('select-user-title').innerText = u.name;
             const list = document.getElementById('workout-select-list'); list.innerHTML = '';
 
+            // Garante que array de treinos existe
+            if (!u.workouts) u.workouts = [];
+
             const lastEntry = this.historyData.find(h => h.user === u.name);
             let recIdx = 0;
             if (lastEntry && u.workouts.length) {
@@ -354,7 +342,7 @@
                 card.className = `workout-select-card bd-${u.themeId} ${isRec?'suggested-workout':''}`;
                 card.style.borderLeft = '5px solid';
                 card.onclick = () => this.startWorkout(idx);
-                card.innerHTML = `${isRec ? '<div class="suggested-badge">SUGERIDO</div>' : ''}<h3>${w.title}</h3><p>${w.exercises.length} exercícios</p>`;
+                card.innerHTML = `${isRec ? '<div class="suggested-badge">SUGERIDO</div>' : ''}<h3>${w.title}</h3><p>${w.exercises ? w.exercises.length : 0} exercícios</p>`;
 
                 if(this.isSelectEditing) {
                     const del = document.createElement('div'); del.className = 'btn-del-floating'; del.innerText = 'X';
@@ -375,13 +363,17 @@
         renderActiveWorkout: function() {
             if(!this.currentUser || this.currentWorkoutIndex === null) return;
             const u = this.data[this.currentUser];
+            if (!u.workouts) return;
             const w = u.workouts[this.currentWorkoutIndex];
-            if(!w) return; // Segurança
+            if (!w) return;
+
             const cont = document.getElementById('active-workout-container');
-            
             document.getElementById('active-title').innerText = w.title;
             document.getElementById('active-title').className = `user-title txt-${u.themeId}`;
             cont.innerHTML = '';
+
+            // Garante array de exercícios
+            if (!w.exercises) w.exercises = [];
 
             w.exercises.forEach((ex, i) => {
                 const vid = `https://www.youtube.com/results?search_query=execução+${encodeURIComponent(ex.name)}`;
@@ -408,79 +400,63 @@
         },
         toggleActiveEditMode: function() { this.isActiveEditing = !this.isActiveEditing; this.renderActiveWorkout(); },
 
-        // --- MUDANÇA DE ÍCONES ---
+        // --- UTILITÁRIOS DE ÍCONE ---
         updateEditIcon: function(btnId, screenId, isEditing) {
             const btn = document.getElementById(btnId);
             const screen = document.getElementById(screenId);
             if(isEditing) {
-                btn.innerText = '💾'; 
-                btn.classList.add('icon-active');
-                screen.classList.add('editing');
+                btn.innerText = '💾'; btn.classList.add('icon-active'); screen.classList.add('editing');
             } else {
-                btn.innerText = '✏️'; 
-                btn.classList.remove('icon-active');
-                screen.classList.remove('editing');
+                btn.innerText = '✏️'; btn.classList.remove('icon-active'); screen.classList.remove('editing');
             }
         },
 
-        // --- FLUXOS DE ADIÇÃO AUTOMÁTICA ---
+        // --- FLUXOS DE ADIÇÃO (Corrigidos) ---
         addUser: function() { 
             const n = prompt("Nome da nova pessoa:"); 
             if(n) { 
                 const newId = 'u_'+Date.now();
                 this.data[newId] = { name: n, themeId: `theme-${Math.floor(Math.random()*6)+1}`, workouts:[] }; 
                 this.save();
-                this.currentUser = newId;
-                this.renderWorkoutSelectScreen();
-                this.toggleScreen('screen-workout-select');
+                this.currentUser = newId; this.renderWorkoutSelectScreen(); this.toggleScreen('screen-workout-select');
             } 
         },
-
         addWorkout: function() {
+            if (!this.data[this.currentUser].workouts) this.data[this.currentUser].workouts = [];
             const user = this.data[this.currentUser];
             const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             const nextId = letters[user.workouts.length] || '?';
-            const name = prompt(`Nome do Treino ${nextId} (ex: Costas e Bíceps):`);
-            
+            const name = prompt(`Nome do Treino ${nextId} (ex: Costas):`);
             if(name) { 
                 user.workouts.push({ id: nextId, title: `${nextId} - ${name}`, exercises: [] }); 
                 this.save();
-                this.currentWorkoutIndex = user.workouts.length - 1;
-                this.renderActiveWorkout();
-                this.toggleScreen('screen-active-workout');
+                this.currentWorkoutIndex = user.workouts.length - 1; this.renderActiveWorkout(); this.toggleScreen('screen-active-workout');
             }
         },
-
         addExercise: function() {
+            const w = this.data[this.currentUser].workouts[this.currentWorkoutIndex];
+            if (!w.exercises) w.exercises = [];
             const n = prompt("Nome do Exercício:"); 
             if(n) { 
-                this.data[this.currentUser].workouts[this.currentWorkoutIndex].exercises.push({
-                    name: n, sets: prompt("Séries:", "3")||"3", reps: prompt("Repetições:", "10")||"10", weight: 0
-                });
-                this.save();
-                this.renderActiveWorkout();
-                setTimeout(() => window.scrollTo(0, document.body.scrollHeight), 100);
+                w.exercises.push({ name: n, sets: prompt("Séries:", "3")||"3", reps: prompt("Repetições:", "10")||"10", weight: 0 });
+                this.save(); this.renderActiveWorkout(); setTimeout(() => window.scrollTo(0, document.body.scrollHeight), 100);
             }
         },
 
-        // --- CONTROLE DE PESO ---
+        // --- CONTROLES DE DADOS ---
         chgWeight: function(i, delta) {
             const ex = this.data[this.currentUser].workouts[this.currentWorkoutIndex].exercises[i];
-            let w = (parseInt(ex.weight) || 0) + delta;
-            if(w < 0) w = 0;
-            ex.weight = w;
-            this.save();
-            this.renderActiveWorkout(); 
+            let w = (parseInt(ex.weight) || 0) + delta; if(w < 0) w = 0;
+            ex.weight = w; this.save();
         },
         setWeight: function(i, val) {
             const ex = this.data[this.currentUser].workouts[this.currentWorkoutIndex].exercises[i];
-            ex.weight = parseInt(val) || 0;
-            this.save();
+            ex.weight = parseInt(val) || 0; this.save();
         },
         deleteEx: function(i) { 
             if(confirm('Apagar exercício?')) { 
                 this.data[this.currentUser].workouts[this.currentWorkoutIndex].exercises.splice(i,1); 
-                this.save(); this.renderActiveWorkout(); 
+                this.save(); 
             } 
         },
 
@@ -503,7 +479,6 @@
                 }, () => this.saveHist(wName, "GPS Desativado", dur<10, skipped), {enableHighAccuracy: true});
             } else this.saveHist(wName, "Sem GPS", dur<10, skipped);
         },
-
         calcDist: function(lat1, lon1, lat2, lon2) {
             const R = 6371; 
             const dLat = (lat2-lat1) * Math.PI/180;
@@ -511,16 +486,15 @@
             const a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)*Math.sin(dLon/2);
             return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         },
-
         saveHist: function(title, loc, cheat, skip) {
             const reg = { id: Date.now(), date: new Date().toLocaleDateString('pt-BR'), user: this.data[this.currentUser].name, workoutTitle: title, location: loc, cheat: cheat, skipped: skip };
             if(window.dbInstance) window.dbPush(window.dbRef(window.dbInstance, 'history'), reg);
             else { this.historyData.unshift(reg); localStorage.setItem('gymHistory', JSON.stringify(this.historyData)); }
-            
             document.getElementById('gps-status').innerText = `📍 ${loc}`;
             document.getElementById('btn-finish-main').innerText = "🏁 Finalizar"; document.getElementById('btn-finish-main').disabled = false;
         },
 
+        // --- NAVEGAÇÃO ---
         showHistory: function() {
             this.toggleScreen('screen-history');
             const list = document.getElementById('history-list'); list.innerHTML = '';
