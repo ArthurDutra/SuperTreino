@@ -6,9 +6,7 @@
     <title>Super Treino App</title>
     
     <link rel="manifest" href="manifest.json">
-    
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
-    
     <meta name="theme-color" content="#121212">
 
     <style>
@@ -110,16 +108,6 @@
         .editing .card-wrapper > button, .editing .workout-select-card, .editing .exercise-card { pointer-events: none; }
         .editing .edit-input, .editing .edit-controls-floating, .editing .weight-display, .editing .btn-video { pointer-events: auto; }
 
-        /* BOTÃO DE INSTALAÇÃO (IMPORTANTE) */
-        #btn-install-app {
-            display: none; /* Controlado via JS */
-            width: 100%; max-width: 400px; padding: 15px; margin-top: 20px;
-            background: #2575fc; color: white; border: none; border-radius: 12px;
-            font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(37, 117, 252, 0.3);
-            text-transform: uppercase; letter-spacing: 1px; animation: pulseBtn 2s infinite;
-        }
-        @keyframes pulseBtn { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
-
         /* FOOTER */
         .footer-fixed { position: fixed; bottom: 0; left: 0; width: 100%; padding: 20px; background: linear-gradient(to top, var(--bg) 80%, transparent); display: flex; justify-content: center; z-index: 90; pointer-events: none; }
         .btn-finish { width: 100%; max-width: 400px; padding: 18px; background: var(--success); color: #000; font-weight: 800; border: none; border-radius: 50px; font-size: 16px; text-transform: uppercase; box-shadow: 0 5px 20px rgba(0, 255, 136, 0.3); cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; pointer-events: auto; }
@@ -158,14 +146,14 @@
     <div id="screen-menu" class="screen visible">
         <div class="header-bar">
             <div class="app-title"><span class="app-logo">⚡</span> SUPERTREINO</div>
+            
             <div class="header-actions">
+                <button class="btn-icon" id="btn-install-header" title="Instalar App">📲</button>
                 <button class="btn-icon" onclick="window.app.showHistory()" title="Histórico">📋</button>
                 <button class="btn-icon" id="btn-edit-menu" onclick="window.app.toggleMenuEdit()" title="Editar">✏️</button>
             </div>
         </div>
         
-        <button id="btn-install-app">📲 INSTALAR APP</button>
-
         <div id="user-list"></div>
         <button id="btn-add-user" class="btn-add-item" onclick="window.app.addUser()">+ NOVA PESSOA</button>
     </div>
@@ -221,7 +209,6 @@
         import { getDatabase, ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
-        // CONFIGURAÇÃO DO FIREBASE (JÁ CONFIGURADA)
         const firebaseConfig = {
             apiKey: "AIzaSyBXpjF-2oGF3RrfqT9KjthB4NVZXUGtsCg",
             authDomain: "supertreino-e20ee.firebaseapp.com",
@@ -255,43 +242,38 @@
 
     <script>
       let deferredPrompt;
-      const installBtn = document.getElementById('btn-install-app');
+      const installBtn = document.getElementById('btn-install-header');
 
-      // 1. Detectar Android/Desktop
+      // 1. Ouve se pode instalar (Android/PC)
       window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        installBtn.style.display = 'block'; // Mostra botão se for instalável
-        installBtn.textContent = "📲 INSTALAR APP";
+        console.log("App pode ser instalado!");
       });
 
-      // 2. Detectar se é iPhone (iOS não dispara evento automático)
-      const isIos = /iPhone|iPad|iPod/.test(navigator.userAgent);
-      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-
-      if (isIos && !isStandalone) {
-          installBtn.style.display = 'block';
-          installBtn.textContent = "📲 INSTALAR (iOS)";
-      }
-
-      // 3. Ação do Botão
+      // 2. Clique no Botão do Cabeçalho
       installBtn.addEventListener('click', (e) => {
-        if (isIos) {
-            alert("No iPhone: Toque no botão de Compartilhar (quadrado com seta ⬆️) e escolha 'Adicionar à Tela de Início'.");
-        } else if (deferredPrompt) {
+        const isIos = /iPhone|iPad|iPod/.test(navigator.userAgent);
+        
+        if (deferredPrompt) {
+            // Android/PC (Automático)
             deferredPrompt.prompt();
             deferredPrompt.userChoice.then((choiceResult) => {
                 if (choiceResult.outcome === 'accepted') {
-                    installBtn.style.display = 'none';
+                    console.log('Usuário aceitou instalar');
                 }
                 deferredPrompt = null;
             });
+        } else if (isIos) {
+            // iPhone (Manual)
+            alert("Para instalar no iPhone:\n1. Toque no botão de Compartilhar (quadrado com seta ⬆️)\n2. Escolha 'Adicionar à Tela de Início'.");
         } else {
-            alert("Para instalar: Toque nos 3 pontinhos do navegador e escolha 'Adicionar à Tela Inicial' ou 'Instalar App'.");
+            // Já instalado ou não suportado
+            alert("O App já parece estar instalado ou seu navegador não suporta instalação automática.\n\nTente buscar nos seus aplicativos ou use a opção 'Adicionar à Tela Inicial' no menu do navegador.");
         }
       });
 
-      // 4. Registrar Service Worker
+      // 3. Registrar Service Worker
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('./sw.js').then(reg => console.log('SW ok')).catch(err => console.log('SW falhou'));
@@ -300,7 +282,7 @@
     </script>
 
     <script>
-    const quotes = ["Tá pago!", "A dor é temporária.", "Hoje foi pago com juros!", "Sem dor, sem ganho.", "Parabéns monstro!", "O corpo alcança o que a mente acredita.", "Treino difícil, luta fácil."];
+    const quotes = ["Tá pago!", "A dor é temporária.", "Hoje foi pago com juros!", "Sem dor, sem ganho.", "Parabéns monstro!", "O corpo alcança o que a mente acredita."];
     const GYM_LAT = -19.8285; const GYM_LON = -40.3735; const GYM_RADIUS_KM = 0.1;
 
     window.app = {
@@ -324,7 +306,7 @@
                     this.historyData = val ? Object.keys(val).map(k => ({...val[k], firebaseId: k})).sort((a,b) => b.id - a.id) : [];
                 });
             } else {
-                this.data = JSON.parse(localStorage.getItem('gymData_v25')) || {};
+                this.data = JSON.parse(localStorage.getItem('gymData_v26')) || {};
                 this.historyData = JSON.parse(localStorage.getItem('gymHistory')) || [];
                 this.refreshCurrentScreen();
             }
@@ -332,7 +314,7 @@
 
         save: function() { 
             if(window.dbInstance) window.dbSet(window.dbRef(window.dbInstance, 'users'), this.data);
-            else localStorage.setItem('gymData_v25', JSON.stringify(this.data)); 
+            else localStorage.setItem('gymData_v26', JSON.stringify(this.data)); 
         },
 
         // --- NAVEGAÇÃO ---
@@ -658,8 +640,13 @@
         },
         delHist: function(id, fid) { if(confirm('Apagar?')) { if(window.dbInstance && fid) window.dbRemove(window.dbRef(window.dbInstance, `history/${fid}`)); else { this.historyData = this.historyData.filter(x=>x.id!==id); localStorage.setItem('gymHistory', JSON.stringify(this.historyData)); this.renderHistoryList(); } } },
         clearAllHistory: function() { if(confirm('Tudo?')) window.dbInstance ? window.dbRemove(window.dbRef(window.dbInstance, 'history')) : (localStorage.removeItem('gymHistory') || this.renderHistoryList()); },
-        goHome: function() { this.navigate('screen-menu'); },
-        toggleScreen: function(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('visible')); document.getElementById(id).classList.add('visible'); }
+        goHome: function() { 
+            this.navigate('screen-menu'); 
+        },
+        toggleScreen: function(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('visible'));
+            document.getElementById(id).classList.add('visible');
+        }
     };
 
     window.onload = function() { if(window.app && window.app.init) window.app.init(); };
