@@ -6,22 +6,19 @@
     <title>Super Treino App</title>
     
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
     <meta name="theme-color" content="#121212">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
     <style>
         :root { 
             --bg: #121212; --card: #1e1e1e; --text: #ffffff; 
             --success: #00ff88; --danger: #ff4444; --edit-mode: #ffb700;
-            
-            /* Temas */
+            --primary: #2575fc;
             --color-1: #00d4ff; --color-2: #ff007f; --color-3: #9d4edd;
             --color-4: #ff9e00; --color-5: #00b4d8; --color-6: #80ed99;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Segoe UI', Roboto, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; padding-bottom: 80px; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; padding-bottom: 50px; }
         
         /* GERAL */
         .screen { display: none; padding: 20px; animation: fadeIn 0.3s; min-height: 100vh; flex-direction: column; position: relative; }
@@ -34,19 +31,14 @@
         .app-title { font-size: 20px; font-weight: bold; color: var(--text); letter-spacing: 1px; display: flex; align-items: center; }
         .user-title { font-size: 18px; font-weight: bold; text-transform: uppercase; }
         .header-actions { display: flex; gap: 15px; }
-        .btn-icon { background: none; border: none; font-size: 24px; cursor: pointer; color: #fff; transition: transform 0.2s; padding: 0; }
-        .btn-icon:active { transform: scale(0.9); }
+        .btn-icon { background: none; border: none; font-size: 24px; cursor: pointer; color: #fff; padding: 0; }
         .icon-active { color: var(--edit-mode); transform: scale(1.1); }
-
-        /* BOTÃO DE INSTALAÇÃO (Header) */
-        #btn-install-header { animation: pulse 2s infinite; color: var(--success); }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
 
         /* LISTAS & CARDS */
         #user-list, #workout-select-list { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 20px; }
         .card-wrapper { position: relative; width: 100%; max-width: 400px; }
         .btn-large { width: 100%; padding: 25px 20px; border: none; border-radius: 16px; font-size: 20px; font-weight: bold; cursor: pointer; color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.3); text-transform: uppercase; text-align: left; display: flex; justify-content: space-between; align-items: center; }
-        .workout-select-card { background: var(--card); border: 2px solid #333; color: #fff; padding: 20px; border-radius: 16px; cursor: pointer; width: 100%; text-align: left; position: relative; }
+        .workout-select-card { background: var(--card); border: 2px solid #333; color: #fff; padding: 20px; border-radius: 16px; cursor: pointer; width: 100%; text-align: left; position: relative; transition: 0.2s; }
         .workout-select-card:active { transform: scale(0.98); }
         .suggested-badge { position: absolute; right: 15px; top: 15px; background: var(--success); color: #000; font-size: 10px; font-weight: bold; padding: 4px 8px; border-radius: 4px; animation: pulse 2s infinite; }
 
@@ -69,6 +61,7 @@
         .weight-control { margin-top: 15px; background: #252525; padding: 10px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
         .weight-label { color: #aaa; font-size: 12px; margin-right: auto; padding-left: 5px; }
         .btn-weight { width: 45px; height: 45px; background: #444; border: none; border-radius: 8px; color: #fff; font-size: 24px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .btn-weight:active { background: #666; transform: scale(0.95); }
         .weight-display { flex-grow: 1; text-align: center; font-size: 18px; font-weight: bold; color: var(--success); font-family: monospace; cursor: pointer; border: 1px solid transparent; padding: 5px; border-radius: 6px; }
         .no-load { color: #888; font-size: 14px; font-family: sans-serif; letter-spacing: 1px; }
 
@@ -80,15 +73,28 @@
         .btn-float { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #fff; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.5); color: #fff; font-size: 14px; }
         .btn-del { background: var(--danger); }
         .btn-reorder { background: #444; border-color: #888; }
+        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
         .btn-add-item { display: none; } 
         .editing .btn-add-item { display: block; width: 100%; max-width: 400px; padding: 20px; background: rgba(255, 255, 255, 0.05); border: 2px dashed var(--edit-mode); color: var(--edit-mode); border-radius: 16px; cursor: pointer; font-size: 16px; font-weight: bold; margin-top: 15px; text-align: center; }
         .editing .btn-large, .editing .workout-select-card, .editing .exercise-card { border: 1px dashed #555; pointer-events: none; }
         .editing .edit-input, .editing .edit-controls-floating { pointer-events: auto; }
 
-        /* FOOTER FINALIZAR */
+        /* BOTÃO DE INSTALAÇÃO */
+        #btn-install-app { display: none; width: 100%; max-width: 400px; padding: 15px; margin-top: 20px; background: #2575fc; color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(37, 117, 252, 0.3); text-transform: uppercase; letter-spacing: 1px; animation: pulseBtn 2s infinite; }
+        @keyframes pulseBtn { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+
+        /* FOOTER */
         .footer-fixed { position: fixed; bottom: 0; left: 0; width: 100%; padding: 20px; background: linear-gradient(to top, var(--bg) 80%, transparent); display: flex; justify-content: center; z-index: 90; pointer-events: none; }
         .btn-finish { width: 100%; max-width: 400px; padding: 18px; background: var(--success); color: #000; font-weight: 800; border: none; border-radius: 50px; font-size: 16px; text-transform: uppercase; box-shadow: 0 5px 20px rgba(0, 255, 136, 0.3); cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; pointer-events: auto; }
         .btn-finish:disabled { background: #333; color: #555; box-shadow: none; cursor: default; }
+
+        /* TEMAS */
+        .theme-1 { background: linear-gradient(135deg, #005f73, var(--color-1)); } .bd-theme-1 { border-left-color: var(--color-1); }
+        .theme-2 { background: linear-gradient(135deg, #720040, var(--color-2)); } .bd-theme-2 { border-left-color: var(--color-2); }
+        .theme-3 { background: linear-gradient(135deg, #480ca8, var(--color-3)); } .bd-theme-3 { border-left-color: var(--color-3); }
+        .theme-4 { background: linear-gradient(135deg, #9d4600, var(--color-4)); } .bd-theme-4 { border-left-color: var(--color-4); }
+        .theme-5 { background: linear-gradient(135deg, #005063, var(--color-5)); } .bd-theme-5 { border-left-color: var(--color-5); }
+        .theme-6 { background: linear-gradient(135deg, #2b9348, var(--color-6)); } .bd-theme-6 { border-left-color: var(--color-6); }
 
         /* HISTÓRICO */
         .history-item { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; flex-direction: column; border-left: 4px solid #555; position: relative; }
@@ -99,23 +105,11 @@
         .loc-bad { color: #ffaa00; background: rgba(255, 170, 0, 0.1); }
         .skipped-list { color: #ffaa00; font-size: 11px; margin-top: 8px; border-top: 1px solid #333; padding-top: 5px; }
 
-        /* TEMAS */
-        .theme-1 { background: linear-gradient(135deg, #005f73, var(--color-1)); } .bd-theme-1 { border-left-color: var(--color-1); }
-        .theme-2 { background: linear-gradient(135deg, #720040, var(--color-2)); } .bd-theme-2 { border-left-color: var(--color-2); }
-        .theme-3 { background: linear-gradient(135deg, #480ca8, var(--color-3)); } .bd-theme-3 { border-left-color: var(--color-3); }
-        .theme-4 { background: linear-gradient(135deg, #9d4600, var(--color-4)); } .bd-theme-4 { border-left-color: var(--color-4); }
-        .theme-5 { background: linear-gradient(135deg, #005063, var(--color-5)); } .bd-theme-5 { border-left-color: var(--color-5); }
-        .theme-6 { background: linear-gradient(135deg, #2b9348, var(--color-6)); } .bd-theme-6 { border-left-color: var(--color-6); }
-
         /* MODAIS */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; text-align: center; }
         .msg-content { background: #222; padding: 30px; border-radius: 15px; border: 2px solid var(--success); max-width: 400px; width: 100%; }
-        
-        /* MODAL DE INSTALAÇÃO (NOVO) */
         #modal-install { border-color: #2575fc; }
         .install-guide-ios { font-size: 16px; color: #ddd; margin: 20px 0; text-align: left; }
-        .ios-icon { font-size: 24px; vertical-align: middle; margin: 0 5px; }
-        
         #db-status { position: fixed; bottom: 5px; right: 5px; font-size: 10px; color: #555; z-index: 200; }
         .status-online { color: var(--success) !important; }
     </style>
@@ -133,7 +127,6 @@
                 <button class="btn-icon" id="btn-edit-menu" onclick="window.app.toggleMenuEdit()" title="Editar">✏️</button>
             </div>
         </div>
-        
         <div id="user-list"></div>
         <button id="btn-add-user" class="btn-add-item" onclick="window.app.addUser()">+ NOVA PESSOA</button>
     </div>
@@ -144,7 +137,6 @@
             <span class="user-title" id="select-user-title">...</span>
             <button class="btn-icon" id="btn-edit-select" onclick="window.app.toggleSelectEditMode()" title="Editar">✏️</button>
         </div>
-        
         <div id="workout-select-list"></div>
         <button id="btn-add-workout" class="btn-add-item" onclick="window.app.addWorkout()">+ NOVO TREINO</button>
     </div>
@@ -155,14 +147,10 @@
             <span class="user-title" id="active-title">Treino A</span>
             <button class="btn-icon" id="btn-edit-active" onclick="window.app.toggleActiveEditMode()" title="Editar">✏️</button>
         </div>
-
         <div id="active-workout-container" class="workout-container"></div>
         <button id="btn-add-exercise" class="btn-add-item" onclick="window.app.addExercise()" style="margin-bottom: 80px;">+ NOVO EXERCÍCIO</button>
-
         <div class="footer-fixed">
-            <button id="btn-finish-main" class="btn-finish" onclick="window.app.finishWorkout()">
-                🏁 Finalizar
-            </button>
+            <button id="btn-finish-main" class="btn-finish" onclick="window.app.finishWorkout()">🏁 Finalizar</button>
         </div>
     </div>
 
@@ -187,19 +175,15 @@
     <div id="modal-install" class="modal-overlay">
         <div class="msg-content" style="border-color: #2575fc;">
             <h2 style="color: #2575fc">COMO INSTALAR 📲</h2>
-            
             <div id="install-guide-ios" style="display:none; text-align:left; color:#ddd; margin-top:20px;">
-                <p>1. Toque no botão de <strong>Compartilhar</strong> do navegador (quadrado com seta).</p>
-                <p>2. Role para baixo e escolha <strong>"Adicionar à Tela de Início"</strong> <span style="font-size:20px">➕</span>.</p>
+                <p>1. Toque no botão de <strong>Compartilhar</strong> (quadrado com seta).</p>
+                <p>2. Escolha <strong>"Adicionar à Tela de Início"</strong>.</p>
                 <p>3. Confirme em <strong>Adicionar</strong>.</p>
             </div>
-
             <div id="install-guide-android" style="display:none; text-align:left; color:#ddd; margin-top:20px;">
-                <p>Se a janela automática não abriu:</p>
                 <p>1. Toque nos <strong>3 pontinhos</strong> do navegador.</p>
                 <p>2. Escolha <strong>"Instalar aplicativo"</strong> ou "Adicionar à Tela Inicial".</p>
             </div>
-
             <button class="btn-finish" style="background:#333; margin-top:20px;" onclick="document.getElementById('modal-install').style.display='none'">Fechar</button>
         </div>
     </div>
@@ -231,10 +215,7 @@
                 window.dbRef = ref; window.dbSet = set; window.dbOnValue = onValue;
                 window.dbPush = push; window.dbRemove = remove; window.dbInstance = db;
                 if(window.app) window.app.init();
-            } catch(e) {
-                console.error("Erro Conexão:", e);
-                if(window.app) window.app.init();
-            }
+            } catch(e) { console.error("Erro Conexão:", e); if(window.app) window.app.init(); }
         }
         startFirebase();
     </script>
@@ -246,59 +227,68 @@
       const guideIOS = document.getElementById('install-guide-ios');
       const guideAndroid = document.getElementById('install-guide-android');
 
-      // 1. Captura evento de instalação (Android/Chrome)
       window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        installBtn.innerText = "📲"; // Ícone de instalar
-        installBtn.style.color = "#00ff88"; // Verde destaque
+        e.preventDefault(); deferredPrompt = e;
+        installBtn.innerText = "📲"; installBtn.style.color = "#00ff88";
       });
 
-      // 2. Clique no Botão
       installBtn.addEventListener('click', () => {
         const isIos = /iPhone|iPad|iPod/.test(navigator.userAgent);
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
 
-        // Se já instalado, atua como "Atualizar"
         if (isStandalone) {
-            if(confirm("App já instalado. Deseja buscar atualizações e recarregar?")) {
-                window.location.reload(true);
-            }
+            if(confirm("App já instalado. Deseja recarregar para atualizar?")) window.location.reload(true);
             return;
         }
-
-        // Cenário 1: Android com evento pronto
         if (deferredPrompt) {
             deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    deferredPrompt = null;
-                }
-            });
+            deferredPrompt.userChoice.then((choiceResult) => { if (choiceResult.outcome === 'accepted') deferredPrompt = null; });
             return;
         }
-
-        // Cenário 2: iOS ou Android sem evento (Abre Modal de Ajuda)
         modalInstall.style.display = 'flex';
-        if (isIos) {
-            guideIOS.style.display = 'block';
-            guideAndroid.style.display = 'none';
-        } else {
-            guideIOS.style.display = 'none';
-            guideAndroid.style.display = 'block';
-        }
+        if (isIos) { guideIOS.style.display = 'block'; guideAndroid.style.display = 'none'; } 
+        else { guideIOS.style.display = 'none'; guideAndroid.style.display = 'block'; }
       });
 
-      // Registrar Service Worker
       if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js');
-        });
+        window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); });
       }
     </script>
 
     <script>
-    const quotes = ["Tá pago!", "A dor é temporária.", "Hoje foi pago com juros!", "Sem dor, sem ganho.", "Parabéns monstro!", "O corpo alcança o que a mente acredita."];
+    // 100 FRASES ALEATÓRIAS E DIVERTIDAS
+    const quotes = [
+        "Se fosse fácil, se chamava miojo. Bom treino!", "Tá pago! Agora pode chorar no banho.", "A dor é temporária, a glória de subir a escada sem morrer é eterna.", 
+        "Suor é a gordura chorando. Deixe ela chorar!", "Não existe treino milagroso, existe constância.", "Treino feito! Agora finja que consegue andar normal.",
+        "Mais um dia vencido. Seu sofá te espera com orgulho.", "Lembre-se: Você treina para comer sem culpa!", "Estado civil: Em um relacionamento sério com a academia.",
+        "Missão cumprida! O shape vem... (a esperança é a última que morre).", "Você é mais forte do que sua vontade de comer pizza.", "Bumbum na nuca e boleto pago. A paz que eu queria.",
+        "Se treinar fofo, vira almofada. Você treinou monstro!", "Corpo de verão se constrói no inverno (e sofrendo o ano todo).", "Hoje foi pago com juros e correção monetária!",
+        "Parabéns! Você é oficialmente melhor que quem ficou no sofá.", "Zero dias sem reclamar, mas zero dias sem treinar!", "Diz a lenda que depois da dor vem o músculo.",
+        "A meta é ficar irreconhecível no Natal.", "Foco, força e fé... que uma hora acaba!", "Não pare quando doer, pare quando acabar.", "Frango não tem vez aqui!",
+        "Quem tem pena é galinha, aqui é treino pesado!", "Seu único limite é a sua mente (e as anilhas que acabaram).", "Shape de respeito se constrói com cara feia.",
+        "Sorria, você acabou de ficar mais forte.", "Descanse, mas não desista.", "O resultado vem para quem não inventa desculpa.", "Hoje você venceu a preguiça de novo.",
+        "Sua versão do futuro agradece o esforço de hoje.", "Treinar é vida. O resto é intervalo.", "Calma, respira e agacha!", "Se não for para suar a camisa, nem saio de casa.",
+        "Ficar monstro não é escolha, é obrigação.", "Vença a si mesmo todos os dias.", "Disciplina é liberdade (e dor nas pernas).", "O único treino ruim é aquele que não aconteceu.",
+        "Motivação é o que te faz começar. Hábito é o que te faz continuar.", "Transforme sua dor em poder.", "Não conte os dias, faça os dias contarem.",
+        "Seu corpo pode tudo. É sua mente que você tem que convencer.", "Acredite: você aguenta mais uma repetição.", "Levanta esse peso ou vai pra casa!",
+        "Sem dor, sem ganho (clichê mas real).", "Todo campeão foi um dia um competidor que se recusou a desistir.", "O sucesso começa onde termina a sua zona de conforto.",
+        "Não deseje que fosse mais fácil, deseje ser melhor.", "Faça por você. Ninguém mais pode fazer.", "O esforço de hoje é o orgulho de amanhã.", "Treino bom é treino que descabela.",
+        "Se não pode voar, corra. Se não pode correr, ande. Mas treine!", "Musculação: a arte de levantar coisas pesadas só pra por no chão de novo.",
+        "Se você ainda consegue ler isso sem tremer, treinou errado.", "Academia: meu playground favorito.", "Menos 'mimimi', mais agachamento.",
+        "Não espere incentivo dos outros. O shape é seu.", "Vá treinar. Você nunca se arrependerá de ter ido.", "Corpo são, mente sã, perna doendo.", "A vida começa depois do treino.",
+        "Seus músculos não sabem contar, leve até a falha!", "Supere seus limites ou fique na média.", "Não é sobre ter tempo, é sobre arrumar tempo.", "Desculpas não queimam calorias.",
+        "Treino concluído com sucesso e ódio no coração.", "Amanhã você vai desejar ter começado hoje.", "Se está fácil, aumente o peso.", "Foco no objetivo, não no obstáculo.",
+        "Você não chegou até aqui para desistir agora.", "Seja sua própria motivação.", "Dor muscular é o troféu do esforço.", "Treinar cura tudo, até mau humor.",
+        "A única coisa impossível é aquilo que você não tenta.", "Seja a melhor versão de você mesmo.", "Não tenha medo de falhar, tenha medo de não tentar.",
+        "Cada gota de suor é um passo para o objetivo.", "Respeite o processo.", "Construindo um corpo que não preciso editar no Photoshop.", "Treino é terapia.",
+        "Não diminua a meta, aumente o esforço.", "Vencedores treinam, perdedores reclamam.", "Hoje tá pago. Amanhã tem juros.", "Se você quer algo que nunca teve, faça algo que nunca fez.",
+        "A dor de hoje é a força de amanhã.", "Não pare até se orgulhar.", "Você é o seu único adversário.", "Levanta a cabeça e o peso também.",
+        "Firme e forte, igual prego na areia (brincadeira, igual rocha!).", "Treino de hoje: Sobreviver.", "Ame o processo tanto quanto o resultado.",
+        "Fim de treino! Agora vai comer proteína!", "Estou sentindo minhas pernas? Não. Valeu a pena? Sim.", "A única bad trip permitida é a falha muscular.",
+        "Cansado? Aprenda a descansar, não a desistir.", "Vai doer? Vai. Vai valer a pena? Muito.", "Treino de perna não se comenta, se lamenta.", "O corpo ideal é aquele que tem uma pessoa feliz dentro (e musculosa).",
+        "A academia é o hospital da alma.", "Seu corpo ouve tudo o que sua mente diz.", "Faça hoje o que seu 'eu' do futuro vai agradecer.", "Não é sorte, é suor."
+    ];
+
     const GYM_LAT = -19.8285; const GYM_LON = -40.3735; const GYM_RADIUS_KM = 0.1;
 
     window.app = {
@@ -322,7 +312,7 @@
                     this.historyData = val ? Object.keys(val).map(k => ({...val[k], firebaseId: k})).sort((a,b) => b.id - a.id) : [];
                 });
             } else {
-                this.data = JSON.parse(localStorage.getItem('gymData_v28')) || {}; // v28 limpa cache antigo
+                this.data = JSON.parse(localStorage.getItem('gymData_v28')) || {};
                 this.historyData = JSON.parse(localStorage.getItem('gymHistory')) || [];
                 this.refreshCurrentScreen();
             }
@@ -333,16 +323,32 @@
             else localStorage.setItem('gymData_v28', JSON.stringify(this.data)); 
         },
 
-        // --- NAVEGAÇÃO ---
+        // --- NAVEGAÇÃO E PROTEÇÃO ANTI-SAÍDA ---
         navigate: function(screenId, stateData = {}) {
             if (this.startTime && screenId !== 'screen-active-workout') {
                 const u = this.data[this.currentUser];
                 const w = u?.workouts?.[this.currentWorkoutIndex];
-                const isEmpty = !w || !w.exercises || w.exercises.length === 0;
-                if (!isEmpty && !confirm("O treino está rolando. Sair vai cancelar. Continuar?")) {
-                    history.pushState({ screen: 'screen-active-workout', ...stateData }, '');
-                    return;
+                
+                // VERIFICAÇÃO INTELIGENTE: Tem exercícios não marcados?
+                let hasPending = false;
+                if (w && w.exercises && w.exercises.length > 0) {
+                    const checkboxes = document.querySelectorAll('.ex-check');
+                    // Se houver checkbox na tela que não está marcado
+                    for (let chk of checkboxes) { if (!chk.checked) hasPending = true; }
                 }
+
+                if (hasPending) {
+                    if (!confirm("⚠️ A atividade não foi finalizada e existem exercícios por fazer.\n\nSair agora cancela o timer de 10 min. Deseja sair mesmo?")) {
+                        // Se cancelar a saída, empurra o estado de volta para manter na tela
+                        history.pushState({ screen: 'screen-active-workout', ...stateData }, '');
+                        return;
+                    }
+                } else if (!hasPending && !confirm("O treino está rolando. Sair cancela o timer. Continuar?")) {
+                     // Caso raro: tudo marcado mas não finalizou
+                     history.pushState({ screen: 'screen-active-workout', ...stateData }, '');
+                     return;
+                }
+                
                 this.startTime = null; window.onbeforeunload = null;
             }
             const newState = { screen: screenId, ...stateData };
@@ -607,6 +613,8 @@
             
             const btn = document.getElementById('btn-finish-main'); btn.innerText = "Salvando..."; btn.disabled = true;
             document.getElementById('modal-msg').style.display = 'flex';
+            
+            // Frase aleatória
             document.getElementById('quote-text').innerText = quotes[Math.floor(Math.random()*quotes.length)];
 
             const dur = (Date.now() - this.startTime)/60000;
