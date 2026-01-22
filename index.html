@@ -7,6 +7,10 @@
     
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+    
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#121212">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -321,19 +325,34 @@
         init: function() {
             if (!history.state) history.replaceState({ screen: 'screen-menu' }, '');
             
+            // Lógica do Fujão (Anti-Desistência Infinita)
             window.onpopstate = (event) => {
                 if (document.getElementById('screen-active-workout').classList.contains('visible') && this.startTime) {
                     const randomMsg = quitMessages[Math.floor(Math.random() * quitMessages.length)];
                     if (confirm(`🚨 ${randomMsg}\n\nO treino está rolando. Sair cancela o tempo. Deseja realmente sair?`)) {
-                        this.startTime = null; window.onbeforeunload = null;
+                        // Se o usuário CONFIRMAR a saída:
+                        this.startTime = null; 
+                        window.onbeforeunload = null;
+                        
+                        // Zera tentativas e volta ao menu
+                        // Se houver histórico, volta. Se não, vai pro menu
                         if (event.state) this.restoreScreen(event.state);
-                        else this.toggleScreen('screen-workout-select'); 
+                        else this.toggleScreen('screen-workout-select');
+                        
                     } else {
-                        // Se ficou, aumentamos o contador de tentativas
+                        // Se o usuário CANCELAR (Ficar):
                         this.quitAttempts++;
-                        history.pushState({ screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex }, '');
+                        // EMPURRA O ESTADO DE NOVO para bloquear o próximo "voltar"
+                        // O truque é que history.pushState adiciona um novo item na pilha
+                        // Então se o usuário clicar em voltar de novo, o evento popstate dispara de novo.
+                        history.pushState({ 
+                            screen: 'screen-active-workout', 
+                            userId: this.currentUser, 
+                            wIndex: this.currentWorkoutIndex 
+                        }, '');
                     }
                 } else {
+                    // Navegação normal fora do treino
                     if (event.state) this.restoreScreen(event.state);
                     else this.toggleScreen('screen-menu'); 
                 }
@@ -352,7 +371,7 @@
                     }
                 });
             } else {
-                this.data = JSON.parse(localStorage.getItem('gymData_v37')) || {};
+                this.data = JSON.parse(localStorage.getItem('gymData_v38')) || {};
                 this.historyData = JSON.parse(localStorage.getItem('gymHistory')) || [];
                 this.refreshCurrentScreen();
             }
@@ -360,7 +379,7 @@
 
         save: function() { 
             if(window.dbInstance) window.dbSet(window.dbRef(window.dbInstance, 'users'), this.data);
-            else localStorage.setItem('gymData_v37', JSON.stringify(this.data)); 
+            else localStorage.setItem('gymData_v38', JSON.stringify(this.data)); 
         },
 
         handleBack: function() { window.history.back(); },
@@ -371,12 +390,21 @@
             this.restoreScreen(newState);
         },
 
+        // Função mágica para fechar o app ao voltar pro menu
         returnToMenu: function() {
             document.getElementById('modal-msg').style.display='none';
-            // Volta 2 telas (Active -> Select -> Menu) + o número de tentativas
+            
+            // Calculamos quantos passos precisamos voltar
+            // 2 passos (Active -> Select -> Menu) + o número de tentativas de fuga
             const jumps = 2 + this.quitAttempts;
-            window.history.go(-jumps);
+            
+            // Zeramos o contador para a próxima vez
             this.quitAttempts = 0;
+            
+            // Voltamos no histórico real do navegador
+            // Isso limpa a "sujeira" do histórico e coloca o usuário no Menu
+            // Se ele apertar voltar de novo, não tem mais nada e o app fecha
+            window.history.go(-jumps);
         },
 
         restoreScreen: function(state) {
