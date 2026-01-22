@@ -14,7 +14,7 @@
             --text: #ffffff; 
             --success: #00ff88;
             --danger: #ff4444;
-            --primary: #2979ff;
+            --edit-mode: #ffb700;
             
             /* Temas */
             --color-1: #00d4ff; --color-2: #ff007f; --color-3: #9d4edd;
@@ -30,14 +30,13 @@
 
         /* HEADER */
         .header-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; position: sticky; top: 0; background: var(--bg); z-index: 50; padding: 15px 0; border-bottom: 1px solid #333; }
-        .app-logo { font-size: 24px; margin-right: 10px; }
         .app-title { font-size: 20px; font-weight: bold; color: var(--text); letter-spacing: 1px; display: flex; align-items: center; }
         .user-title { font-size: 18px; font-weight: bold; text-transform: uppercase; }
         
         .header-actions { display: flex; gap: 15px; }
         .btn-icon { background: none; border: none; font-size: 24px; cursor: pointer; color: #fff; transition: transform 0.2s, color 0.2s; padding: 0; }
         .btn-icon:active { transform: scale(0.9); }
-        .icon-active { color: var(--edit-mode, #ffb700); transform: scale(1.1); }
+        .icon-active { color: var(--edit-mode); transform: scale(1.1); }
 
         /* LISTAS */
         #user-list, #workout-select-list { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 20px; }
@@ -86,7 +85,7 @@
         .weight-slider { flex-grow: 1; -webkit-appearance: none; height: 6px; background: #444; border-radius: 5px; outline: none; }
         .weight-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #fff; cursor: pointer; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
 
-        /* MODO EDIÇÃO (PADRONIZADO) */
+        /* MODO EDIÇÃO (SISTEMA DE VISIBILIDADE) */
         .btn-del-floating { 
             position: absolute; right: -10px; top: -10px; background: #ff4444; color: white; 
             width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
@@ -95,20 +94,22 @@
         }
         @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
 
+        /* Oculta botões de adicionar por padrão */
+        .btn-add-item { display: none; }
+
+        /* Quando o container pai tem a classe .editing, mostra os botões */
+        .editing .btn-add-item {
+            display: block; width: 100%; max-width: 400px; padding: 20px;
+            background: rgba(255, 255, 255, 0.05); border: 2px dashed var(--edit-mode);
+            color: var(--edit-mode); border-radius: 16px; cursor: pointer; font-size: 16px; font-weight: bold;
+            margin-top: 15px; text-align: center;
+        }
+        .editing .btn-add-item:hover { background: rgba(255, 183, 0, 0.1); }
+
         .editing .btn-large, .editing .workout-select-card, .editing .exercise-card { 
-            opacity: 0.9; border: 1px dashed #555; pointer-events: none; 
+            opacity: 0.8; border: 1px dashed #555; pointer-events: none; 
         }
         .editing .btn-del-floating { pointer-events: auto; }
-        
-        /* Botão "Adicionar (+)" que só aparece na edição */
-        .btn-add-item {
-            display: none; width: 100%; max-width: 400px; padding: 20px;
-            background: rgba(255, 255, 255, 0.05); border: 2px dashed #444;
-            color: #888; border-radius: 16px; cursor: pointer; font-size: 16px;
-            margin-top: 10px; text-align: center;
-        }
-        .btn-add-item:hover { background: rgba(255, 255, 255, 0.1); color: #fff; border-color: #666; }
-        .editing .btn-add-item { display: block; pointer-events: auto; }
 
         /* FOOTER FINALIZAR */
         .footer-fixed { position: fixed; bottom: 0; left: 0; width: 100%; padding: 20px; background: linear-gradient(to top, var(--bg) 80%, transparent); display: flex; justify-content: center; z-index: 90; pointer-events: none; }
@@ -154,7 +155,7 @@
         </div>
         
         <div id="user-list"></div>
-        <button class="btn-add-item" onclick="window.app.addUser()">+ NOVA PESSOA</button>
+        <button id="btn-add-user" class="btn-add-item" onclick="window.app.addUser()">+ NOVA PESSOA</button>
     </div>
 
     <div id="screen-workout-select" class="screen">
@@ -165,7 +166,7 @@
         </div>
         
         <div id="workout-select-list"></div>
-        <button class="btn-add-item" onclick="window.app.addWorkout()">+ NOVO TREINO</button>
+        <button id="btn-add-workout" class="btn-add-item" onclick="window.app.addWorkout()">+ NOVO TREINO</button>
     </div>
 
     <div id="screen-active-workout" class="screen">
@@ -176,7 +177,7 @@
         </div>
 
         <div id="active-workout-container" class="workout-container"></div>
-        <button class="btn-add-item" onclick="window.app.addExercise()" style="margin-bottom: 80px;">+ NOVO EXERCÍCIO</button>
+        <button id="btn-add-exercise" class="btn-add-item" onclick="window.app.addExercise()" style="margin-bottom: 80px;">+ NOVO EXERCÍCIO</button>
 
         <div class="footer-fixed">
             <button id="btn-finish-main" class="btn-finish" onclick="window.app.finishWorkout()">
@@ -208,6 +209,7 @@
         import { getDatabase, ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
+        // CONFIGURAÇÃO DO FIREBASE (JÁ IMPLEMENTADA)
         const firebaseConfig = {
             apiKey: "AIzaSyBXpjF-2oGF3RrfqT9KjthB4NVZXUGtsCg",
             authDomain: "supertreino-e20ee.firebaseapp.com",
@@ -257,7 +259,7 @@
     // COORDENADAS FIXAS: Academia Estações do Corpo (Ibiraçu - ES)
     const GYM_LAT = -19.8285; 
     const GYM_LON = -40.3735;
-    const GYM_RADIUS_KM = 0.1; // 100 metros de raio
+    const GYM_RADIUS_KM = 0.1; // 100 metros
 
     window.app = {
         data: null, historyData: [], currentUser: null, currentWorkoutIndex: null, startTime: null,
@@ -277,7 +279,7 @@
                     this.historyData = val ? Object.keys(val).map(k => ({...val[k], firebaseId: k})).sort((a,b) => b.id - a.id) : [];
                 });
             } else {
-                this.data = JSON.parse(localStorage.getItem('gymData_v12')) || JSON.parse(JSON.stringify(defaultDB));
+                this.data = JSON.parse(localStorage.getItem('gymData_v13')) || JSON.parse(JSON.stringify(defaultDB));
                 this.historyData = JSON.parse(localStorage.getItem('gymHistory')) || [];
                 this.renderMenu();
             }
@@ -285,7 +287,7 @@
 
         save: function() { 
             if(window.dbInstance) window.dbSet(window.dbRef(window.dbInstance, 'users'), this.data);
-            else localStorage.setItem('gymData_v12', JSON.stringify(this.data)); 
+            else localStorage.setItem('gymData_v13', JSON.stringify(this.data)); 
         },
 
         // --- MENU PRINCIPAL ---
@@ -324,6 +326,7 @@
 
         // --- SELEÇÃO DE TREINO ---
         renderWorkoutSelectScreen: function() {
+            if(!this.currentUser || !this.data[this.currentUser]) return;
             const u = this.data[this.currentUser];
             document.getElementById('select-user-title').innerText = u.name;
             const list = document.getElementById('workout-select-list'); list.innerHTML = '';
@@ -366,6 +369,7 @@
             this.renderActiveWorkout(); this.toggleScreen('screen-active-workout');
         },
         renderActiveWorkout: function() {
+            if(!this.currentUser || this.currentWorkoutIndex === null) return;
             const u = this.data[this.currentUser];
             const w = u.workouts[this.currentWorkoutIndex];
             const cont = document.getElementById('active-workout-container');
@@ -402,22 +406,63 @@
         },
         toggleActiveEditMode: function() { this.isActiveEditing = !this.isActiveEditing; this.renderActiveWorkout(); },
 
-        // --- ADDERS (Só aparecem quando a caneta tá ativa) ---
-        addUser: function() { const n = prompt("Nome:"); if(n) { this.data['u_'+Date.now()] = { name: n, themeId: `theme-${Math.floor(Math.random()*6)+1}`, workouts:[] }; this.save(); } },
-        addWorkout: function() { const t = prompt("Nome do Treino (ex: Treino C):"); if(t) { this.data[this.currentUser].workouts.push({id:t[0], title:t, exercises:[]}); this.save(); } },
+        // --- FUNÇÕES DE ADIÇÃO (Corrigidas e Automáticas) ---
+        
+        addUser: function() { 
+            const n = prompt("Nome da nova pessoa:"); 
+            if(n) { 
+                this.data['u_'+Date.now()] = { name: n, themeId: `theme-${Math.floor(Math.random()*6)+1}`, workouts:[] }; 
+                this.save(); // Salva no banco
+                this.renderMenu();
+            } 
+        },
+
+        addWorkout: function() {
+            // Lógica de Letra Automática (A, B, C...)
+            const user = this.data[this.currentUser];
+            const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const nextIndex = user.workouts.length;
+            const nextId = letters[nextIndex] || '?'; // Se passar de Z, vira ?
+
+            const name = prompt(`Nome do Treino ${nextId} (ex: Costas e Bíceps):`);
+            
+            if(name) { 
+                const fullTitle = `${nextId} - ${name}`;
+                user.workouts.push({ id: nextId, title: fullTitle, exercises: [] }); 
+                this.save(); // Salva no banco
+                this.renderWorkoutSelectScreen(); 
+            }
+        },
+
         addExercise: function() {
-            const n = prompt("Nome do Exercício:"); if(n) { 
-                this.data[this.currentUser].workouts[this.currentWorkoutIndex].exercises.push({name:n, sets:3, reps:10, weight:10});
-                this.save(); this.renderActiveWorkout();
+            const n = prompt("Nome do Exercício:"); 
+            if(n) { 
+                const sets = prompt("Séries:", "3");
+                const reps = prompt("Repetições:", "10");
+                this.data[this.currentUser].workouts[this.currentWorkoutIndex].exercises.push({
+                    name: n, 
+                    sets: sets || "3", 
+                    reps: reps || "10", 
+                    weight: 0
+                });
+                this.save(); // Salva no banco
+                this.renderActiveWorkout();
                 setTimeout(() => window.scrollTo(0, document.body.scrollHeight), 100);
             }
         },
+
         updWeight: function(el, i) {
             document.getElementById(`w-val-${i}`).innerText = el.value;
             this.data[this.currentUser].workouts[this.currentWorkoutIndex].exercises[i].weight = parseInt(el.value);
             this.save();
         },
-        deleteEx: function(i) { if(confirm('Apagar exercício?')) { this.data[this.currentUser].workouts[this.currentWorkoutIndex].exercises.splice(i,1); this.save(); this.renderActiveWorkout(); } },
+        deleteEx: function(i) { 
+            if(confirm('Apagar exercício?')) { 
+                this.data[this.currentUser].workouts[this.currentWorkoutIndex].exercises.splice(i,1); 
+                this.save(); 
+                this.renderActiveWorkout(); 
+            } 
+        },
 
         // --- FINALIZAÇÃO ---
         finishWorkout: function() {
