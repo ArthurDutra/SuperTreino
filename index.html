@@ -7,7 +7,6 @@
     
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon.png">
-    <link rel="apple-touch-icon" href="icon.png">
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -240,14 +239,12 @@
     </script>
 
     <script>
-      // Service Worker (Obrigatório para PWA)
       if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); });
+        window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js', {scope: '/SuperTreino/'}); });
       }
     </script>
 
     <script>
-    // FRASES (MANTIDAS)
     const successMessages = ["Tá pago! Agora pode chorar no banho.", "A dor é temporária, a glória é eterna.", "Suor é gordura chorando!", "Treino feito! Finja que consegue andar.", "Mais um dia vencido. O sofá te espera.", "Você treina para comer sem culpa!", "Shape de respeito em construção.", "Parabéns! Você é melhor que quem não veio.", "Zero dias sem reclamar, mas zero sem treinar!", "Diz a lenda que depois da dor vem o músculo.", "A meta é ficar irreconhecível.", "Foco, força e fé!", "Não pare quando doer, pare quando acabar.", "Frango não tem vez aqui!", "Quem tem pena é galinha!", "Seu único limite é a sua mente.", "Shape se constrói com cara feia.", "Sorria, você ficou mais forte.", "Descanse, mas não desista.", "Hoje você venceu a preguiça.", "Treinar é vida. O resto é intervalo.", "Calma, respira e agacha!", "Se não for para suar, nem saio de casa.", "Ficar monstro é obrigação.", "Vença a si mesmo todos os dias.", "Disciplina é liberdade.", "O único treino ruim é o que não aconteceu.", "Transforme dor em poder.", "Faça os dias contarem.", "Seu corpo pode tudo.", "Você aguenta mais uma!", "Levanta esse peso!", "Sem dor, sem ganho.", "Todo campeão já foi um frango.", "O sucesso começa fora da zona de conforto.", "Não deseje que fosse fácil.", "Faça por você.", "O esforço de hoje é o orgulho de amanhã.", "Treino bom é treino que descabela.", "Se não pode voar, corra.", "Musculação: levantar coisas pesadas.", "Se consegue ler isso sem tremer, treinou errado.", "Academia: meu playground.", "Menos mimimi, mais agachamento.", "Não espere incentivo, o shape é seu.", "Vá treinar!", "Corpo são, mente sã, perna doendo.", "A vida começa depois do treino.", "Seus músculos não sabem contar.", "Supere seus limites.", "Não é sobre tempo, é prioridade.", "Desculpas não queimam calorias.", "Treino concluído com ódio e sucesso.", "Amanhã você vai agradecer.", "Se está fácil, aumenta o peso.", "Foco no objetivo.", "Você não chegou até aqui pra parar.", "Seja sua motivação.", "Dor muscular é troféu.", "Treinar cura tudo.", "O impossível é só questão de opinião.", "Seja sua melhor versão.", "Não tenha medo de falhar.", "Cada gota de suor conta.", "Respeite o processo.", "Construindo um corpo blindado.", "Treino é terapia.", "Não diminua a meta.", "Vencedores treinam.", "Hoje tá pago com juros.", "Se quer algo novo, faça algo novo.", "A dor de hoje é força.", "Não pare até se orgulhar.", "Você é seu adversário.", "Levanta a cabeça e o peso.", "Firme igual rocha.", "Treino de hoje: Sobreviver.", "Ame o processo.", "Fim de treino! Coma proteína.", "Sentindo as pernas? Não. Valeu? Sim.", "Falha muscular é vida.", "Aprenda a descansar.", "Vai doer? Vai.", "Treino de perna se lamenta.", "O corpo ideal tem alguém feliz dentro.", "Hospital da alma.", "Seu corpo ouve sua mente.", "Faça seu 'eu' do futuro feliz.", "Não é sorte, é suor.", "Constância é a chave.", "Esmaga que cresce!", "Bora ficar gigante!", "Shape inexplicável.", "Treino de gente grande.", "Sai da frente que tô passando!", "Hoje o treino rendeu.", "Missão dada é missão cumprida.", "Nada vence o trabalho duro.", "O topo é logo ali.", "Monstro saindo da jaula!", "Foco total.", "Sem massagem!", "Dale!", "Brabo demais!"];
     const quitMessages = ["Já vai? O sofá te chamou?", "Fugindo do leg day?", "Sua mãe disse que você podia sair?", "Volta aqui, frango!", "Ei, o treino não acabou!", "Desistir é para os fracos.", "Você prometeu que ia treinar!", "A porta da rua é serventia da vergonha.", "Vai deixar o peso ganhar?", "Não ouse sair agora!", "O cronômetro tá te julgando.", "Vai chorar no banho ou terminar?", "Se sair agora, vira estatística.", "Quem foge não cresce.", "Tá com medinho?", "Volta pro treino, soldado!", "Sair agora = Frango pra sempre.", "Acha que o shape vem por osmose?", "Não me decepcione.", "Você é melhor que isso.", "Onde você pensa que vai?", "Fica! Vai ter bolo (mentira).", "Se sair, o treino não conta.", "Honre seu suor.", "Termina isso logo!", "Preguiça não define caráter.", "Vai sair sem terminar? Que feio.", "O peso tá leve, volta lá.", "Não seja um desistente.", "Falta pouco, aguenta!", "A dor passa, a vergonha fica.", "Você não é de açúcar.", "Vai derreter se continuar?", "Sair agora é derrota.", "Mostre do que é feito.", "Não clique nesse botão!", "Bloqueado por falta de vergonha.", "Volte e termine o serviço.", "Sua avó treinaria mais que isso.", "Tá doendo? Que bom.", "Sem desculpas.", "Vai sair de fininho?", "Eu vi você clicando em voltar!", "O treino não é opcional.", "Compromisso é tudo.", "Não traia seu corpo.", "Se sair, paga 10 flexões.", "Vai correr da raia?", "Não seja essa pessoa.", "Termina e a gente conversa.", "Fuga das galinhas?", "Você consegue, volta lá.", "Não desperdice o tempo.", "Foco!", "Disciplina!", "Cadê a força de vontade?", "Vai se arrepender se sair.", "O espelho não mente.", "Não saia!", "Volta!", "Fica!", "Treina!", "Esmaga!", "Não foge!", "Você é guerreiro ou vítima?", "Encare o desafio.", "Não tem atalho.", "Se sair, o shape murcha.", "Cancele a saída, não o treino.", "Persistência é tudo.", "Não seja medíocre.", "Supere a vontade de ir embora.", "O resultado vem pra quem fica.", "Não desista.", "Lute contra a preguiça.", "Seja forte.", "Aguenta firme.", "Tá acabando (quase).", "Não me irrite.", "Volta pro supino.", "Não abandone os pesos.", "Eles sentem sua falta.", "Se sair, zero whey hoje.", "Você aguenta.", "Confio em você.", "Bora!", "Não para!", "Continua!", "Mais um pouco!", "Vai valer a pena!", "Não saia da tela.", "Mantenha o foco.", "Olho no objetivo.", "Se sair, engorda 1kg.", "Brincadeira (ou não).", "Fica aí.", "Treino sério.", "Sem corpo mole.", "Bora monstro!", "Vence isso!"];
     const incompleteMessages = ["Roubando repetição? Que feio.", "Vai deixar exercício pra amanhã?", "Treino pela metade, resultado pela metade.", "Acha que eu não vi essa caixa vazia?", "Assim você não fica monstro.", "Tá esquecendo coisa pra trás!", "Volta lá e marca tudo.", "Não adianta mentir pro app.", "Seu bíceps tá chorando.", "Finalizar assim? Sério?", "Você consegue fazer tudo!", "Não seja preguiçoso.", "Faltou um ali, ó.", "O treino é completo ou não é.", "Quem rouba no treino, rouba na vida.", "Tá com pressa de que?", "Termina o serviço.", "Não faça serviço de porco.", "Seja honesto com seu treino.", "Vai deixar buraco no treino?", "Isso não é um treino completo.", "Falta exercício!", "Olha as caixinhas vazias.", "Preenche tudo!", "Não me engana.", "O shape não vem pela metade.", "Vai ficar devendo?", "Paga o que deve!", "Não finalizo se não terminar.", "Volta e faz direito.", "Tá achando que é festa?", "Treino sério exige tudo.", "Não pule o leg day.", "Nem o supino.", "Completa isso aí.", "Estou de olho.", "Não valida treino fofo.", "Quer resultado? Faça tudo.", "Sem atalhos.", "O caminho é completo.", "Não deixe nada pra trás.", "Zere o treino.", "Marque todas as opções.", "Falta pouco, não desista.", "Faça valer a pena.", "Não seja meio termo.", "Tudo ou nada.", "100% ou 0%.", "Vai sair devendo?", "O app sabe que faltou.", "Não mente pra mim.", "Seu corpo sabe.", "Termina!", "Faz tudo!", "Não enrola.", "Sem migué.", "Que vergonha...", "Pensei que fosse monstro.", "Cadê a disciplina?", "Falta um check.", "Ou dois.", "Ou três.", "Tá quase, não para.", "Finalizar incompleto é pecado.", "O deus do ferro tá vendo.", "Não decepcione o Arnold.", "Faça por merecer.", "Conquiste o botão finalizar.", "Ele só libera se fizer tudo.", "Bloqueado por preguiça.", "Volte e treine.", "Não tem essa de pular.", "Cada exercício conta.", "Não desperdice.", "Valorize seu tempo.", "Faça bem feito.", "Qualidade total.", "Não aceito meio treino.", "Sou exigente.", "Você também deveria ser.", "Bora marcar tudo.", "Tica tudo!", "Checklist incompleto.", "Erro 404: Exercício não encontrado.", "Corrija isso.", "Agora sim (se fizer).", "Vai logo!", "Quero ver tudo verde.", "Sem caixas vazias.", "Preenchimento obrigatório.", "Treino é sagrado.", "Amém?", "Bora terminar!"];
@@ -257,7 +254,7 @@
     window.app = {
         data: {}, historyData: [], currentUser: null, currentWorkoutIndex: null, startTime: null,
         isMenuEditing: false, isSelectEditing: false, isActiveEditing: false,
-        quitAttempts: 0, // Contador de fugas
+        quitAttempts: 0, 
 
         init: function() {
             if (!history.state) history.replaceState({ screen: 'screen-menu' }, '');
@@ -274,17 +271,14 @@
                         window.onbeforeunload = null;
                         this.quitAttempts = 0; // Zera tentativas
                         
-                        // Volta para a tela de seleção de treino (comportamento correto de voltar)
-                        // A função `toggleScreen` vai atualizar a view, mas precisamos garantir que o histórico do navegador esteja alinhado
-                        // Como ele acabou de dar um "popstate", tecnicamente já voltou no histórico.
-                        // Só precisamos mostrar a tela certa.
-                        this.toggleScreen('screen-workout-select');
+                        // Atualiza a tela para a anterior
+                        if (event.state) this.restoreScreen(event.state);
+                        else this.toggleScreen('screen-workout-select');
                         
                     } else {
-                        // CANCELOU (FICOU - Botão Cancelar):
+                        // CANCELOU (FICOU):
                         this.quitAttempts++;
                         // Truque do Loop: Empurra o estado DE NOVO para bloquear o próximo "voltar"
-                        // Isso faz com que o botão "Voltar" do celular precise ser apertado de novo, disparando esse evento de novo.
                         history.pushState({ 
                             screen: 'screen-active-workout', 
                             userId: this.currentUser, 
@@ -314,7 +308,7 @@
                     }
                 });
             } else {
-                this.data = JSON.parse(localStorage.getItem('gymData_v41')) || {};
+                this.data = JSON.parse(localStorage.getItem('gymData_v44')) || {};
                 this.historyData = JSON.parse(localStorage.getItem('gymHistory')) || [];
                 this.refreshCurrentScreen();
             }
@@ -322,13 +316,10 @@
 
         save: function() { 
             if(window.dbInstance) window.dbSet(window.dbRef(window.dbInstance, 'users'), this.data);
-            else localStorage.setItem('gymData_v41', JSON.stringify(this.data)); 
+            else localStorage.setItem('gymData_v44', JSON.stringify(this.data)); 
         },
 
-        handleBack: function() { 
-            // Botão da tela chama o mesmo evento do botão físico
-            window.history.back(); 
-        },
+        handleBack: function() { window.history.back(); },
 
         navigate: function(screenId, stateData = {}) {
             const newState = { screen: screenId, ...stateData };
@@ -340,15 +331,11 @@
         returnToMenu: function() {
             document.getElementById('modal-msg').style.display='none';
             // Volta tudo que foi empilhado (telas normais + tentativas de fuga)
-            // Se entrou 1 vez no fujão, tem 1 estado extra.
-            // O padrão é voltar 2 (Active -> Select -> Menu).
             const jumps = 2 + this.quitAttempts;
             this.quitAttempts = 0;
             
-            // Volta no histórico real. Se o cálculo estiver certo, cai no Menu.
-            // Se cair no Menu e apertar voltar, fecha o app.
-            if(jumps > 0) window.history.go(-jumps);
-            else this.navigate('screen-menu');
+            // Volta no histórico real
+            window.history.go(-jumps);
         },
 
         restoreScreen: function(state) {
@@ -559,9 +546,7 @@
             for(let c of chks) if(!c.checked) p = true;
             if(p) { const msg = incompleteMessages[Math.floor(Math.random()*incompleteMessages.length)]; if(!confirm(`👀 ${msg}\n\nFinalizar incompleto?`)) return; }
             
-            const btn = document.getElementById('btn-finish-main'); btn.innerText = "Localizando..."; btn.disabled = true;
-            document.getElementById('modal-msg').style.display = 'flex';
-            document.getElementById('quote-text').innerText = successMessages[Math.floor(Math.random()*successMessages.length)];
+            const btn = document.getElementById('btn-finish-main'); btn.innerText = "Salvando..."; btn.disabled = true;
             
             const dur = (Date.now()-this.startTime)/60000; const wName = this.data[this.currentUser].workouts[this.currentWorkoutIndex].title;
             this.startTime = null; window.onbeforeunload = null;
@@ -578,7 +563,12 @@
             const reg = { id: Date.now(), date: new Date().toLocaleDateString('pt-BR'), user: this.data[this.currentUser].name, workoutTitle: t, location: l, cheat: c, skipped: s };
             if(window.dbInstance) window.dbPush(window.dbRef(window.dbInstance, 'history'), reg);
             else { this.historyData.unshift(reg); localStorage.setItem('gymHistory', JSON.stringify(this.historyData)); }
+            
+            // Só mostra o modal DEPOIS de salvar
+            document.getElementById('modal-msg').style.display = 'flex';
+            document.getElementById('quote-text').innerText = successMessages[Math.floor(Math.random()*successMessages.length)];
             document.getElementById('gps-status').innerText = `📍 ${l}`;
+            
             document.getElementById('btn-finish-main').innerText = "🏁 Finalizar"; document.getElementById('btn-finish-main').disabled = false;
         },
         
