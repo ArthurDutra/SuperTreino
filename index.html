@@ -58,7 +58,8 @@
             font-size: 18px; font-weight: 700; cursor: pointer; color: #fff; 
             box-shadow: 0 8px 20px rgba(0,0,0,0.3); text-transform: uppercase;
             text-align: left; display: flex; justify-content: space-between; align-items: center;
-            transition: transform 0.1s; font-family: 'Poppins', sans-serif;
+            transition: transform 0.1s, box-shadow 0.1s;
+            font-family: 'Poppins', sans-serif;
         }
         .btn-large:active { transform: scale(0.98); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         
@@ -85,13 +86,11 @@
         .workout-container { padding-bottom: 120px; }
         .exercise-card { background: var(--card); border-radius: 18px; padding: 20px; margin-bottom: 15px; border-left: 6px solid #555; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .exercise-header { display: flex; align-items: flex-start; gap: 15px; margin-bottom: 15px; }
-        
         .chk-container { position: relative; display: flex; align-items: center; min-width: 32px; }
         input[type="checkbox"] { width: 32px; height: 32px; cursor: pointer; opacity: 0; position: absolute; z-index: 2; }
         .custom-chk { width: 32px; height: 32px; background: #2a2a2a; border-radius: 10px; display: inline-block; position: relative; pointer-events: none; transition: 0.3s; border: 2px solid #444; }
         input:checked + .custom-chk { background: var(--success); border-color: var(--success); transform: scale(1.1); }
         input:checked + .custom-chk::after { content: '✔'; color: #000; position: absolute; left: 7px; top: 1px; font-weight: 800; font-size: 20px; }
-
         .ex-info { flex-grow: 1; min-width: 0; }
         .ex-name { font-size: 18px; font-weight: 600; display: block; margin-bottom: 6px; color: #fff; word-wrap: break-word; }
         .ex-meta { display: flex; gap: 10px; align-items: center; font-size: 14px; color: #bbb; font-weight: 500; flex-wrap: wrap; }
@@ -100,7 +99,7 @@
         
         .weight-control { margin-top: 15px; background: #151515; padding: 10px; border-radius: 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; border: 1px solid #333; }
         .weight-label { color: #666; font-size: 11px; margin-right: auto; padding-left: 5px; font-weight: 700; letter-spacing: 1px; }
-        .btn-weight { width: 42px; height: 42px; background: #333; border: none; border-radius: 12px; color: #fff; font-size: 24px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .btn-weight { width: 42px; height: 42px; background: #333; border: none; border-radius: 12px; color: #fff; font-size: 24px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .btn-weight:active { background: var(--primary); transform: scale(0.9); }
         .weight-display { flex-grow: 1; text-align: center; font-size: 20px; font-weight: 800; color: var(--primary); font-family: 'Poppins', monospace; cursor: pointer; }
         .no-load { color: #666; font-size: 12px; font-family: 'Poppins', sans-serif; letter-spacing: 1px; text-transform: uppercase; }
@@ -112,7 +111,6 @@
         .btn-del { background: var(--danger); }
         .btn-reorder { background: var(--secondary); border-color: #fff; }
         @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
-        
         .btn-add-item { display: none; } 
         .editing .btn-add-item { display: block; width: 100%; max-width: 400px; padding: 20px; background: rgba(250, 204, 21, 0.1); border: 2px dashed var(--edit-mode); color: var(--edit-mode); border-radius: 16px; cursor: pointer; font-size: 16px; font-weight: 800; margin-top: 15px; text-align: center; }
         .editing .btn-large, .editing .workout-select-card, .editing .exercise-card { border: 1px dashed #555; opacity: 0.8; }
@@ -243,9 +241,75 @@
     </script>
 
     <script>
-    const successMessages = ["Tá pago!", "Mais um pra conta!", "Ficou gigante!", "Sem dor sem ganho!", "Amanhã tem mais!", "Shape vindo!", "Parabéns monstro!", "Suor é gordura chorando!", "Treino de gente grande!", "Missão cumprida!"];
-    const quitMessages = ["Já vai?", "Fugindo?", "O treino não acabou!", "Volta aqui frango!", "Desistir? Jamais!", "Tá com medo do peso?", "Sair agora é derrota.", "Fica mais um pouco!", "Não me decepcione!", "Honre o treino!"];
-    const incompleteMessages = ["Esqueceu de marcar?", "Treino incompleto?", "Faltou exercício!", "Não rouba!", "Marca tudo aí!", "Deixou pra trás?", "Faz direito!", "Tá devendo repetição?", "Completa isso!", "Sem migué!"];
+    // 100 FRASES DE SUCESSO (Tudo Certo)
+    const successMessages = [
+        "Tá pago! Agora pode chorar no banho.", "A dor é temporária, a glória é eterna.", "Suor é gordura chorando!", "Treino feito! Finja que consegue andar.", 
+        "Mais um dia vencido. O sofá te espera.", "Você treina para comer sem culpa!", "Shape de respeito em construção.", "Parabéns! Você é melhor que quem não veio.",
+        "Zero dias sem reclamar, mas zero sem treinar!", "Diz a lenda que depois da dor vem o músculo.", "A meta é ficar irreconhecível.", "Foco, força e fé!",
+        "Não pare quando doer, pare quando acabar.", "Frango não tem vez aqui!", "Quem tem pena é galinha!", "Seu único limite é a sua mente.", 
+        "Shape se constrói com cara feia.", "Sorria, você ficou mais forte.", "Descanse, mas não desista.", "Hoje você venceu a preguiça.",
+        "Treinar é vida. O resto é intervalo.", "Calma, respira e agacha!", "Se não for para suar, nem saio de casa.", "Ficar monstro é obrigação.", 
+        "Vença a si mesmo todos os dias.", "Disciplina é liberdade.", "O único treino ruim é o que não aconteceu.", "Transforme dor em poder.",
+        "Faça os dias contarem.", "Seu corpo pode tudo.", "Você aguenta mais uma!", "Levanta esse peso!", "Sem dor, sem ganho.",
+        "Todo campeão já foi um frango.", "O sucesso começa fora da zona de conforto.", "Não deseje que fosse fácil.", "Faça por você.", "O esforço de hoje é o orgulho de amanhã.",
+        "Treino bom é treino que descabela.", "Se não pode voar, corra.", "Musculação: levantar coisas pesadas.", "Se consegue ler isso sem tremer, treinou errado.",
+        "Academia: meu playground.", "Menos mimimi, mais agachamento.", "Não espere incentivo, o shape é seu.", "Vá treinar!", "Corpo são, mente sã, perna doendo.",
+        "A vida começa depois do treino.", "Seus músculos não sabem contar.", "Supere seus limites.", "Não é sobre tempo, é prioridade.", "Desculpas não queimam calorias.",
+        "Treino concluído com ódio e sucesso.", "Amanhã você vai agradecer.", "Se está fácil, aumenta o peso.", "Foco no objetivo.", "Você não chegou até aqui pra parar.",
+        "Seja sua motivação.", "Dor muscular é troféu.", "Treinar cura tudo.", "O impossível é só questão de opinião.", "Seja sua melhor versão.",
+        "Não tenha medo de falhar.", "Cada gota de suor conta.", "Respeite o processo.", "Construindo um corpo blindado.", "Treino é terapia.",
+        "Não diminua a meta.", "Vencedores treinam.", "Hoje tá pago com juros.", "Se quer algo novo, faça algo novo.", "A dor de hoje é força.",
+        "Não pare até se orgulhar.", "Você é seu adversário.", "Levanta a cabeça e o peso.", "Firme igual rocha.", "Treino de hoje: Sobreviver.",
+        "Ame o processo.", "Fim de treino! Coma proteína.", "Sentindo as pernas? Não. Valeu? Sim.", "Falha muscular é vida.", "Aprenda a descansar.",
+        "Vai doer? Vai.", "Treino de perna se lamenta.", "O corpo ideal tem alguém feliz dentro.", "Hospital da alma.", "Seu corpo ouve sua mente.",
+        "Faça seu 'eu' do futuro feliz.", "Não é sorte, é suor.", "Constância é a chave.", "Esmaga que cresce!", "Bora ficar gigante!",
+        "Shape inexplicável.", "Treino de gente grande.", "Sai da frente que tô passando!", "Hoje o treino rendeu.", "Missão dada é missão cumprida.",
+        "Nada vence o trabalho duro.", "O topo é logo ali.", "Monstro saindo da jaula!", "Foco total.", "Sem massagem!", "Dale!", "Brabo demais!"
+    ];
+
+    // 100 FRASES DE "FUJÃO" (Tentar Sair no Meio)
+    const quitMessages = [
+        "Já vai? O sofá te chamou?", "Fugindo do leg day?", "Sua mãe disse que você podia sair?", "Volta aqui, frango!", "Ei, o treino não acabou!",
+        "Desistir é para os fracos.", "Você prometeu que ia treinar!", "A porta da rua é serventia da vergonha.", "Vai deixar o peso ganhar?", "Não ouse sair agora!",
+        "O cronômetro tá te julgando.", "Vai chorar no banho ou terminar?", "Se sair agora, vira estatística.", "Quem foge não cresce.", "Tá com medinho?",
+        "Volta pro treino, soldado!", "Sair agora = Frango pra sempre.", "Acha que o shape vem por osmose?", "Não me decepcione.", "Você é melhor que isso.",
+        "Onde você pensa que vai?", "Fica! Vai ter bolo (mentira).", "Se sair, o treino não conta.", "Honre seu suor.", "Termina isso logo!",
+        "Preguiça não define caráter.", "Vai sair sem terminar? Que feio.", "O peso tá leve, volta lá.", "Não seja um desistente.", "Falta pouco, aguenta!",
+        "A dor passa, a vergonha fica.", "Você não é de açúcar.", "Vai derreter se continuar?", "Sair agora é derrota.", "Mostre do que é feito.",
+        "Não clique nesse botão!", "Bloqueado por falta de vergonha.", "Volte e termine o serviço.", "Sua avó treinaria mais que isso.", "Tá doendo? Que bom.",
+        "Sem desculpas.", "Vai sair de fininho?", "Eu vi você clicando em voltar!", "O treino não é opcional.", "Compromisso é tudo.",
+        "Não traia seu corpo.", "Se sair, paga 10 flexões.", "Vai correr da raia?", "Não seja essa pessoa.", "Termina e a gente conversa.",
+        "Fuga das galinhas?", "Você consegue, volta lá.", "Não desperdice o tempo.", "Foco!", "Disciplina!", "Cadê a força de vontade?",
+        "Vai se arrepender se sair.", "O espelho não mente.", "Não saia!", "Volta!", "Fica!", "Treina!", "Esmaga!", "Não foge!",
+        "Você é guerreiro ou vítima?", "Encare o desafio.", "Não tem atalho.", "Se sair, o shape murcha.", "Cancele a saída, não o treino.",
+        "Persistência é tudo.", "Não seja medíocre.", "Supere a vontade de ir embora.", "O resultado vem pra quem fica.", "Não desista.",
+        "Lute contra a preguiça.", "Seja forte.", "Aguenta firme.", "Tá acabando (quase).", "Não me irrite.", "Volta pro supino.",
+        "Não abandone os pesos.", "Eles sentem sua falta.", "Se sair, zero whey hoje.", "Você aguenta.", "Confio em você.", "Bora!",
+        "Não para!", "Continua!", "Mais um pouco!", "Vai valer a pena!", "Não saia da tela.", "Mantenha o foco.", "Olho no objetivo.",
+        "Se sair, engorda 1kg.", "Brincadeira (ou não).", "Fica aí.", "Treino sério.", "Sem corpo mole.", "Bora monstro!", "Vence isso!"
+    ];
+
+    // 100 FRASES DE COBRANÇA (Finalizar Incompleto)
+    const incompleteMessages = [
+        "Roubando repetição? Que feio.", "Vai deixar exercício pra amanhã?", "Treino pela metade, resultado pela metade.", "Acha que eu não vi essa caixa vazia?", "Assim você não fica monstro.",
+        "Tá esquecendo coisa pra trás!", "Volta lá e marca tudo.", "Não adianta mentir pro app.", "Seu bíceps tá chorando.", "Finalizar assim? Sério?",
+        "Você consegue fazer tudo!", "Não seja preguiçoso.", "Faltou um ali, ó.", "O treino é completo ou não é.", "Quem rouba no treino, rouba na vida.",
+        "Tá com pressa de que?", "Termina o serviço.", "Não faça serviço de porco.", "Seja honesto com seu treino.", "Vai deixar buraco no treino?",
+        "Isso não é um treino completo.", "Falta exercício!", "Olha as caixinhas vazias.", "Preenche tudo!", "Não me engana.",
+        "O shape não vem pela metade.", "Vai ficar devendo?", "Paga o que deve!", "Não finalizo se não terminar.", "Volta e faz direito.",
+        "Tá achando que é festa?", "Treino sério exige tudo.", "Não pule o leg day.", "Nem o supino.", "Completa isso aí.",
+        "Estou de olho.", "Não valida treino fofo.", "Quer resultado? Faça tudo.", "Sem atalhos.", "O caminho é completo.",
+        "Não deixe nada pra trás.", "Zere o treino.", "Marque todas as opções.", "Falta pouco, não desista.", "Faça valer a pena.",
+        "Não seja meio termo.", "Tudo ou nada.", "100% ou 0%.", "Vai sair devendo?", "O app sabe que faltou.",
+        "Não mente pra mim.", "Seu corpo sabe.", "Termina!", "Faz tudo!", "Não enrola.", "Sem migué.",
+        "Que vergonha...", "Pensei que fosse monstro.", "Cadê a disciplina?", "Falta um check.", "Ou dois.", "Ou três.",
+        "Tá quase, não para.", "Finalizar incompleto é pecado.", "O deus do ferro tá vendo.", "Não decepcione o Arnold.", "Faça por merecer.",
+        "Conquiste o botão finalizar.", "Ele só libera se fizer tudo.", "Bloqueado por preguiça.", "Volte e treine.", "Não tem essa de pular.",
+        "Cada exercício conta.", "Não desperdice.", "Valorize seu tempo.", "Faça bem feito.", "Qualidade total.",
+        "Não aceito meio treino.", "Sou exigente.", "Você também deveria ser.", "Bora marcar tudo.", "Tica tudo!",
+        "Checklist incompleto.", "Erro 404: Exercício não encontrado.", "Corrija isso.", "Agora sim (se fizer).", "Vai logo!",
+        "Quero ver tudo verde.", "Sem caixas vazias.", "Preenchimento obrigatório.", "Treino é sagrado.", "Amém?", "Bora terminar!"
+    ];
 
     const GYM_LAT = -19.8285; const GYM_LON = -40.3735; const GYM_RADIUS_KM = 0.1;
 
@@ -288,7 +352,7 @@
                     }
                 });
             } else {
-                this.data = JSON.parse(localStorage.getItem('gymData_v36')) || {};
+                this.data = JSON.parse(localStorage.getItem('gymData_v37')) || {};
                 this.historyData = JSON.parse(localStorage.getItem('gymHistory')) || [];
                 this.refreshCurrentScreen();
             }
@@ -296,7 +360,7 @@
 
         save: function() { 
             if(window.dbInstance) window.dbSet(window.dbRef(window.dbInstance, 'users'), this.data);
-            else localStorage.setItem('gymData_v36', JSON.stringify(this.data)); 
+            else localStorage.setItem('gymData_v37', JSON.stringify(this.data)); 
         },
 
         handleBack: function() { window.history.back(); },
@@ -307,14 +371,11 @@
             this.restoreScreen(newState);
         },
 
-        // --- FUNÇÃO CORRIGIDA: VOLTA AO MENU ---
         returnToMenu: function() {
             document.getElementById('modal-msg').style.display='none';
-            // Cálculo mágico: Volta 2 telas (Active -> Select -> Menu) + o número de vezes que tentou sair
+            // Volta 2 telas (Active -> Select -> Menu) + o número de tentativas
             const jumps = 2 + this.quitAttempts;
             window.history.go(-jumps);
-            
-            // Reseta contador
             this.quitAttempts = 0;
         },
 
