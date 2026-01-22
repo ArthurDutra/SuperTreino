@@ -1,4 +1,4 @@
-const CACHE_NAME = 'super-treino-v1';
+const CACHE_NAME = 'super-treino-v27'; // Mudei a versão aqui
 const urlsToCache = [
   './',
   './index.html',
@@ -7,6 +7,7 @@ const urlsToCache = [
 ];
 
 self.addEventListener('install', event => {
+  self.skipWaiting(); // Força a atualização imediata
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(urlsToCache))
