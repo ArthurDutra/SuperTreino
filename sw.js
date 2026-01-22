@@ -1,4 +1,4 @@
-const CACHE_NAME = 'super-treino-v30'; // Mude este número sempre que atualizar o código
+const CACHE_NAME = 'super-treino-v41-final';
 const urlsToCache = [
   './',
   './index.html',
@@ -6,16 +6,29 @@ const urlsToCache = [
   './icon.png'
 ];
 
-// Instalação e cache
 self.addEventListener('install', event => {
-  self.skipWaiting(); // Força atualização imediata
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(urlsToCache))
   );
 });
 
-// Responde com cache ou busca na rede
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheName !== CACHE_NAME) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+  return self.clients.claim();
+});
+
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
