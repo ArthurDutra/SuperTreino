@@ -11,15 +11,9 @@
 
     <style>
         :root { 
-            --bg: #121212; 
-            --card: #1e1e1e; 
-            --text: #ffffff; 
-            --success: #00ff88;
-            --danger: #ff4444;
-            --edit-mode: #ffb700;
+            --bg: #121212; --card: #1e1e1e; --text: #ffffff; 
+            --success: #00ff88; --danger: #ff4444; --edit-mode: #ffb700;
             --primary: #2575fc;
-            
-            /* Temas */
             --color-1: #00d4ff; --color-2: #ff007f; --color-3: #9d4edd;
             --color-4: #ff9e00; --color-5: #00b4d8; --color-6: #80ed99;
         }
@@ -30,57 +24,38 @@
         .screen { display: none; padding: 20px; animation: fadeIn 0.3s; min-height: 100vh; flex-direction: column; position: relative; }
         .visible { display: flex; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
         .empty-msg { text-align: center; color: #666; margin-top: 40px; font-style: italic; font-size: 14px; }
 
         /* HEADER */
         .header-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; position: sticky; top: 0; background: var(--bg); z-index: 50; padding: 15px 0; border-bottom: 1px solid #333; }
         .app-title { font-size: 20px; font-weight: bold; color: var(--text); letter-spacing: 1px; display: flex; align-items: center; }
         .user-title { font-size: 18px; font-weight: bold; text-transform: uppercase; }
-        
         .header-actions { display: flex; gap: 15px; }
-        .btn-icon { background: none; border: none; font-size: 24px; cursor: pointer; color: #fff; transition: transform 0.2s, color 0.2s; padding: 0; }
-        .btn-icon:active { transform: scale(0.9); }
+        .btn-icon { background: none; border: none; font-size: 24px; cursor: pointer; color: #fff; padding: 0; }
         .icon-active { color: var(--edit-mode); transform: scale(1.1); }
 
         /* LISTAS */
         #user-list, #workout-select-list { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 20px; }
         .card-wrapper { position: relative; width: 100%; max-width: 400px; }
-
-        .btn-large { 
-            width: 100%; padding: 25px 20px; border: none; border-radius: 16px; 
-            font-size: 20px; font-weight: bold; cursor: pointer; color: #fff; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3); text-transform: uppercase;
-            text-align: left; display: flex; justify-content: space-between; align-items: center;
-        }
-        
+        .btn-large { width: 100%; padding: 25px 20px; border: none; border-radius: 16px; font-size: 20px; font-weight: bold; cursor: pointer; color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.3); text-transform: uppercase; text-align: left; display: flex; justify-content: space-between; align-items: center; }
         .edit-input { background: rgba(0,0,0,0.2); border: 1px solid #555; color: #fff; padding: 5px; border-radius: 4px; font-family: inherit; font-size: inherit; width: 100%; }
         .edit-input-inline { width: 50px; text-align: center; margin: 0 2px; }
 
         /* CARDS */
-        .workout-select-card {
-            background: var(--card); border: 2px solid #333; color: #fff;
-            padding: 20px; border-radius: 16px; cursor: pointer;
-            width: 100%; text-align: left; position: relative; transition: 0.2s;
-        }
+        .workout-select-card { background: var(--card); border: 2px solid #333; color: #fff; padding: 20px; border-radius: 16px; cursor: pointer; width: 100%; text-align: left; position: relative; transition: 0.2s; }
         .workout-select-card:active { transform: scale(0.98); }
         .suggested-workout { border: 2px solid var(--success); box-shadow: 0 0 15px rgba(0, 255, 136, 0.15); }
-        .suggested-badge {
-            position: absolute; right: 15px; top: 15px; background: var(--success); color: #000;
-            font-size: 10px; font-weight: bold; padding: 4px 8px; border-radius: 4px; animation: pulse 2s infinite;
-        }
+        .suggested-badge { position: absolute; right: 15px; top: 15px; background: var(--success); color: #000; font-size: 10px; font-weight: bold; padding: 4px 8px; border-radius: 4px; animation: pulse 2s infinite; }
 
         /* EXERCÍCIOS */
         .workout-container { padding-bottom: 100px; }
         .exercise-card { background: var(--card); border-radius: 16px; padding: 20px; margin-bottom: 15px; border-left: 5px solid #555; position: relative; }
         .exercise-header { display: flex; align-items: flex-start; gap: 15px; margin-bottom: 15px; }
-        
         .chk-container { position: relative; display: flex; align-items: center; min-width: 30px; }
         input[type="checkbox"] { width: 30px; height: 30px; cursor: pointer; opacity: 0; position: absolute; z-index: 2; }
         .custom-chk { width: 28px; height: 28px; background: #333; border-radius: 8px; display: inline-block; position: relative; pointer-events: none; transition: 0.2s; border: 2px solid #555; }
         input:checked + .custom-chk { background: var(--success); border-color: var(--success); }
         input:checked + .custom-chk::after { content: '✔'; color: #000; position: absolute; left: 5px; top: 0px; font-weight: bold; font-size: 18px; }
-
         .ex-info { flex-grow: 1; }
         .ex-name { font-size: 18px; font-weight: 600; display: block; margin-bottom: 6px; color: #fff; }
         .ex-meta { display: flex; gap: 10px; align-items: center; font-size: 14px; color: #aaa; }
@@ -146,9 +121,9 @@
     <div id="screen-menu" class="screen visible">
         <div class="header-bar">
             <div class="app-title"><span class="app-logo">⚡</span> SUPERTREINO</div>
-            
             <div class="header-actions">
-                <button class="btn-icon" id="btn-install-header" title="Instalar App">📲</button>
+                <button class="btn-icon" id="btn-smart-install" title="Instalar ou Atualizar">🔄</button>
+                
                 <button class="btn-icon" onclick="window.app.showHistory()" title="Histórico">📋</button>
                 <button class="btn-icon" id="btn-edit-menu" onclick="window.app.toggleMenuEdit()" title="Editar">✏️</button>
             </div>
@@ -242,41 +217,62 @@
 
     <script>
       let deferredPrompt;
-      const installBtn = document.getElementById('btn-install-header');
+      const smartBtn = document.getElementById('btn-smart-install');
 
-      // 1. Ouve se pode instalar (Android/PC)
+      // Estado Padrão: Botão de Atualizar (Se já instalado ou não suportado)
+      smartBtn.innerText = "🔄";
+      smartBtn.title = "Atualizar App / Limpar Cache";
+
+      // 1. Se o navegador disser que pode instalar, mudamos o botão para Instalar
       window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        console.log("App pode ser instalado!");
+        smartBtn.innerText = "📲"; // Muda ícone para celular
+        smartBtn.title = "Instalar Aplicativo";
+        console.log("Modo Instalação Ativado");
       });
 
-      // 2. Clique no Botão do Cabeçalho
-      installBtn.addEventListener('click', (e) => {
-        const isIos = /iPhone|iPad|iPod/.test(navigator.userAgent);
-        
+      // 2. Ação do Botão
+      smartBtn.addEventListener('click', (e) => {
+        // Se temos o evento de instalação, instalamos
         if (deferredPrompt) {
-            // Android/PC (Automático)
             deferredPrompt.prompt();
             deferredPrompt.userChoice.then((choiceResult) => {
                 if (choiceResult.outcome === 'accepted') {
-                    console.log('Usuário aceitou instalar');
+                    // Se instalou, volta a ser botão de atualizar
+                    smartBtn.innerText = "🔄";
+                    deferredPrompt = null;
                 }
-                deferredPrompt = null;
             });
-        } else if (isIos) {
-            // iPhone (Manual)
-            alert("Para instalar no iPhone:\n1. Toque no botão de Compartilhar (quadrado com seta ⬆️)\n2. Escolha 'Adicionar à Tela de Início'.");
-        } else {
-            // Já instalado ou não suportado
-            alert("O App já parece estar instalado ou seu navegador não suporta instalação automática.\n\nTente buscar nos seus aplicativos ou use a opção 'Adicionar à Tela Inicial' no menu do navegador.");
+        } 
+        // Se NÃO temos evento (já instalado ou iOS), forçamos atualização
+        else {
+            const isIos = /iPhone|iPad|iPod/.test(navigator.userAgent);
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+
+            if (isIos && !isStandalone) {
+                alert("Para instalar no iPhone:\nToque em Compartilhar ⬆️ e escolha 'Adicionar à Tela de Início'.");
+            } else {
+                if(confirm("Deseja forçar a atualização do App e recarregar?")) {
+                    // Força limpeza de cache do Service Worker
+                    if ('serviceWorker' in navigator) {
+                        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                            for(let registration of registrations) { registration.unregister(); }
+                        });
+                        caches.keys().then(names => {
+                            for (let name of names) caches.delete(name);
+                        });
+                    }
+                    window.location.reload(true);
+                }
+            }
         }
       });
 
-      // 3. Registrar Service Worker
+      // Registrar Service Worker
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js').then(reg => console.log('SW ok')).catch(err => console.log('SW falhou'));
+          navigator.serviceWorker.register('./sw.js');
         });
       }
     </script>
@@ -306,7 +302,7 @@
                     this.historyData = val ? Object.keys(val).map(k => ({...val[k], firebaseId: k})).sort((a,b) => b.id - a.id) : [];
                 });
             } else {
-                this.data = JSON.parse(localStorage.getItem('gymData_v26')) || {};
+                this.data = JSON.parse(localStorage.getItem('gymData_v27')) || {};
                 this.historyData = JSON.parse(localStorage.getItem('gymHistory')) || [];
                 this.refreshCurrentScreen();
             }
@@ -314,7 +310,7 @@
 
         save: function() { 
             if(window.dbInstance) window.dbSet(window.dbRef(window.dbInstance, 'users'), this.data);
-            else localStorage.setItem('gymData_v26', JSON.stringify(this.data)); 
+            else localStorage.setItem('gymData_v27', JSON.stringify(this.data)); 
         },
 
         // --- NAVEGAÇÃO ---
