@@ -79,14 +79,18 @@
         .editing .btn-large, .editing .workout-select-card, .editing .exercise-card { border: 1px dashed #555; pointer-events: none; }
         .editing .edit-input, .editing .edit-controls-floating { pointer-events: auto; }
 
-        /* BOTÃO DE INSTALAÇÃO */
-        #btn-install-app { display: none; width: 100%; max-width: 400px; padding: 15px; margin-top: 20px; background: #2575fc; color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(37, 117, 252, 0.3); text-transform: uppercase; letter-spacing: 1px; animation: pulseBtn 2s infinite; }
-        @keyframes pulseBtn { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
-
         /* FOOTER */
         .footer-fixed { position: fixed; bottom: 0; left: 0; width: 100%; padding: 20px; background: linear-gradient(to top, var(--bg) 80%, transparent); display: flex; justify-content: center; z-index: 90; pointer-events: none; }
         .btn-finish { width: 100%; max-width: 400px; padding: 18px; background: var(--success); color: #000; font-weight: 800; border: none; border-radius: 50px; font-size: 16px; text-transform: uppercase; box-shadow: 0 5px 20px rgba(0, 255, 136, 0.3); cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; pointer-events: auto; }
         .btn-finish:disabled { background: #333; color: #555; box-shadow: none; cursor: default; }
+
+        /* TEMAS */
+        .theme-1 { background: linear-gradient(135deg, #005f73, var(--color-1)); } .bd-theme-1 { border-left-color: var(--color-1); }
+        .theme-2 { background: linear-gradient(135deg, #720040, var(--color-2)); } .bd-theme-2 { border-left-color: var(--color-2); }
+        .theme-3 { background: linear-gradient(135deg, #480ca8, var(--color-3)); } .bd-theme-3 { border-left-color: var(--color-3); }
+        .theme-4 { background: linear-gradient(135deg, #9d4600, var(--color-4)); } .bd-theme-4 { border-left-color: var(--color-4); }
+        .theme-5 { background: linear-gradient(135deg, #005063, var(--color-5)); } .bd-theme-5 { border-left-color: var(--color-5); }
+        .theme-6 { background: linear-gradient(135deg, #2b9348, var(--color-6)); } .bd-theme-6 { border-left-color: var(--color-6); }
 
         /* HISTÓRICO */
         .history-item { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; flex-direction: column; border-left: 4px solid #555; position: relative; }
@@ -101,8 +105,6 @@
         /* MODAIS */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; text-align: center; }
         .msg-content { background: #222; padding: 30px; border-radius: 15px; border: 2px solid var(--success); max-width: 400px; width: 100%; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
-        #modal-install { border-color: #2575fc; }
-        .install-guide-ios { font-size: 16px; color: #ddd; margin: 20px 0; text-align: left; }
         #db-status { position: fixed; bottom: 5px; right: 5px; font-size: 10px; color: #555; z-index: 200; }
         .status-online { color: var(--success) !important; }
     </style>
@@ -115,7 +117,6 @@
         <div class="header-bar">
             <div class="app-title"><span class="app-logo">⚡</span> SUPERTREINO</div>
             <div class="header-actions">
-                <button class="btn-icon" id="btn-install-header" title="Instalar/Atualizar">📲</button>
                 <button class="btn-icon" onclick="window.app.showHistory()" title="Histórico">📋</button>
                 <button class="btn-icon" id="btn-edit-menu" onclick="window.app.toggleMenuEdit()" title="Editar">✏️</button>
             </div>
@@ -126,7 +127,7 @@
 
     <div id="screen-workout-select" class="screen">
         <div class="header-bar">
-            <button class="btn-icon" onclick="window.app.handleBack()">⬅️</button>
+            <button class="btn-icon" onclick="window.history.back()">⬅️</button>
             <span class="user-title" id="select-user-title">...</span>
             <button class="btn-icon" id="btn-edit-select" onclick="window.app.toggleSelectEditMode()" title="Editar">✏️</button>
         </div>
@@ -136,7 +137,7 @@
 
     <div id="screen-active-workout" class="screen">
         <div class="header-bar">
-            <button class="btn-icon" onclick="window.app.handleBack()">⬅️</button>
+            <button class="btn-icon" onclick="window.history.back()">⬅️</button>
             <span class="user-title" id="active-title">Treino A</span>
             <button class="btn-icon" id="btn-edit-active" onclick="window.app.toggleActiveEditMode()" title="Editar">✏️</button>
         </div>
@@ -149,7 +150,7 @@
 
     <div id="screen-history" class="screen">
         <div class="header-bar">
-            <button class="btn-icon" onclick="window.app.handleBack()">⬅️</button>
+            <button class="btn-icon" onclick="window.history.back()">⬅️</button>
             <span class="user-title">Histórico</span>
             <button class="btn-icon" onclick="window.app.clearAllHistory()">🗑️</button>
         </div>
@@ -162,22 +163,6 @@
             <p id="quote-text" style="color:#ddd; margin: 20px 0; font-style: italic; font-size: 18px;">...</p>
             <span id="gps-status" style="font-size:12px; color:#aaa;"></span>
             <button class="btn-finish" style="margin-top:20px; width:100%" onclick="document.getElementById('modal-msg').style.display='none'; window.app.goHome()">Fechar</button>
-        </div>
-    </div>
-
-    <div id="modal-install" class="modal-overlay">
-        <div class="msg-content" style="border-color: #2575fc;">
-            <h2 style="color: #2575fc">COMO INSTALAR 📲</h2>
-            <div id="install-guide-ios" style="display:none; text-align:left; color:#ddd; margin-top:20px;">
-                <p>1. Toque no botão de <strong>Compartilhar</strong> (quadrado com seta).</p>
-                <p>2. Escolha <strong>"Adicionar à Tela de Início"</strong>.</p>
-                <p>3. Confirme em <strong>Adicionar</strong>.</p>
-            </div>
-            <div id="install-guide-android" style="display:none; text-align:left; color:#ddd; margin-top:20px;">
-                <p>1. Toque nos <strong>3 pontinhos</strong> do navegador.</p>
-                <p>2. Escolha <strong>"Instalar aplicativo"</strong> ou "Adicionar à Tela Inicial".</p>
-            </div>
-            <button class="btn-finish" style="background:#333; margin-top:20px;" onclick="document.getElementById('modal-install').style.display='none'">Fechar</button>
         </div>
     </div>
 
@@ -214,43 +199,14 @@
     </script>
 
     <script>
-      let deferredPrompt;
-      const installBtn = document.getElementById('btn-install-header');
-      const modalInstall = document.getElementById('modal-install');
-      const guideIOS = document.getElementById('install-guide-ios');
-      const guideAndroid = document.getElementById('install-guide-android');
-
-      window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault(); deferredPrompt = e;
-        installBtn.innerText = "📲"; installBtn.style.color = "#00ff88";
-      });
-
-      installBtn.addEventListener('click', () => {
-        const isIos = /iPhone|iPad|iPod/.test(navigator.userAgent);
-        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-
-        if (isStandalone) {
-            if(confirm("App já instalado. Deseja recarregar para atualizar?")) window.location.reload(true);
-            return;
-        }
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => { if (choiceResult.outcome === 'accepted') deferredPrompt = null; });
-            return;
-        }
-        modalInstall.style.display = 'flex';
-        if (isIos) { guideIOS.style.display = 'block'; guideAndroid.style.display = 'none'; } 
-        else { guideIOS.style.display = 'none'; guideAndroid.style.display = 'block'; }
-      });
-
+      // Service Worker (Opcional, apenas registra se existir)
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); });
       }
     </script>
 
     <script>
-    // 100 FRASES DE SUCESSO
-    const successMessages = Array(100).fill().map((_, i) => [
+    const successMessages = [
         "Tá pago! Agora pode chorar no banho.", "A dor é temporária, a glória é eterna.", "Suor é gordura chorando!", "Treino feito! Finja que consegue andar.", 
         "Mais um dia vencido. O sofá te espera.", "Você treina para comer sem culpa!", "Shape de respeito em construção.", "Parabéns! Você é melhor que quem não veio.",
         "Zero dias sem reclamar, mas zero sem treinar!", "Diz a lenda que depois da dor vem o músculo.", "A meta é ficar irreconhecível.", "Foco, força e fé!",
@@ -273,10 +229,9 @@
         "Faça seu 'eu' do futuro feliz.", "Não é sorte, é suor.", "Constância é a chave.", "Esmaga que cresce!", "Bora ficar gigante!",
         "Shape inexplicável.", "Treino de gente grande.", "Sai da frente que tô passando!", "Hoje o treino rendeu.", "Missão dada é missão cumprida.",
         "Nada vence o trabalho duro.", "O topo é logo ali.", "Monstro saindo da jaula!", "Foco total.", "Sem massagem!", "Dale!", "Brabo demais!"
-    ][i % 96]);
+    ];
 
-    // 100 FRASES DE FUJÃO
-    const quitMessages = Array(100).fill().map((_, i) => [
+    const quitMessages = [
         "Já vai? O sofá te chamou?", "Fugindo do leg day?", "Sua mãe disse que você podia sair?", "Volta aqui, frango!", "Ei, o treino não acabou!",
         "Desistir é para os fracos.", "Você prometeu que ia treinar!", "A porta da rua é serventia da vergonha.", "Vai deixar o peso ganhar?", "Não ouse sair agora!",
         "O cronômetro tá te julgando.", "Vai chorar no banho ou terminar?", "Se sair agora, vira estatística.", "Quem foge não cresce.", "Tá com medinho?",
@@ -295,10 +250,9 @@
         "Não abandone os pesos.", "Eles sentem sua falta.", "Se sair, zero whey hoje.", "Você aguenta.", "Confio em você.", "Bora!",
         "Não para!", "Continua!", "Mais um pouco!", "Vai valer a pena!", "Não saia da tela.", "Mantenha o foco.", "Olho no objetivo.",
         "Se sair, engorda 1kg.", "Brincadeira (ou não).", "Fica aí.", "Treino sério.", "Sem corpo mole.", "Bora monstro!", "Vence isso!"
-    ][i % 96]);
+    ];
 
-    // 100 FRASES DE COBRANÇA
-    const incompleteMessages = Array(100).fill().map((_, i) => [
+    const incompleteMessages = [
         "Roubando repetição? Que feio.", "Vai deixar exercício pra amanhã?", "Treino pela metade, resultado pela metade.", "Acha que eu não vi essa caixa vazia?", "Assim você não fica monstro.",
         "Tá esquecendo coisa pra trás!", "Volta lá e marca tudo.", "Não adianta mentir pro app.", "Seu bíceps tá chorando.", "Finalizar assim? Sério?",
         "Você consegue fazer tudo!", "Não seja preguiçoso.", "Faltou um ali, ó.", "O treino é completo ou não é.", "Quem rouba no treino, rouba na vida.",
@@ -317,7 +271,7 @@
         "Não aceito meio treino.", "Sou exigente.", "Você também deveria ser.", "Bora marcar tudo.", "Tica tudo!",
         "Checklist incompleto.", "Erro 404: Exercício não encontrado.", "Corrija isso.", "Agora sim (se fizer).", "Vai logo!",
         "Quero ver tudo verde.", "Sem caixas vazias.", "Preenchimento obrigatório.", "Treino é sagrado.", "Amém?", "Bora terminar!"
-    ][i % 96]);
+    ];
 
     const GYM_LAT = -19.8285; const GYM_LON = -40.3735; const GYM_RADIUS_KM = 0.1;
 
@@ -327,14 +281,28 @@
 
         init: function() {
             if (!history.state) history.replaceState({ screen: 'screen-menu' }, '');
+            
+            // LÓGICA DE VOLTAR (POPSTATE)
             window.onpopstate = (event) => {
-                // Intercepta botão voltar do celular se estiver treinando
-                if (this.startTime && document.getElementById('screen-active-workout').classList.contains('visible')) {
-                    this.handleBack(); // Chama a lógica de proteção
-                } else if (event.state) {
-                    this.restoreScreen(event.state);
+                if (document.getElementById('screen-active-workout').classList.contains('visible') && this.startTime) {
+                    // Se estiver treinando e tentar voltar:
+                    const randomMsg = quitMessages[Math.floor(Math.random() * quitMessages.length)];
+                    
+                    // Bloqueia e pergunta
+                    if (confirm(`🚨 ${randomMsg}\n\nO treino está rolando. Sair cancela o tempo. Deseja sair?`)) {
+                        // Confirmou sair
+                        this.startTime = null; // Zera timer
+                        window.onbeforeunload = null;
+                        if (event.state) this.restoreScreen(event.state);
+                        else this.toggleScreen('screen-workout-select', false);
+                    } else {
+                        // Cancelou a saída: Empurra o estado de volta para ficar na tela
+                        history.pushState({ screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex }, '');
+                    }
                 } else {
-                    this.toggleScreen('screen-menu', false);
+                    // Navegação normal
+                    if (event.state) this.restoreScreen(event.state);
+                    else this.toggleScreen('screen-menu', false);
                 }
             };
 
@@ -351,7 +319,7 @@
                     }
                 });
             } else {
-                this.data = JSON.parse(localStorage.getItem('gymData_v30')) || {};
+                this.data = JSON.parse(localStorage.getItem('gymData_v31')) || {};
                 this.historyData = JSON.parse(localStorage.getItem('gymHistory')) || [];
                 this.refreshCurrentScreen();
             }
@@ -359,29 +327,10 @@
 
         save: function() { 
             if(window.dbInstance) window.dbSet(window.dbRef(window.dbInstance, 'users'), this.data);
-            else localStorage.setItem('gymData_v30', JSON.stringify(this.data)); 
+            else localStorage.setItem('gymData_v31', JSON.stringify(this.data)); 
         },
 
-        // --- SISTEMA DE VOLTAR E NAVEGAÇÃO ---
-        handleBack: function() {
-            // Se estiver na tela de treino e o timer estiver rodando
-            if (this.startTime && document.getElementById('screen-active-workout').classList.contains('visible')) {
-                const randomMsg = quitMessages[Math.floor(Math.random() * quitMessages.length)];
-                
-                if (!confirm(`🚨 ${randomMsg}\n\nO treino está rolando e o timer de 10 min será cancelado. Deseja realmente sair?`)) {
-                    // Se o usuário cancelar, empurramos o estado de volta para impedir a saída
-                    history.pushState({ screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex }, '');
-                    return;
-                }
-                // Se confirmou sair:
-                this.startTime = null; 
-                window.onbeforeunload = null;
-                window.history.back(); // Agora sim volta
-            } else {
-                window.history.back();
-            }
-        },
-
+        // --- NAVEGAÇÃO ---
         navigate: function(screenId, stateData = {}) {
             const newState = { screen: screenId, ...stateData };
             history.pushState(newState, '');
@@ -508,11 +457,11 @@
             const w = u.workouts[this.currentWorkoutIndex];
             if (!w) return;
 
+            // Timer só se tiver exercícios e não estiver rodando
             const hasExercises = w.exercises && w.exercises.length > 0;
-            // Só inicia o timer se for a primeira vez entrando na tela
             if (!this.startTime && hasExercises) {
                 this.startTime = Date.now();
-                window.onbeforeunload = function() { return "Treino rodando."; };
+                window.onbeforeunload = function() { return "Treino rodando."; }; // Proteção de refresh/fechar aba
             }
 
             const cont = document.getElementById('active-workout-container');
@@ -525,7 +474,7 @@
                 w.exercises = [];
                 cont.innerHTML = '<p class="empty-msg">Este treino está vazio.<br>Toque na caneta ✏️ para adicionar exercícios.</p>';
                 btnFinish.disabled = true; btnFinish.innerText = "Adicione exercícios para iniciar";
-                this.startTime = null; window.onbeforeunload = null;
+                this.startTime = null; 
             } else {
                 btnFinish.disabled = false; btnFinish.innerText = "🏁 Finalizar";
             }
@@ -657,10 +606,12 @@
             document.getElementById('modal-msg').style.display = 'flex';
             document.getElementById('quote-text').innerText = successMessages[Math.floor(Math.random()*successMessages.length)];
 
+            // Timer Check
             const dur = (Date.now() - this.startTime)/60000;
             const wName = this.data[this.currentUser].workouts[this.currentWorkoutIndex].title;
             const isCheat = dur < 10;
 
+            // Para o timer
             this.startTime = null; 
             window.onbeforeunload = null;
 
@@ -671,7 +622,7 @@
                     this.saveHist(wName, locName, isCheat, pending ? ["Incompleto"] : []);
                 }, () => {
                     this.saveHist(wName, "GPS Desativado", isCheat, pending ? ["Incompleto"] : []);
-                }, {enableHighAccuracy: true, timeout: 10000});
+                }, {enableHighAccuracy: true, timeout: 10000}); // Aguarda 10s pelo GPS
             } else {
                 this.saveHist(wName, "Sem GPS", isCheat, pending ? ["Incompleto"] : []);
             }
