@@ -15,10 +15,18 @@
 
     <style>
         :root { 
-            --bg: #121212; --card: #1f1f23; --text: #ffffff; 
-            --primary: #c084fc; --secondary: #fb923c; --accent: #facc15;
-            --success: #4ade80; --danger: #ef4444; --edit-mode: #facc15;
-            /* Temas */
+            /* Cores Baseadas no Ícone */
+            --bg: #121212; 
+            --card: #1f1f23; 
+            --text: #ffffff; 
+            --primary: #c084fc; 
+            --secondary: #fb923c;
+            --accent: #facc15;
+            --success: #4ade80;
+            --danger: #ef4444;
+            --edit-mode: #facc15;
+            
+            /* Temas de Usuário */
             --color-1: #38bdf8; --color-2: #f472b6; --color-3: #a78bfa;
             --color-4: #fb923c; --color-5: #22d3ee; --color-6: #4ade80;
         }
@@ -26,14 +34,16 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body { 
-            font-family: 'Poppins', sans-serif; background-color: var(--bg); color: var(--text); 
+            font-family: 'Poppins', sans-serif; 
+            background-color: var(--bg); 
+            color: var(--text); 
             margin: 0; padding: 0; padding-bottom: 50px; 
         }
         
         /* GERAL */
-        .screen { display: none; padding: 20px; animation: fadeIn 0.3s; min-height: 100vh; flex-direction: column; position: relative; }
+        .screen { display: none; padding: 20px; animation: fadeIn 0.4s; min-height: 100vh; flex-direction: column; position: relative; }
         .visible { display: flex; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .empty-msg { text-align: center; color: #888; margin-top: 40px; font-style: italic; font-size: 14px; font-weight: 400; }
 
@@ -46,6 +56,7 @@
         }
         .app-title { font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: 0.5px; display: flex; align-items: center; text-transform: uppercase; font-style: italic; }
         .user-title { font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        
         .header-actions { display: flex; gap: 15px; }
         .btn-icon { background: none; border: none; font-size: 24px; cursor: pointer; color: #fff; padding: 0; transition: transform 0.2s; }
         .btn-icon:active { transform: scale(0.9); }
@@ -60,15 +71,26 @@
             font-size: 18px; font-weight: 700; cursor: pointer; color: #fff; 
             box-shadow: 0 8px 20px rgba(0,0,0,0.3); text-transform: uppercase;
             text-align: left; display: flex; justify-content: space-between; align-items: center;
-            transition: transform 0.1s; font-family: 'Poppins', sans-serif;
+            transition: transform 0.1s, box-shadow 0.1s;
+            font-family: 'Poppins', sans-serif;
         }
-        .btn-large:active { transform: scale(0.98); }
+        .btn-large:active { transform: scale(0.98); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         
+        /* INPUTS DE EDIÇÃO (CORRIGIDO TAMANHO) */
         .edit-input { 
-            background: rgba(255,255,255,0.1); border: 1px solid #555; color: #fff; 
-            padding: 10px; border-radius: 8px; font-family: inherit; font-size: inherit; 
-            width: 100%; box-sizing: border-box; font-weight: bold; margin-bottom: 5px;
+            background: rgba(255,255,255,0.1); 
+            border: 1px solid #555; 
+            color: #fff; 
+            padding: 10px; 
+            border-radius: 8px; 
+            font-family: inherit; 
+            font-size: inherit; 
+            width: 100%; 
+            box-sizing: border-box; /* Garante que padding não estoure */
+            font-weight: bold; 
+            margin-bottom: 5px;
         }
+        .edit-input:focus { border-color: var(--accent); outline: none; }
         .edit-input-inline { width: 50px; text-align: center; margin: 0 2px; background: #333; border: none; display: inline-block; }
 
         /* CARDS DE TREINO */
@@ -78,63 +100,98 @@
             width: 100%; text-align: left; position: relative; transition: 0.2s;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-        .workout-select-card h3 { margin: 0 0 5px 0; font-size: 20px; overflow-wrap: break-word; } 
+        .workout-select-card h3 { margin: 0 0 5px 0; font-size: 20px; overflow-wrap: break-word; }
         .workout-select-card p { margin: 0; color: #888; font-size: 14px; font-weight: 400; }
         .workout-select-card:active { transform: scale(0.98); background: #25252a; }
+        
         .suggested-workout { border: 2px solid var(--accent); box-shadow: 0 0 15px rgba(250, 204, 21, 0.15); }
-        .suggested-badge { position: absolute; right: 15px; top: 20px; background: var(--accent); color: #000; font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 20px; animation: pulse 2s infinite; }
+        .suggested-badge {
+            position: absolute; right: 15px; top: 20px; background: var(--accent); color: #000;
+            font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 20px; animation: pulse 2s infinite;
+        }
 
         /* EXERCÍCIOS */
         .workout-container { padding-bottom: 120px; }
-        .exercise-card { background: var(--card); border-radius: 18px; padding: 20px; margin-bottom: 15px; border-left: 6px solid #555; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .exercise-card { 
+            background: var(--card); border-radius: 18px; padding: 20px; margin-bottom: 15px; 
+            border-left: 6px solid #555; position: relative; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
         .exercise-header { display: flex; align-items: flex-start; gap: 15px; margin-bottom: 15px; }
+        
         .chk-container { position: relative; display: flex; align-items: center; min-width: 32px; }
         input[type="checkbox"] { width: 32px; height: 32px; cursor: pointer; opacity: 0; position: absolute; z-index: 2; }
-        .custom-chk { width: 32px; height: 32px; background: #2a2a2a; border-radius: 10px; display: inline-block; position: relative; pointer-events: none; transition: 0.3s; border: 2px solid #444; }
+        .custom-chk { 
+            width: 32px; height: 32px; background: #2a2a2a; border-radius: 10px; 
+            display: inline-block; position: relative; pointer-events: none; transition: 0.3s; 
+            border: 2px solid #444;
+        }
         input:checked + .custom-chk { background: var(--success); border-color: var(--success); transform: scale(1.1); }
         input:checked + .custom-chk::after { content: '✔'; color: #000; position: absolute; left: 7px; top: 1px; font-weight: 800; font-size: 20px; }
+
         .ex-info { flex-grow: 1; min-width: 0; }
         .ex-name { font-size: 18px; font-weight: 600; display: block; margin-bottom: 6px; color: #fff; word-wrap: break-word; }
         .ex-meta { display: flex; gap: 10px; align-items: center; font-size: 14px; color: #bbb; font-weight: 500; flex-wrap: wrap; }
         .badge { background: #333; padding: 4px 12px; border-radius: 8px; font-weight: 700; font-size: 12px; color: #fff; }
         .btn-video { color: var(--secondary); text-decoration: none; font-weight: 800; border: 2px solid var(--secondary); padding: 2px 10px; border-radius: 8px; font-size: 10px; text-transform: uppercase; transition: 0.2s; }
-        
+        .btn-video:hover { background: var(--secondary); color: #000; }
+
         /* PESO */
         .weight-control { margin-top: 15px; background: #151515; padding: 10px; border-radius: 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; border: 1px solid #333; }
         .weight-label { color: #666; font-size: 11px; margin-right: auto; padding-left: 5px; font-weight: 700; letter-spacing: 1px; }
-        .btn-weight { width: 42px; height: 42px; background: #333; border: none; border-radius: 12px; color: #fff; font-size: 24px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .btn-weight { width: 42px; height: 42px; background: #333; border: none; border-radius: 12px; color: #fff; font-size: 24px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .btn-weight:active { background: var(--primary); transform: scale(0.9); }
         .weight-display { flex-grow: 1; text-align: center; font-size: 20px; font-weight: 800; color: var(--primary); font-family: 'Poppins', monospace; cursor: pointer; }
         .no-load { color: #666; font-size: 12px; font-family: 'Poppins', sans-serif; letter-spacing: 1px; text-transform: uppercase; }
 
         /* EDIÇÃO */
         .edit-controls-floating { position: absolute; right: -10px; top: -10px; display: flex; flex-direction: column; gap: 8px; z-index: 10; animation: popIn 0.2s; pointer-events: none; opacity: 0; transition: 0.2s; }
         .editing .edit-controls-floating { opacity: 1; pointer-events: auto; }
-        .btn-float { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #fff; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.5); color: #fff; font-size: 14px; }
+        .btn-float { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #fff; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.5); color: #fff; font-size: 14px; transition: transform 0.2s; }
+        .btn-float:active { transform: scale(0.9); }
         .btn-del { background: var(--danger); }
         .btn-reorder { background: var(--secondary); border-color: #fff; }
         @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+        
         .btn-add-item { display: none; } 
         .editing .btn-add-item { display: block; width: 100%; max-width: 400px; padding: 20px; background: rgba(250, 204, 21, 0.1); border: 2px dashed var(--edit-mode); color: var(--edit-mode); border-radius: 16px; cursor: pointer; font-size: 16px; font-weight: 800; margin-top: 15px; text-align: center; }
+        
         .editing .btn-large, .editing .workout-select-card, .editing .exercise-card { border: 1px dashed #555; opacity: 0.8; }
+        /* AQUI: Garantimos que o clique no card não funciona, mas no input sim */
         .editing .card-wrapper > button, .editing .workout-select-card, .editing .exercise-card { pointer-events: none; }
         .editing .edit-input, .editing .edit-controls-floating, .editing .weight-display, .editing .btn-video { pointer-events: auto; }
 
         /* FOOTER */
         .footer-fixed { position: fixed; bottom: 0; left: 0; width: 100%; padding: 20px; background: linear-gradient(to top, var(--bg) 80%, transparent); display: flex; justify-content: center; z-index: 90; pointer-events: none; }
-        .btn-finish { width: 100%; max-width: 400px; padding: 20px; background: var(--success); color: #000; font-weight: 900; border: none; border-radius: 50px; font-size: 18px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 5px 25px rgba(74, 222, 128, 0.4); cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; pointer-events: auto; }
+        .btn-finish { 
+            width: 100%; max-width: 400px; padding: 20px; 
+            background: var(--success); color: #000; font-weight: 900; border: none; border-radius: 50px; 
+            font-size: 18px; text-transform: uppercase; letter-spacing: 1px;
+            box-shadow: 0 5px 25px rgba(74, 222, 128, 0.4); 
+            cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; pointer-events: auto; 
+            transition: transform 0.2s;
+        }
+        .btn-finish:active { transform: scale(0.98); }
         .btn-finish:disabled { background: #333; color: #555; box-shadow: none; cursor: default; }
 
         /* HISTÓRICO */
-        .history-item { background: var(--card); padding: 20px; border-radius: 16px; margin-bottom: 12px; display: flex; flex-direction: column; border-left: 5px solid #555; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .history-item { 
+            background: var(--card); padding: 20px; border-radius: 16px; margin-bottom: 12px; 
+            display: flex; flex-direction: column; border-left: 5px solid #555; position: relative; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
         .hist-top { display: flex; justify-content: space-between; width: 100%; align-items: flex-start; }
         .hist-date { font-weight: 700; color: #fff; font-size: 15px; }
         .hist-status { font-size: 24px; }
         .hist-user { font-weight: 700; font-size: 13px; margin-top: 5px; display: block; opacity: 0.8; }
-        .hist-loc { font-size: 11px; color: var(--success); background: rgba(74, 222, 128, 0.1); padding: 5px 10px; border-radius: 6px; width: fit-content; margin-top: 10px; font-weight: 600; }
+        .hist-loc { 
+            font-size: 11px; color: var(--success); background: rgba(74, 222, 128, 0.1); 
+            padding: 5px 10px; border-radius: 6px; width: fit-content; margin-top: 10px; font-weight: 600;
+        }
         .loc-bad { color: var(--secondary); background: rgba(251, 146, 60, 0.1); }
         .skipped-list { color: var(--secondary); font-size: 11px; margin-top: 8px; border-top: 1px solid #333; padding-top: 5px; font-weight: 600; }
 
-        /* MODAIS */
+        /* MODAL */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; text-align: center; backdrop-filter: blur(5px); }
         .msg-content { background: #1a1a1a; padding: 30px; border-radius: 25px; border: 2px solid var(--success); max-width: 400px; width: 100%; box-shadow: 0 0 30px rgba(74, 222, 128, 0.2); }
         #db-status { position: fixed; bottom: 5px; right: 5px; font-size: 10px; color: #555; z-index: 200; font-weight: bold; }
@@ -257,30 +314,21 @@
         isMenuEditing: false, isSelectEditing: false, isActiveEditing: false,
 
         init: function() {
-            // Garante que o estado inicial é o Menu
             if (!history.state) history.replaceState({ screen: 'screen-menu' }, '');
             
-            // Lógica Central do Botão Voltar (Físico ou UI)
             window.onpopstate = (event) => {
-                // Se estiver treinando, intercepta
                 if (document.getElementById('screen-active-workout').classList.contains('visible') && this.startTime) {
                     const randomMsg = quitMessages[Math.floor(Math.random() * quitMessages.length)];
-                    if (confirm(`🚨 ${randomMsg}\n\nSair agora cancela o treino. Confirmar?`)) {
+                    if (confirm(`🚨 ${randomMsg}\n\nO treino está rolando. Sair cancela o tempo. Deseja realmente sair?`)) {
                         this.startTime = null; window.onbeforeunload = null;
                         if (event.state) this.restoreScreen(event.state);
-                        else this.toggleScreen('screen-workout-select'); // Fallback
+                        else this.toggleScreen('screen-workout-select'); 
                     } else {
-                        // Cancela saída empurrando estado de volta
                         history.pushState({ screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex }, '');
                     }
                 } else {
-                    // Navegação normal
                     if (event.state) this.restoreScreen(event.state);
-                    else {
-                        // Se não tem estado (chegou no fim do histórico), estamos no Menu.
-                        // O navegador vai fechar/minimizar o app nativamente aqui.
-                        this.toggleScreen('screen-menu'); 
-                    }
+                    else this.toggleScreen('screen-menu'); 
                 }
             };
 
@@ -308,11 +356,7 @@
             else localStorage.setItem('gymData_v34', JSON.stringify(this.data)); 
         },
 
-        // --- NAVEGAÇÃO NATIVA ---
-        handleBack: function() {
-            // Simula o botão voltar do celular
-            window.history.back();
-        },
+        handleBack: function() { window.history.back(); },
 
         navigate: function(screenId, stateData = {}) {
             const newState = { screen: screenId, ...stateData };
@@ -338,7 +382,6 @@
             if (current === 'screen-active-workout') this.renderActiveWorkout();
         },
 
-        // --- TELAS ---
         renderMenu: function() {
             const list = document.getElementById('user-list'); list.innerHTML = '';
             const userKeys = Object.keys(this.data);
@@ -350,7 +393,8 @@
                 
                 let content = `<span>${u.name}</span> <span style="font-size:14px">➜</span>`;
                 if(this.isMenuEditing) {
-                    content = `<input type="text" class="edit-input" value="${u.name}" onchange="window.app.renameUser('${id}', this.value)">`;
+                    // STOP PROPAGATION HERE
+                    content = `<input type="text" class="edit-input" value="${u.name}" onclick="event.stopPropagation()" onchange="window.app.renameUser('${id}', this.value)">`;
                 }
 
                 const btn = document.createElement('button'); btn.className = `btn-large ${u.themeId}`;
@@ -402,7 +446,8 @@
                     const parts = w.title.split(' - ');
                     const prefix = parts.length > 1 ? parts[0] + ' - ' : '';
                     const name = parts.length > 1 ? parts.slice(1).join(' - ') : w.title;
-                    titleDisplay = `<h3>${prefix}<input type="text" class="edit-input" style="width:auto;display:inline-block" value="${name}" onclick="event.stopPropagation()" onchange="window.app.renameWorkout(${idx}, '${prefix}', this.value)"></h3>`;
+                    // FIX: INPUT WIDTH + STOP PROPAGATION
+                    titleDisplay = `<h3>${prefix}<input type="text" class="edit-input" style="width:100%; display:block; margin-top:5px" value="${name}" onclick="event.stopPropagation()" onchange="window.app.renameWorkout(${idx}, '${prefix}', this.value)"></h3>`;
                 }
 
                 card.innerHTML = `${isRec ? '<div class="suggested-badge">SUGERIDO</div>' : ''}${titleDisplay}<p>${w.exercises ? w.exercises.length : 0} exercícios</p>`;
@@ -493,7 +538,6 @@
             });
         },
 
-        // --- LÓGICA DE NEGÓCIO ---
         toggleMenuEdit: function() { this.isMenuEditing = !this.isMenuEditing; this.renderMenu(); },
         toggleSelectEditMode: function() { this.isSelectEditing = !this.isSelectEditing; this.renderWorkoutSelectScreen(); },
         toggleActiveEditMode: function() { this.isActiveEditing = !this.isActiveEditing; this.renderActiveWorkout(); },
@@ -557,7 +601,7 @@
         delHist: function(id, fid) { if(confirm('Apagar?')) { if(window.dbInstance&&fid) window.dbRemove(window.dbRef(window.dbInstance, `history/${fid}`)); else { this.historyData=this.historyData.filter(x=>x.id!==id); localStorage.setItem('gymHistory', JSON.stringify(this.historyData)); this.renderHistoryList(); } } },
         clearAllHistory: function() { if(confirm('Tudo?')) { if(window.dbInstance) window.dbRemove(window.dbRef(window.dbInstance, 'history')); else { localStorage.removeItem('gymHistory'); this.historyData=[]; this.renderHistoryList(); } } },
         
-        goHome: function() { window.history.back(); }, // Volta real do navegador
+        goHome: function() { window.history.back(); }, 
         toggleScreen: function(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('visible')); document.getElementById(id).classList.add('visible'); },
         updateEditIcon: function(bid, sid, isE) { const b=document.getElementById(bid); const s=document.getElementById(sid); if(isE) { b.innerText='💾'; b.classList.add('icon-active'); s.classList.add('editing'); } else { b.innerText='✏️'; b.classList.remove('icon-active'); s.classList.remove('editing'); } }
     };
