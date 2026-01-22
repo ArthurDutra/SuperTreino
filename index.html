@@ -88,19 +88,12 @@
         .btn-finish { width: 100%; max-width: 400px; padding: 18px; background: var(--success); color: #000; font-weight: 800; border: none; border-radius: 50px; font-size: 16px; text-transform: uppercase; box-shadow: 0 5px 20px rgba(0, 255, 136, 0.3); cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; pointer-events: auto; }
         .btn-finish:disabled { background: #333; color: #555; box-shadow: none; cursor: default; }
 
-        /* TEMAS */
-        .theme-1 { background: linear-gradient(135deg, #005f73, var(--color-1)); } .bd-theme-1 { border-left-color: var(--color-1); }
-        .theme-2 { background: linear-gradient(135deg, #720040, var(--color-2)); } .bd-theme-2 { border-left-color: var(--color-2); }
-        .theme-3 { background: linear-gradient(135deg, #480ca8, var(--color-3)); } .bd-theme-3 { border-left-color: var(--color-3); }
-        .theme-4 { background: linear-gradient(135deg, #9d4600, var(--color-4)); } .bd-theme-4 { border-left-color: var(--color-4); }
-        .theme-5 { background: linear-gradient(135deg, #005063, var(--color-5)); } .bd-theme-5 { border-left-color: var(--color-5); }
-        .theme-6 { background: linear-gradient(135deg, #2b9348, var(--color-6)); } .bd-theme-6 { border-left-color: var(--color-6); }
-
         /* HISTÓRICO */
         .history-item { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; flex-direction: column; border-left: 4px solid #555; position: relative; }
         .hist-top { display: flex; justify-content: space-between; width: 100%; }
         .hist-date { font-weight: bold; color: #fff; }
         .hist-status { font-size: 20px; }
+        .hist-user { font-weight: bold; font-size: 14px; margin-top: 5px; display: block; }
         .hist-loc { font-size: 12px; color: var(--success); background: rgba(0,255,136,0.1); padding: 4px 8px; border-radius: 4px; width: fit-content; margin-top: 8px; }
         .loc-bad { color: #ffaa00; background: rgba(255, 170, 0, 0.1); }
         .skipped-list { color: #ffaa00; font-size: 11px; margin-top: 8px; border-top: 1px solid #333; padding-top: 5px; }
@@ -133,7 +126,7 @@
 
     <div id="screen-workout-select" class="screen">
         <div class="header-bar">
-            <button class="btn-icon" onclick="window.history.back()">⬅️</button>
+            <button class="btn-icon" onclick="window.app.handleBack()">⬅️</button>
             <span class="user-title" id="select-user-title">...</span>
             <button class="btn-icon" id="btn-edit-select" onclick="window.app.toggleSelectEditMode()" title="Editar">✏️</button>
         </div>
@@ -143,7 +136,7 @@
 
     <div id="screen-active-workout" class="screen">
         <div class="header-bar">
-            <button class="btn-icon" onclick="window.history.back()">⬅️</button>
+            <button class="btn-icon" onclick="window.app.handleBack()">⬅️</button>
             <span class="user-title" id="active-title">Treino A</span>
             <button class="btn-icon" id="btn-edit-active" onclick="window.app.toggleActiveEditMode()" title="Editar">✏️</button>
         </div>
@@ -156,7 +149,7 @@
 
     <div id="screen-history" class="screen">
         <div class="header-bar">
-            <button class="btn-icon" onclick="window.history.back()">⬅️</button>
+            <button class="btn-icon" onclick="window.app.handleBack()">⬅️</button>
             <span class="user-title">Histórico</span>
             <button class="btn-icon" onclick="window.app.clearAllHistory()">🗑️</button>
         </div>
@@ -256,7 +249,7 @@
     </script>
 
     <script>
-    // 100 FRASES DE SUCESSO (Tudo Certo)
+    // 100 FRASES DE SUCESSO
     const successMessages = Array(100).fill().map((_, i) => [
         "Tá pago! Agora pode chorar no banho.", "A dor é temporária, a glória é eterna.", "Suor é gordura chorando!", "Treino feito! Finja que consegue andar.", 
         "Mais um dia vencido. O sofá te espera.", "Você treina para comer sem culpa!", "Shape de respeito em construção.", "Parabéns! Você é melhor que quem não veio.",
@@ -282,7 +275,7 @@
         "Nada vence o trabalho duro.", "O topo é logo ali.", "Monstro saindo da jaula!", "Foco total.", "Sem massagem!", "Dale!", "Brabo demais!"
     ][i % 96]);
 
-    // 100 FRASES DE "FUJÃO" (Tentar Sair no Meio)
+    // 100 FRASES DE FUJÃO
     const quitMessages = Array(100).fill().map((_, i) => [
         "Já vai? O sofá te chamou?", "Fugindo do leg day?", "Sua mãe disse que você podia sair?", "Volta aqui, frango!", "Ei, o treino não acabou!",
         "Desistir é para os fracos.", "Você prometeu que ia treinar!", "A porta da rua é serventia da vergonha.", "Vai deixar o peso ganhar?", "Não ouse sair agora!",
@@ -304,7 +297,7 @@
         "Se sair, engorda 1kg.", "Brincadeira (ou não).", "Fica aí.", "Treino sério.", "Sem corpo mole.", "Bora monstro!", "Vence isso!"
     ][i % 96]);
 
-    // 100 FRASES DE COBRANÇA (Finalizar Incompleto)
+    // 100 FRASES DE COBRANÇA
     const incompleteMessages = Array(100).fill().map((_, i) => [
         "Roubando repetição? Que feio.", "Vai deixar exercício pra amanhã?", "Treino pela metade, resultado pela metade.", "Acha que eu não vi essa caixa vazia?", "Assim você não fica monstro.",
         "Tá esquecendo coisa pra trás!", "Volta lá e marca tudo.", "Não adianta mentir pro app.", "Seu bíceps tá chorando.", "Finalizar assim? Sério?",
@@ -335,8 +328,14 @@
         init: function() {
             if (!history.state) history.replaceState({ screen: 'screen-menu' }, '');
             window.onpopstate = (event) => {
-                if (event.state) this.restoreScreen(event.state);
-                else this.toggleScreen('screen-menu', false);
+                // Intercepta botão voltar do celular se estiver treinando
+                if (this.startTime && document.getElementById('screen-active-workout').classList.contains('visible')) {
+                    this.handleBack(); // Chama a lógica de proteção
+                } else if (event.state) {
+                    this.restoreScreen(event.state);
+                } else {
+                    this.toggleScreen('screen-menu', false);
+                }
             };
 
             if (window.dbInstance) {
@@ -347,13 +346,12 @@
                 window.dbOnValue(window.dbRef(window.dbInstance, 'history'), (snap) => {
                     const val = snap.val();
                     this.historyData = val ? Object.keys(val).map(k => ({...val[k], firebaseId: k})).sort((a,b) => b.id - a.id) : [];
-                    // Atualiza a tela se estiver no histórico
                     if(document.getElementById('screen-history').classList.contains('visible')) {
                         this.renderHistoryList();
                     }
                 });
             } else {
-                this.data = JSON.parse(localStorage.getItem('gymData_v29')) || {};
+                this.data = JSON.parse(localStorage.getItem('gymData_v30')) || {};
                 this.historyData = JSON.parse(localStorage.getItem('gymHistory')) || [];
                 this.refreshCurrentScreen();
             }
@@ -361,24 +359,30 @@
 
         save: function() { 
             if(window.dbInstance) window.dbSet(window.dbRef(window.dbInstance, 'users'), this.data);
-            else localStorage.setItem('gymData_v29', JSON.stringify(this.data)); 
+            else localStorage.setItem('gymData_v30', JSON.stringify(this.data)); 
         },
 
-        // --- NAVEGAÇÃO SUPER SEGURA ---
-        navigate: function(screenId, stateData = {}) {
-            // Se tentar sair da tela de treino ATIVO
-            if (this.startTime && screenId !== 'screen-active-workout') {
+        // --- SISTEMA DE VOLTAR E NAVEGAÇÃO ---
+        handleBack: function() {
+            // Se estiver na tela de treino e o timer estiver rodando
+            if (this.startTime && document.getElementById('screen-active-workout').classList.contains('visible')) {
                 const randomMsg = quitMessages[Math.floor(Math.random() * quitMessages.length)];
                 
-                // SEMPRE PERGUNTA, independente de checkboxes
                 if (!confirm(`🚨 ${randomMsg}\n\nO treino está rolando e o timer de 10 min será cancelado. Deseja realmente sair?`)) {
-                    // Se cancelar a saída, empurra o estado de volta para manter na tela
-                    history.pushState({ screen: 'screen-active-workout', ...stateData }, '');
+                    // Se o usuário cancelar, empurramos o estado de volta para impedir a saída
+                    history.pushState({ screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex }, '');
                     return;
                 }
-                
-                this.startTime = null; window.onbeforeunload = null;
+                // Se confirmou sair:
+                this.startTime = null; 
+                window.onbeforeunload = null;
+                window.history.back(); // Agora sim volta
+            } else {
+                window.history.back();
             }
+        },
+
+        navigate: function(screenId, stateData = {}) {
             const newState = { screen: screenId, ...stateData };
             history.pushState(newState, '');
             this.restoreScreen(newState);
@@ -505,6 +509,7 @@
             if (!w) return;
 
             const hasExercises = w.exercises && w.exercises.length > 0;
+            // Só inicia o timer se for a primeira vez entrando na tela
             if (!this.startTime && hasExercises) {
                 this.startTime = Date.now();
                 window.onbeforeunload = function() { return "Treino rodando."; };
@@ -640,29 +645,36 @@
             let pending = false;
             for(let chk of checkboxes) { if(!chk.checked) pending = true; }
 
-            // AVISO DE EXERCÍCIO FALTANDO
             if(pending) {
                 const randomMsg = incompleteMessages[Math.floor(Math.random()*incompleteMessages.length)];
                 if(!confirm(`👀 ${randomMsg}\n\nDeseja finalizar mesmo faltando exercícios?`)) return;
             }
             
-            const btn = document.getElementById('btn-finish-main'); btn.innerText = "Salvando..."; btn.disabled = true;
+            // UI de carregamento
+            const btn = document.getElementById('btn-finish-main'); 
+            btn.innerText = "Localizando..."; 
+            btn.disabled = true;
             document.getElementById('modal-msg').style.display = 'flex';
-            
-            // Frase de sucesso aleatória
             document.getElementById('quote-text').innerText = successMessages[Math.floor(Math.random()*successMessages.length)];
 
             const dur = (Date.now() - this.startTime)/60000;
             const wName = this.data[this.currentUser].workouts[this.currentWorkoutIndex].title;
+            const isCheat = dur < 10;
 
-            this.startTime = null; window.onbeforeunload = null;
+            this.startTime = null; 
+            window.onbeforeunload = null;
 
             if(navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(p => {
                     const d = this.calcDist(p.coords.latitude, p.coords.longitude, GYM_LAT, GYM_LON);
-                    this.saveHist(wName, (d <= GYM_RADIUS_KM) ? "Na Academia" : "Fora da Academia", dur<10, skipped);
-                }, () => this.saveHist(wName, "GPS Desativado", dur<10, skipped), {enableHighAccuracy: true});
-            } else this.saveHist(wName, "Sem GPS", dur<10, []);
+                    const locName = (d <= GYM_RADIUS_KM) ? "Na Academia" : "Fora da Academia";
+                    this.saveHist(wName, locName, isCheat, pending ? ["Incompleto"] : []);
+                }, () => {
+                    this.saveHist(wName, "GPS Desativado", isCheat, pending ? ["Incompleto"] : []);
+                }, {enableHighAccuracy: true, timeout: 10000});
+            } else {
+                this.saveHist(wName, "Sem GPS", isCheat, pending ? ["Incompleto"] : []);
+            }
         },
         calcDist: function(lat1, lon1, lat2, lon2) {
             const R = 6371; 
@@ -675,8 +687,10 @@
             const reg = { id: Date.now(), date: new Date().toLocaleDateString('pt-BR'), user: this.data[this.currentUser].name, workoutTitle: title, location: loc, cheat: cheat, skipped: skip };
             if(window.dbInstance) window.dbPush(window.dbRef(window.dbInstance, 'history'), reg);
             else { this.historyData.unshift(reg); localStorage.setItem('gymHistory', JSON.stringify(this.historyData)); }
+            
             document.getElementById('gps-status').innerText = `📍 ${loc}`;
-            document.getElementById('btn-finish-main').innerText = "🏁 Finalizar"; document.getElementById('btn-finish-main').disabled = false;
+            document.getElementById('btn-finish-main').innerText = "🏁 Finalizar"; 
+            document.getElementById('btn-finish-main').disabled = false;
         },
 
         showHistory: function() { this.navigate('screen-history'); },
@@ -701,11 +715,10 @@
             if(confirm('Apagar?')) { 
                 if(window.dbInstance && fid) {
                     window.dbRemove(window.dbRef(window.dbInstance, `history/${fid}`)); 
-                    // O Listener do Firebase vai atualizar a tela automaticamente agora
                 } else { 
                     this.historyData = this.historyData.filter(x=>x.id!==id); 
                     localStorage.setItem('gymHistory', JSON.stringify(this.historyData)); 
-                    this.renderHistoryList(); // Atualização manual para modo offline
+                    this.renderHistoryList(); 
                 } 
             } 
         },
@@ -720,9 +733,7 @@
                 }
             } 
         },
-        goHome: function() { 
-            this.navigate('screen-menu'); 
-        },
+        goHome: function() { this.navigate('screen-menu'); },
         toggleScreen: function(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('visible'));
             document.getElementById(id).classList.add('visible');
