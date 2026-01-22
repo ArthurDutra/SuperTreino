@@ -121,7 +121,8 @@
         /* FOOTER FINALIZAR */
         .footer-fixed { position: fixed; bottom: 0; left: 0; width: 100%; padding: 20px; background: linear-gradient(to top, var(--bg) 80%, transparent); display: flex; justify-content: center; z-index: 90; pointer-events: none; }
         .btn-finish { width: 100%; max-width: 400px; padding: 18px; background: var(--success); color: #000; font-weight: 800; border: none; border-radius: 50px; font-size: 16px; text-transform: uppercase; box-shadow: 0 5px 20px rgba(0, 255, 136, 0.3); cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; pointer-events: auto; }
-        
+        .btn-finish:disabled { background: #333; color: #555; box-shadow: none; cursor: default; }
+
         /* TEMAS */
         .theme-1 { background: linear-gradient(135deg, #005f73, var(--color-1)); } .bd-theme-1 { border-left-color: var(--color-1); }
         .theme-2 { background: linear-gradient(135deg, #720040, var(--color-2)); } .bd-theme-2 { border-left-color: var(--color-2); }
@@ -167,7 +168,7 @@
 
     <div id="screen-workout-select" class="screen">
         <div class="header-bar">
-            <button class="btn-icon" onclick="window.app.goHome()">⬅️</button>
+            <button class="btn-icon" onclick="window.history.back()">⬅️</button>
             <span class="user-title" id="select-user-title">...</span>
             <button class="btn-icon" id="btn-edit-select" onclick="window.app.toggleSelectEditMode()" title="Editar">✏️</button>
         </div>
@@ -178,7 +179,7 @@
 
     <div id="screen-active-workout" class="screen">
         <div class="header-bar">
-            <button class="btn-icon" onclick="window.app.goBackToSelect()">⬅️</button>
+            <button class="btn-icon" onclick="window.history.back()">⬅️</button>
             <span class="user-title" id="active-title">Treino A</span>
             <button class="btn-icon" id="btn-edit-active" onclick="window.app.toggleActiveEditMode()" title="Editar">✏️</button>
         </div>
@@ -195,7 +196,7 @@
 
     <div id="screen-history" class="screen">
         <div class="header-bar">
-            <button class="btn-icon" onclick="window.app.goHome()">⬅️</button>
+            <button class="btn-icon" onclick="window.history.back()">⬅️</button>
             <span class="user-title">Histórico</span>
             <button class="btn-icon" onclick="window.app.clearAllHistory()">🗑️</button>
         </div>
@@ -256,78 +257,103 @@
         isMenuEditing: false, isSelectEditing: false, isActiveEditing: false,
 
         init: function() {
+            // Inicializa estado do histórico do navegador
+            if (!history.state) history.replaceState({ screen: 'screen-menu' }, '');
+            
+            // Listener do botão voltar
+            window.onpopstate = (event) => {
+                if (event.state) {
+                    this.restoreScreen(event.state);
+                } else {
+                    // Fallback
+                    this.toggleScreen('screen-menu', false);
+                }
+            };
+
             if (window.dbInstance) {
                 window.dbOnValue(window.dbRef(window.dbInstance, 'users'), (snap) => {
                     this.data = snap.val() || {}; 
-                    this.restoreState(); // Tenta restaurar a tela onde estava
+                    this.refreshCurrentScreen();
                 });
                 window.dbOnValue(window.dbRef(window.dbInstance, 'history'), (snap) => {
                     const val = snap.val();
                     this.historyData = val ? Object.keys(val).map(k => ({...val[k], firebaseId: k})).sort((a,b) => b.id - a.id) : [];
                 });
             } else {
-                this.data = JSON.parse(localStorage.getItem('gymData_v18')) || {};
+                this.data = JSON.parse(localStorage.getItem('gymData_v19')) || {};
                 this.historyData = JSON.parse(localStorage.getItem('gymHistory')) || [];
-                this.restoreState();
+                this.refreshCurrentScreen();
             }
         },
 
         save: function() { 
             if(window.dbInstance) window.dbSet(window.dbRef(window.dbInstance, 'users'), this.data);
-            else localStorage.setItem('gymData_v18', JSON.stringify(this.data)); 
+            else localStorage.setItem('gymData_v19', JSON.stringify(this.data)); 
         },
 
-        // --- SISTEMA DE PERSISTÊNCIA DE ESTADO ---
-        saveState: function(screen, userId = null, wIndex = null) {
-            const state = { screen, userId, wIndex };
-            localStorage.setItem('gymAppState', JSON.stringify(state));
-        },
+        // --- NAVEGAÇÃO E HISTÓRICO ---
+        navigate: function(screenId, stateData = {}) {
+            // Validação de saída de treino
+            if (this.startTime && screenId !== 'screen-active-workout') {
+                // Se o treino está vazio (sem exercícios), não precisa confirmar
+                const u = this.data[this.currentUser];
+                const w = u?.workouts?.[this.currentWorkoutIndex];
+                const isEmpty = !w || !w.exercises || w.exercises.length === 0;
 
-        restoreState: function() {
-            const state = JSON.parse(localStorage.getItem('gymAppState'));
-            
-            // Se não tem estado ou dados, vai pro menu
-            if (!state || !this.data) {
-                this.renderMenu();
-                return;
+                if (!isEmpty && !confirm("O treino está rolando. Sair vai cancelar. Continuar?")) {
+                    // Se cancelar, empurra o estado de volta para manter o usuário na tela
+                    history.pushState({ screen: 'screen-active-workout', ...stateData }, '');
+                    return;
+                }
+                this.startTime = null; // Reseta cronometro
+                window.onbeforeunload = null;
             }
 
-            // Restaura contexto
-            if (state.screen === 'screen-workout-select' && state.userId && this.data[state.userId]) {
+            const newState = { screen: screenId, ...stateData };
+            history.pushState(newState, '');
+            this.restoreScreen(newState);
+        },
+
+        restoreScreen: function(state) {
+            // Lógica para restaurar a tela baseada no estado
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('visible'));
+            document.getElementById(state.screen).classList.add('visible');
+            window.scrollTo(0,0);
+
+            if (state.screen === 'screen-menu') {
+                this.currentUser = null;
+                this.renderMenu();
+            } else if (state.screen === 'screen-workout-select') {
                 this.currentUser = state.userId;
                 this.renderWorkoutSelectScreen();
-                this.toggleScreen('screen-workout-select', false); // false = não salvar estado de novo
-            } else if (state.screen === 'screen-active-workout' && state.userId && state.wIndex !== null && this.data[state.userId]) {
+            } else if (state.screen === 'screen-active-workout') {
                 this.currentUser = state.userId;
                 this.currentWorkoutIndex = state.wIndex;
                 this.renderActiveWorkout();
-                this.toggleScreen('screen-active-workout', false);
             } else if (state.screen === 'screen-history') {
-                this.showHistory(false);
-            } else {
-                this.renderMenu();
-                this.toggleScreen('screen-menu', false);
+                this.renderHistoryList();
             }
+        },
+
+        refreshCurrentScreen: function() {
+            // Atualiza a tela atual se os dados mudarem (ex: sync do Firebase)
+            const current = document.querySelector('.screen.visible').id;
+            if (current === 'screen-menu') this.renderMenu();
+            if (current === 'screen-workout-select') this.renderWorkoutSelectScreen();
+            if (current === 'screen-active-workout') this.renderActiveWorkout();
         },
 
         // --- MENU ---
         renderMenu: function() {
             const list = document.getElementById('user-list'); list.innerHTML = '';
-            
-            if (Object.keys(this.data).length === 0) {
-                list.innerHTML = '<p class="empty-msg">Nenhuma pessoa cadastrada.<br>Toque na caneta ✏️ e depois no botão + para adicionar.</p>';
-            }
+            if (Object.keys(this.data).length === 0) list.innerHTML = '<p class="empty-msg">Nenhum usuário encontrado.<br>Toque na caneta ✏️ e no + para começar.</p>';
             
             Object.keys(this.data).forEach(id => {
                 const u = this.data[id];
                 const wrap = document.createElement('div'); wrap.className = 'card-wrapper';
                 const btn = document.createElement('button'); btn.className = `btn-large ${u.themeId}`;
                 btn.innerHTML = `<span>${u.name}</span> <span style="font-size:14px">➜</span>`;
-                btn.onclick = () => { 
-                    this.currentUser = id; 
-                    this.renderWorkoutSelectScreen(); 
-                    this.toggleScreen('screen-workout-select'); 
-                };
+                btn.onclick = () => this.navigate('screen-workout-select', { userId: id });
                 
                 if(this.isMenuEditing) {
                     const del = document.createElement('div'); del.className = 'btn-del-floating'; del.innerText = 'X';
@@ -342,14 +368,14 @@
 
         // --- SELEÇÃO DE TREINO ---
         renderWorkoutSelectScreen: function() {
-            if(!this.currentUser || !this.data[this.currentUser]) { this.goHome(); return; }
+            if(!this.currentUser || !this.data[this.currentUser]) return;
             const u = this.data[this.currentUser];
             document.getElementById('select-user-title').innerText = u.name;
             const list = document.getElementById('workout-select-list'); list.innerHTML = '';
             
             if(!u.workouts || u.workouts.length === 0) {
-                u.workouts = [];
-                list.innerHTML = '<p class="empty-msg">Nenhum treino.<br>Toque na caneta ✏️ e adicione um treino (Ex: A - Costas).</p>';
+                list.innerHTML = `<p class="empty-msg">Nenhum treino cadastrado para ${u.name}.<br>Toque na caneta ✏️ para criar.</p>`;
+                if(!u.workouts) u.workouts = [];
             }
 
             const lastEntry = this.historyData.find(h => h.user === u.name);
@@ -365,7 +391,7 @@
                 const card = document.createElement('div');
                 card.className = `workout-select-card bd-${u.themeId} ${isRec?'suggested-workout':''}`;
                 card.style.borderLeft = '5px solid';
-                card.onclick = () => this.startWorkout(idx);
+                card.onclick = () => this.navigate('screen-active-workout', { userId: this.currentUser, wIndex: idx });
                 card.innerHTML = `${isRec ? '<div class="suggested-badge">SUGERIDO</div>' : ''}<h3>${w.title}</h3><p>${w.exercises ? w.exercises.length : 0} exercícios</p>`;
 
                 if(this.isSelectEditing) {
@@ -380,28 +406,37 @@
         toggleSelectEditMode: function() { this.isSelectEditing = !this.isSelectEditing; this.renderWorkoutSelectScreen(); },
 
         // --- TREINO ATIVO ---
-        startWorkout: function(idx) {
-            this.currentWorkoutIndex = idx; 
-            this.startTime = Date.now();
-            window.onbeforeunload = function() { return "Treino em andamento. Sair?"; };
-            this.renderActiveWorkout(); 
-            this.toggleScreen('screen-active-workout');
-        },
         renderActiveWorkout: function() {
-            if(!this.currentUser || this.currentWorkoutIndex === null) { this.goBackToSelect(); return; }
+            if(!this.currentUser || this.currentWorkoutIndex === null) return;
             const u = this.data[this.currentUser];
             if (!u.workouts) return;
             const w = u.workouts[this.currentWorkoutIndex];
             if (!w) return;
+
+            // Inicia timer se não estiver rodando e tiver exercícios
+            const hasExercises = w.exercises && w.exercises.length > 0;
+            if (!this.startTime && hasExercises) {
+                this.startTime = Date.now();
+                window.onbeforeunload = function() { return "Treino rodando. Sair?"; };
+            }
 
             const cont = document.getElementById('active-workout-container');
             document.getElementById('active-title').innerText = w.title;
             document.getElementById('active-title').className = `user-title txt-${u.themeId}`;
             cont.innerHTML = '';
 
-            if (!w.exercises || w.exercises.length === 0) {
+            const btnFinish = document.getElementById('btn-finish-main');
+
+            if (!hasExercises) {
                 w.exercises = [];
                 cont.innerHTML = '<p class="empty-msg">Este treino está vazio.<br>Toque na caneta ✏️ para adicionar exercícios.</p>';
+                btnFinish.disabled = true;
+                btnFinish.innerText = "Adicione exercícios para iniciar";
+                this.startTime = null; // Não conta tempo
+                window.onbeforeunload = null;
+            } else {
+                btnFinish.disabled = false;
+                btnFinish.innerText = "🏁 Finalizar";
             }
 
             w.exercises.forEach((ex, i) => {
@@ -429,17 +464,7 @@
         },
         toggleActiveEditMode: function() { this.isActiveEditing = !this.isActiveEditing; this.renderActiveWorkout(); },
 
-        updateEditIcon: function(btnId, screenId, isEditing) {
-            const btn = document.getElementById(btnId);
-            const screen = document.getElementById(screenId);
-            if(isEditing) {
-                btn.innerText = '💾'; btn.classList.add('icon-active'); screen.classList.add('editing');
-            } else {
-                btn.innerText = '✏️'; btn.classList.remove('icon-active'); screen.classList.remove('editing');
-            }
-        },
-
-        // --- ADIÇÃO ---
+        // --- ADDERS (Mantêm na tela) ---
         addUser: function() { 
             const n = prompt("Nome da nova pessoa:"); 
             if(n) { 
@@ -473,11 +498,11 @@
             }
         },
 
+        // --- UTILS ---
         chgWeight: function(i, delta) {
             const ex = this.data[this.currentUser].workouts[this.currentWorkoutIndex].exercises[i];
             let w = (parseInt(ex.weight) || 0) + delta; if(w < 0) w = 0;
-            ex.weight = w; this.save();
-            this.renderActiveWorkout();
+            ex.weight = w; this.save(); this.renderActiveWorkout();
         },
         setWeight: function(i, val) {
             const ex = this.data[this.currentUser].workouts[this.currentWorkoutIndex].exercises[i];
@@ -486,9 +511,17 @@
         deleteEx: function(i) { 
             if(confirm('Apagar exercício?')) { 
                 this.data[this.currentUser].workouts[this.currentWorkoutIndex].exercises.splice(i,1); 
-                this.save(); 
-                this.renderActiveWorkout();
+                this.save(); this.renderActiveWorkout();
             } 
+        },
+        updateEditIcon: function(btnId, screenId, isEditing) {
+            const btn = document.getElementById(btnId);
+            const screen = document.getElementById(screenId);
+            if(isEditing) {
+                btn.innerText = '💾'; btn.classList.add('icon-active'); screen.classList.add('editing');
+            } else {
+                btn.innerText = '✏️'; btn.classList.remove('icon-active'); screen.classList.remove('editing');
+            }
         },
 
         // --- FINALIZAÇÃO ---
@@ -503,7 +536,8 @@
             const dur = (Date.now() - this.startTime)/60000;
             const wName = this.data[this.currentUser].workouts[this.currentWorkoutIndex].title;
 
-            window.onbeforeunload = null; // Libera refresh
+            this.startTime = null; // Reseta timer
+            window.onbeforeunload = null;
 
             if(navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(p => {
@@ -527,11 +561,8 @@
             document.getElementById('btn-finish-main').innerText = "🏁 Finalizar"; document.getElementById('btn-finish-main').disabled = false;
         },
 
-        showHistory: function(saveState = true) {
-            if(this.startTime && !confirm("Sair do treino?")) return;
-            if(saveState) this.saveState('screen-history');
-            
-            this.toggleScreen('screen-history', false); // Não salva estado aqui pra não loopar
+        showHistory: function() { this.navigate('screen-history'); },
+        renderHistoryList: function() {
             const list = document.getElementById('history-list'); list.innerHTML = '';
             if(!this.historyData.length) list.innerHTML = '<p style="text-align:center;color:#666">Vazio.</p>';
             this.historyData.forEach(h => {
@@ -548,29 +579,15 @@
                 list.appendChild(div);
             });
         },
-        delHist: function(id, fid) { if(confirm('Apagar?')) { if(window.dbInstance && fid) window.dbRemove(window.dbRef(window.dbInstance, `history/${fid}`)); else { this.historyData = this.historyData.filter(x=>x.id!==id); localStorage.setItem('gymHistory', JSON.stringify(this.historyData)); this.showHistory(false); } } },
-        clearAllHistory: function() { if(confirm('Tudo?')) window.dbInstance ? window.dbRemove(window.dbRef(window.dbInstance, 'history')) : (localStorage.removeItem('gymHistory') || this.showHistory(false)); },
-        
-        toggleScreen: function(id, save = true) {
-            if(save) {
-                if(id === 'screen-menu') this.saveState('screen-menu');
-                if(id === 'screen-workout-select') this.saveState('screen-workout-select', this.currentUser);
-                if(id === 'screen-active-workout') this.saveState('screen-active-workout', this.currentUser, this.currentWorkoutIndex);
-            }
-            document.querySelectorAll('.screen').forEach(s=>s.classList.remove('visible')); 
-            document.getElementById(id).classList.add('visible'); 
-            window.scrollTo(0,0); 
-        },
-        
+        delHist: function(id, fid) { if(confirm('Apagar?')) { if(window.dbInstance && fid) window.dbRemove(window.dbRef(window.dbInstance, `history/${fid}`)); else { this.historyData = this.historyData.filter(x=>x.id!==id); localStorage.setItem('gymHistory', JSON.stringify(this.historyData)); this.renderHistoryList(); } } },
+        clearAllHistory: function() { if(confirm('Tudo?')) window.dbInstance ? window.dbRemove(window.dbRef(window.dbInstance, 'history')) : (localStorage.removeItem('gymHistory') || this.renderHistoryList()); },
         goHome: function() { 
-            if(this.startTime && !confirm("O contador está rodando. Sair cancela o treino. Continuar?")) return;
-            window.onbeforeunload = null; this.startTime = null;
-            this.toggleScreen('screen-menu'); this.currentUser=null; this.isMenuEditing=false; this.renderMenu(); 
+            this.navigate('screen-menu'); 
         },
-        goBackToSelect: function() { 
-            if(this.startTime && !confirm("Sair do treino ativo?")) return;
-            window.onbeforeunload = null; this.startTime = null;
-            this.toggleScreen('screen-workout-select'); 
+        toggleScreen: function(id) {
+            // Helper para casos extremos, mas normalmente usamos navigate()
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('visible'));
+            document.getElementById(id).classList.add('visible');
         }
     };
 
