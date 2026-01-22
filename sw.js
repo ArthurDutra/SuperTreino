@@ -1,4 +1,4 @@
-const CACHE_NAME = 'super-treino-v41-final';
+const CACHE_NAME = 'super-treino-v42-install-fix';
 const urlsToCache = [
   './',
   './index.html',
