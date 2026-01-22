@@ -79,13 +79,24 @@
         .badge { background: #333; padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 12px; }
         .btn-video { color: #ff5555; text-decoration: none; font-weight: bold; border: 1px solid #ff5555; padding: 2px 8px; border-radius: 4px; font-size: 11px; text-transform: uppercase; }
 
-        /* SLIDER PESO */
-        .weight-control { margin-top: 15px; background: #252525; padding: 12px; border-radius: 10px; display: flex; align-items: center; gap: 15px; }
-        .weight-display { font-size: 18px; font-weight: bold; color: var(--success); min-width: 65px; text-align: right; font-family: monospace; }
-        .weight-slider { flex-grow: 1; -webkit-appearance: none; height: 6px; background: #444; border-radius: 5px; outline: none; }
-        .weight-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #fff; cursor: pointer; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        /* CONTROLE DE PESO (NOVO - BOTÕES) */
+        .weight-control { margin-top: 15px; background: #252525; padding: 10px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .weight-label { color: #aaa; font-size: 12px; margin-right: auto; padding-left: 5px; }
+        
+        .btn-weight {
+            width: 40px; height: 40px; background: #444; border: none; border-radius: 8px;
+            color: #fff; font-size: 24px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+        .btn-weight:active { background: #666; transform: scale(0.95); }
+        
+        .weight-input {
+            width: 70px; background: transparent; border: 2px solid #333; border-radius: 6px;
+            color: var(--success); font-size: 22px; font-weight: bold; text-align: center;
+            font-family: monospace; outline: none;
+        }
+        .weight-input:focus { border-color: var(--success); }
 
-        /* MODO EDIÇÃO (SISTEMA DE VISIBILIDADE) */
+        /* MODO EDIÇÃO */
         .btn-del-floating { 
             position: absolute; right: -10px; top: -10px; background: #ff4444; color: white; 
             width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
@@ -94,18 +105,15 @@
         }
         @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
 
-        /* Oculta botões de adicionar por padrão */
-        .btn-add-item { display: none; }
+        .btn-add-item { display: none; } /* Oculto por padrão */
 
-        /* Quando o container pai tem a classe .editing, mostra os botões */
         .editing .btn-add-item {
             display: block; width: 100%; max-width: 400px; padding: 20px;
             background: rgba(255, 255, 255, 0.05); border: 2px dashed var(--edit-mode);
             color: var(--edit-mode); border-radius: 16px; cursor: pointer; font-size: 16px; font-weight: bold;
             margin-top: 15px; text-align: center;
         }
-        .editing .btn-add-item:hover { background: rgba(255, 183, 0, 0.1); }
-
+        
         .editing .btn-large, .editing .workout-select-card, .editing .exercise-card { 
             opacity: 0.8; border: 1px dashed #555; pointer-events: none; 
         }
@@ -150,7 +158,7 @@
             <div class="app-title"><span class="app-logo">⚡</span> SUPERTREINO</div>
             <div class="header-actions">
                 <button class="btn-icon" onclick="window.app.showHistory()" title="Histórico">📅</button>
-                <button class="btn-icon" id="btn-edit-menu" onclick="window.app.toggleMenuEdit()" title="Editar Usuários">✏️</button>
+                <button class="btn-icon" id="btn-edit-menu" onclick="window.app.toggleMenuEdit()" title="Editar">✏️</button>
             </div>
         </div>
         
@@ -162,7 +170,7 @@
         <div class="header-bar">
             <button class="btn-icon" onclick="window.app.goHome()">⬅️</button>
             <span class="user-title" id="select-user-title">...</span>
-            <button class="btn-icon" id="btn-edit-select" onclick="window.app.toggleSelectEditMode()" title="Editar Treinos">✏️</button>
+            <button class="btn-icon" id="btn-edit-select" onclick="window.app.toggleSelectEditMode()" title="Editar">✏️</button>
         </div>
         
         <div id="workout-select-list"></div>
@@ -173,7 +181,7 @@
         <div class="header-bar">
             <button class="btn-icon" onclick="window.app.goBackToSelect()">⬅️</button>
             <span class="user-title" id="active-title">Treino A</span>
-            <button class="btn-icon" id="btn-edit-active" onclick="window.app.toggleActiveEditMode()" title="Editar Exercícios">✏️</button>
+            <button class="btn-icon" id="btn-edit-active" onclick="window.app.toggleActiveEditMode()" title="Editar">✏️</button>
         </div>
 
         <div id="active-workout-container" class="workout-container"></div>
@@ -209,7 +217,7 @@
         import { getDatabase, ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
-        // CONFIGURAÇÃO DO FIREBASE (JÁ IMPLEMENTADA)
+        // SUAS CHAVES (MANTIDAS)
         const firebaseConfig = {
             apiKey: "AIzaSyBXpjF-2oGF3RrfqT9KjthB4NVZXUGtsCg",
             authDomain: "supertreino-e20ee.firebaseapp.com",
@@ -245,21 +253,12 @@
     <script>
     const defaultDB = {
         arthur: { name: 'Arthur', themeId: 'theme-1', workouts: [ 
-            { id: 'A', title: 'A - Costas, Ombro e Bíceps', exercises: [ { name: 'Pulley frente', sets: 3, reps: '8', weight: 40 }, { name: 'Remada curvada', sets: 3, reps: '8', weight: 40 } ] },
-            { id: 'B', title: 'B - Peito, Ombro e Tríceps', exercises: [ { name: 'Supino reto', sets: 3, reps: '8', weight: 30 } ] },
-            { id: 'C', title: 'C - Pernas', exercises: [ { name: 'Agachamento', sets: 3, reps: '12', weight: 50 } ] } 
-        ]},
-        dani: { name: 'Daniele', themeId: 'theme-2', workouts: [ 
-            { id: 'A', title: 'A - Inferiores I', exercises: [ { name: 'Agachamento', sets: 4, reps: '10', weight: 20 } ] } 
+            { id: 'A', title: 'A - Costas, Ombro e Bíceps', exercises: [ { name: 'Pulley frente', sets: 3, reps: '8', weight: 40 } ] } 
         ]}
     };
 
     const quotes = ["Tá pago!", "A dor é temporária.", "Hoje foi pago com juros!", "Sem dor, sem ganho.", "Parabéns monstro!"];
-
-    // COORDENADAS FIXAS: Academia Estações do Corpo (Ibiraçu - ES)
-    const GYM_LAT = -19.8285; 
-    const GYM_LON = -40.3735;
-    const GYM_RADIUS_KM = 0.1; // 100 metros
+    const GYM_LAT = -19.8285; const GYM_LON = -40.3735; const GYM_RADIUS_KM = 0.1;
 
     window.app = {
         data: null, historyData: [], currentUser: null, currentWorkoutIndex: null, startTime: null,
@@ -279,7 +278,7 @@
                     this.historyData = val ? Object.keys(val).map(k => ({...val[k], firebaseId: k})).sort((a,b) => b.id - a.id) : [];
                 });
             } else {
-                this.data = JSON.parse(localStorage.getItem('gymData_v13')) || JSON.parse(JSON.stringify(defaultDB));
+                this.data = JSON.parse(localStorage.getItem('gymData_v14')) || JSON.parse(JSON.stringify(defaultDB));
                 this.historyData = JSON.parse(localStorage.getItem('gymHistory')) || [];
                 this.renderMenu();
             }
@@ -287,7 +286,7 @@
 
         save: function() { 
             if(window.dbInstance) window.dbSet(window.dbRef(window.dbInstance, 'users'), this.data);
-            else localStorage.setItem('gymData_v13', JSON.stringify(this.data)); 
+            else localStorage.setItem('gymData_v14', JSON.stringify(this.data)); 
         },
 
         // --- MENU PRINCIPAL ---
@@ -298,7 +297,6 @@
             Object.keys(this.data).forEach(id => {
                 const u = this.data[id];
                 const wrap = document.createElement('div'); wrap.className = 'card-wrapper';
-                
                 const btn = document.createElement('button'); btn.className = `btn-large ${u.themeId}`;
                 btn.innerHTML = `<span>${u.name}</span> <span style="font-size:14px">➜</span>`;
                 btn.onclick = () => { this.currentUser = id; this.renderWorkoutSelectScreen(); this.toggleScreen('screen-workout-select'); };
@@ -310,17 +308,7 @@
                 }
                 wrap.appendChild(btn); list.appendChild(wrap);
             });
-            
-            const menuScreen = document.getElementById('screen-menu');
-            const editBtn = document.getElementById('btn-edit-menu');
-            
-            if(this.isMenuEditing) {
-                menuScreen.classList.add('editing');
-                editBtn.classList.add('icon-active');
-            } else {
-                menuScreen.classList.remove('editing');
-                editBtn.classList.remove('icon-active');
-            }
+            this.updateEditIcon('btn-edit-menu', 'screen-menu', this.isMenuEditing);
         },
         toggleMenuEdit: function() { this.isMenuEditing = !this.isMenuEditing; this.renderMenu(); },
 
@@ -341,7 +329,6 @@
             u.workouts.forEach((w, idx) => {
                 const wrap = document.createElement('div'); wrap.className = 'card-wrapper';
                 const isRec = (idx === recIdx && u.workouts.length > 0);
-                
                 const card = document.createElement('div');
                 card.className = `workout-select-card bd-${u.themeId} ${isRec?'suggested-workout':''}`;
                 card.style.borderLeft = '5px solid';
@@ -355,11 +342,7 @@
                 }
                 wrap.appendChild(card); list.appendChild(wrap);
             });
-
-            const screen = document.getElementById('screen-workout-select');
-            const editBtn = document.getElementById('btn-edit-select');
-            if(this.isSelectEditing) { screen.classList.add('editing'); editBtn.classList.add('icon-active'); }
-            else { screen.classList.remove('editing'); editBtn.classList.remove('icon-active'); }
+            this.updateEditIcon('btn-edit-select', 'screen-workout-select', this.isSelectEditing);
         },
         toggleSelectEditMode: function() { this.isSelectEditing = !this.isSelectEditing; this.renderWorkoutSelectScreen(); },
 
@@ -391,80 +374,97 @@
                         <div class="btn-del-floating" style="right:-5px; top:-5px; display:${this.isActiveEditing?'flex':'none'}" onclick="window.app.deleteEx(${i})">X</div>
                     </div>
                     <div class="weight-control">
-                        <span style="color:#aaa;font-size:10px">KG</span>
-                        <input type="range" class="weight-slider" min="0" max="500" value="${ex.weight||0}" oninput="window.app.updWeight(this, ${i})">
-                        <span class="weight-display" id="w-val-${i}">${ex.weight||0}</span>
+                        <span class="weight-label">CARGA (KG)</span>
+                        <button class="btn-weight" onclick="window.app.chgWeight(${i}, -1)">-</button>
+                        <input type="number" class="weight-input" value="${ex.weight||0}" onchange="window.app.setWeight(${i}, this.value)">
+                        <button class="btn-weight" onclick="window.app.chgWeight(${i}, 1)">+</button>
                     </div>
                 `;
                 cont.appendChild(div);
             });
-            
-            const screen = document.getElementById('screen-active-workout');
-            const editBtn = document.getElementById('btn-edit-active');
-            if(this.isActiveEditing) { screen.classList.add('editing'); editBtn.classList.add('icon-active'); }
-            else { screen.classList.remove('editing'); editBtn.classList.remove('icon-active'); }
+            this.updateEditIcon('btn-edit-active', 'screen-active-workout', this.isActiveEditing);
         },
         toggleActiveEditMode: function() { this.isActiveEditing = !this.isActiveEditing; this.renderActiveWorkout(); },
 
-        // --- FUNÇÕES DE ADIÇÃO (Corrigidas e Automáticas) ---
-        
+        // --- MUDANÇA DE ÍCONES (Caneta <-> Disquete) ---
+        updateEditIcon: function(btnId, screenId, isEditing) {
+            const btn = document.getElementById(btnId);
+            const screen = document.getElementById(screenId);
+            if(isEditing) {
+                btn.innerText = '💾'; // Ícone Salvar
+                btn.classList.add('icon-active');
+                screen.classList.add('editing');
+            } else {
+                btn.innerText = '✏️'; // Ícone Editar
+                btn.classList.remove('icon-active');
+                screen.classList.remove('editing');
+            }
+        },
+
+        // --- FLUXOS DE ADIÇÃO (Corrigidos com Navegação Automática) ---
         addUser: function() { 
             const n = prompt("Nome da nova pessoa:"); 
             if(n) { 
-                this.data['u_'+Date.now()] = { name: n, themeId: `theme-${Math.floor(Math.random()*6)+1}`, workouts:[] }; 
-                this.save(); // Salva no banco
-                this.renderMenu();
+                const newId = 'u_'+Date.now();
+                this.data[newId] = { name: n, themeId: `theme-${Math.floor(Math.random()*6)+1}`, workouts:[] }; 
+                this.save();
+                // Navega direto para a tela de treinos da nova pessoa
+                this.currentUser = newId;
+                this.renderWorkoutSelectScreen();
+                this.toggleScreen('screen-workout-select');
             } 
         },
 
         addWorkout: function() {
-            // Lógica de Letra Automática (A, B, C...)
             const user = this.data[this.currentUser];
             const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            const nextIndex = user.workouts.length;
-            const nextId = letters[nextIndex] || '?'; // Se passar de Z, vira ?
-
+            const nextId = letters[user.workouts.length] || '?';
             const name = prompt(`Nome do Treino ${nextId} (ex: Costas e Bíceps):`);
             
             if(name) { 
-                const fullTitle = `${nextId} - ${name}`;
-                user.workouts.push({ id: nextId, title: fullTitle, exercises: [] }); 
-                this.save(); // Salva no banco
-                this.renderWorkoutSelectScreen(); 
+                user.workouts.push({ id: nextId, title: `${nextId} - ${name}`, exercises: [] }); 
+                this.save();
+                // Navega direto para a tela de exercícios do novo treino
+                this.currentWorkoutIndex = user.workouts.length - 1;
+                this.renderActiveWorkout();
+                this.toggleScreen('screen-active-workout');
             }
         },
 
         addExercise: function() {
             const n = prompt("Nome do Exercício:"); 
             if(n) { 
-                const sets = prompt("Séries:", "3");
-                const reps = prompt("Repetições:", "10");
                 this.data[this.currentUser].workouts[this.currentWorkoutIndex].exercises.push({
-                    name: n, 
-                    sets: sets || "3", 
-                    reps: reps || "10", 
-                    weight: 0
+                    name: n, sets: prompt("Séries:", "3")||"3", reps: prompt("Repetições:", "10")||"10", weight: 0
                 });
-                this.save(); // Salva no banco
+                this.save();
                 this.renderActiveWorkout();
                 setTimeout(() => window.scrollTo(0, document.body.scrollHeight), 100);
             }
         },
 
-        updWeight: function(el, i) {
-            document.getElementById(`w-val-${i}`).innerText = el.value;
-            this.data[this.currentUser].workouts[this.currentWorkoutIndex].exercises[i].weight = parseInt(el.value);
+        // --- CONTROLE DE PESO NOVO ---
+        chgWeight: function(i, delta) {
+            const ex = this.data[this.currentUser].workouts[this.currentWorkoutIndex].exercises[i];
+            let w = (parseInt(ex.weight) || 0) + delta;
+            if(w < 0) w = 0;
+            ex.weight = w;
+            this.save();
+            this.renderActiveWorkout(); // Re-renderiza para atualizar input
+        },
+        setWeight: function(i, val) {
+            const ex = this.data[this.currentUser].workouts[this.currentWorkoutIndex].exercises[i];
+            ex.weight = parseInt(val) || 0;
             this.save();
         },
         deleteEx: function(i) { 
             if(confirm('Apagar exercício?')) { 
                 this.data[this.currentUser].workouts[this.currentWorkoutIndex].exercises.splice(i,1); 
-                this.save(); 
-                this.renderActiveWorkout(); 
+                this.save(); this.renderActiveWorkout(); 
             } 
         },
 
-        // --- FINALIZAÇÃO ---
+        // --- FINALIZAÇÃO & GPS ---
         finishWorkout: function() {
             const skipped = []; document.querySelectorAll('.ex-check').forEach(c => { if(!c.checked) skipped.push(c.getAttribute('data-name')) });
             if(skipped.length && !confirm(`Faltam ${skipped.length}. Finalizar?`)) return;
@@ -476,12 +476,10 @@
             const dur = (Date.now() - this.startTime)/60000;
             const wName = this.data[this.currentUser].workouts[this.currentWorkoutIndex].title;
 
-            // GPS CHECK - Academia Estações do Corpo
             if(navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(p => {
                     const d = this.calcDist(p.coords.latitude, p.coords.longitude, GYM_LAT, GYM_LON);
-                    const locName = (d <= GYM_RADIUS_KM) ? "Na Academia" : "Fora da Academia";
-                    this.saveHist(wName, locName, dur<10, skipped);
+                    this.saveHist(wName, (d <= GYM_RADIUS_KM) ? "Na Academia" : "Fora da Academia", dur<10, skipped);
                 }, () => this.saveHist(wName, "GPS Desativado", dur<10, skipped), {enableHighAccuracy: true});
             } else this.saveHist(wName, "Sem GPS", dur<10, skipped);
         },
@@ -503,12 +501,10 @@
             document.getElementById('btn-finish-main').innerText = "🏁 Finalizar"; document.getElementById('btn-finish-main').disabled = false;
         },
 
-        // --- NAVEGAÇÃO ---
         showHistory: function() {
             this.toggleScreen('screen-history');
             const list = document.getElementById('history-list'); list.innerHTML = '';
             if(!this.historyData.length) list.innerHTML = '<p style="text-align:center;color:#666">Vazio.</p>';
-            
             this.historyData.forEach(h => {
                 const uColor = this.data && Object.values(this.data).find(u=>u.name===h.user)?.themeId.includes('1') ? '#00d4ff' : '#fff'; 
                 const div = document.createElement('div'); div.className = 'history-item';
