@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Super Treino - Tatu-Bola</title>
+    <title>Super Treino - Capivara</title>
     
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/jpeg" href="icon.jpg">
@@ -18,44 +18,64 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
 
     <style>
-        /* --- VARIÁVEIS DE CORES (PALETA DO SISTEMA) --- */
+        /* --- VARIÁVEIS DE COR E TEMA --- */
         :root { 
             --bg: #121212; --card: #1f1f23; --text: #ffffff; 
             --primary: #c084fc; --secondary: #fb923c; --accent: #facc15;
-            --success: #4ade80; --danger: #ef4444; --edit-mode: #facc15;
-            --bronze: #cd7f32; --silver: #c0c0c0; --gold: #ffd700;
+            --success: #4ade80; --danger: #ef4444; 
+            --edit-mode: #facc15; /* Amarelo para modo edição */
         }
 
-        /* Reset básico e bloqueio de seleção de texto para parecer App */
+        /* --- RESET GLOBAL --- */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
         
         body { 
-            font-family: 'Poppins', sans-serif; background-color: var(--bg); color: var(--text); 
-            margin: 0; padding: 0; padding-bottom: 50px; overscroll-behavior: none; /* Evita efeito elástico no scroll */
+            font-family: 'Poppins', sans-serif; 
+            background-color: var(--bg); 
+            color: var(--text); 
+            margin: 0; padding: 0; padding-bottom: 50px; 
+            /* IMPEDE O PULL-TO-REFRESH (Atualizar puxando a tela) */
+            overscroll-behavior-y: none; 
+            overflow-x: hidden;
         }
         
-        /* --- GERENCIAMENTO DE TELAS --- */
+        /* --- TELAS DO APP --- */
         .screen { display: none; padding: 20px; animation: fadeIn 0.3s; min-height: 100vh; flex-direction: column; position: relative; }
-        .visible { display: flex; } /* Classe que torna a tela visível */
+        .visible { display: flex; } /* Classe usada via JS para mostrar a tela atual */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        .empty-msg { text-align: center; color: #888; margin-top: 40px; font-style: italic; font-size: 14px; font-weight: 400; }
+        .empty-msg { text-align: center; color: #888; margin-top: 40px; font-style: italic; font-size: 14px; }
 
-        /* --- CABEÇALHO (HEADER) --- */
+        /* --- LOADING OVERLAY (TELA DE CARREGAMENTO) --- */
+        /* Cobre tudo até o Firebase responder */
+        #loading-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #121212; z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .spinner {
+            width: 50px; height: 50px; border: 5px solid #333;
+            border-top: 5px solid var(--primary); border-radius: 50%;
+            animation: spin 1s linear infinite; margin-bottom: 20px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* --- HEADER (CABEÇALHO) --- */
         .header-bar { 
             display: flex; align-items: center; justify-content: space-between; 
             margin-bottom: 25px; position: sticky; top: 0; 
             background: rgba(18, 18, 18, 0.95); backdrop-filter: blur(10px);
             z-index: 50; padding: 15px 0; border-bottom: 1px solid #333; 
         }
-        .app-title { font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: 0.5px; display: flex; align-items: center; text-transform: uppercase; font-style: italic; }
+        .app-title { font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: 0.5px; text-transform: uppercase; font-style: italic; }
         .user-title { font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
         .header-actions { display: flex; gap: 15px; }
         .btn-icon { background: none; border: none; font-size: 24px; cursor: pointer; color: #fff; padding: 0; transition: transform 0.2s; }
         .btn-icon:active { transform: scale(0.9); }
+        /* Estilo quando o botão de editar está ativo */
         .icon-active { color: var(--edit-mode); transform: scale(1.1); text-shadow: 0 0 10px var(--edit-mode); }
 
-        /* --- GAMIFICAÇÃO (MEDALHAS) --- */
+        /* --- MEDALHAS E GAMIFICATION --- */
         .game-header { text-align: center; margin-bottom: 30px; }
         .total-days-badge { 
             background: linear-gradient(45deg, var(--primary), var(--secondary)); 
@@ -74,7 +94,7 @@
         .medal-desc { font-size: 10px; color: #888; display: block; margin-top: 5px; }
         .medal-progress { font-size: 10px; color: var(--accent); font-weight: bold; margin-top: 5px; display: block; }
 
-        /* --- LISTAS E BOTÕES LARGOS --- */
+        /* --- CARDS E LISTAS --- */
         #user-list, #workout-select-list { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 10px; }
         .card-wrapper { position: relative; width: 100%; max-width: 400px; }
 
@@ -83,7 +103,6 @@
             font-size: 18px; font-weight: 700; cursor: pointer; color: #fff; 
             box-shadow: 0 8px 20px rgba(0,0,0,0.3); text-transform: uppercase;
             text-align: left; display: flex; justify-content: space-between; align-items: center;
-            transition: transform 0.1s, box-shadow 0.1s;
             font-family: 'Poppins', sans-serif;
         }
         .btn-large:active { transform: scale(0.98); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
@@ -96,6 +115,7 @@
         .edit-input:focus { border-color: var(--accent); outline: none; }
         .edit-input-inline { width: 50px; text-align: center; margin: 0 2px; background: #333; border: none; display: inline-block; }
 
+        /* Card de seleção de treino */
         .workout-select-card {
             background: var(--card); border: 1px solid #333; color: #fff;
             padding: 25px; border-radius: 20px; cursor: pointer;
@@ -105,15 +125,18 @@
         .workout-select-card h3 { margin: 0 0 5px 0; font-size: 20px; overflow-wrap: break-word; }
         .workout-select-card p { margin: 0; color: #888; font-size: 14px; font-weight: 400; }
         .workout-select-card:active { transform: scale(0.98); background: #25252a; }
+        
+        /* Destaque para treino sugerido */
         .suggested-workout { border: 2px solid var(--accent); box-shadow: 0 0 15px rgba(250, 204, 21, 0.15); }
         .suggested-badge { position: absolute; right: 15px; top: 20px; background: var(--accent); color: #000; font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 20px; animation: pulse 2s infinite; }
 
-        /* --- EXERCÍCIOS E CHECKBOX --- */
+        /* --- EXERCÍCIOS --- */
         .workout-container { padding-bottom: 120px; }
         .exercise-card { background: var(--card); border-radius: 18px; padding: 20px; margin-bottom: 15px; border-left: 6px solid #555; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .exercise-header { display: flex; align-items: flex-start; gap: 15px; margin-bottom: 15px; }
         .chk-container { position: relative; display: flex; align-items: center; min-width: 32px; }
         input[type="checkbox"] { width: 32px; height: 32px; cursor: pointer; opacity: 0; position: absolute; z-index: 2; }
+        /* Checkbox Customizado */
         .custom-chk { width: 32px; height: 32px; background: #2a2a2a; border-radius: 10px; display: inline-block; position: relative; pointer-events: none; transition: 0.3s; border: 2px solid #444; }
         input:checked + .custom-chk { background: var(--success); border-color: var(--success); transform: scale(1.1); }
         input:checked + .custom-chk::after { content: '✔'; color: #000; position: absolute; left: 7px; top: 1px; font-weight: 800; font-size: 20px; }
@@ -123,6 +146,7 @@
         .badge { background: #333; padding: 4px 12px; border-radius: 8px; font-weight: 700; font-size: 12px; color: #fff; }
         .btn-video { color: var(--secondary); text-decoration: none; font-weight: 800; border: 2px solid var(--secondary); padding: 2px 10px; border-radius: 8px; font-size: 10px; text-transform: uppercase; transition: 0.2s; }
         
+        /* Controle de Peso */
         .weight-control { margin-top: 15px; background: #151515; padding: 10px; border-radius: 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; border: 1px solid #333; }
         .weight-label { color: #666; font-size: 11px; margin-right: auto; padding-left: 5px; font-weight: 700; letter-spacing: 1px; }
         .btn-weight { width: 42px; height: 42px; background: #333; border: none; border-radius: 12px; color: #fff; font-size: 24px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
@@ -130,7 +154,7 @@
         .weight-display { flex-grow: 1; text-align: center; font-size: 20px; font-weight: 800; color: var(--primary); font-family: 'Poppins', monospace; cursor: pointer; }
         .no-load { color: #666; font-size: 12px; font-family: 'Poppins', sans-serif; letter-spacing: 1px; text-transform: uppercase; }
 
-        /* --- CONTROLES DE EDIÇÃO FLUTUANTES --- */
+        /* --- CONTROLES DE EDIÇÃO (MODO LÁPIS) --- */
         .edit-controls-floating { position: absolute; right: -10px; top: -10px; display: flex; flex-direction: column; gap: 8px; z-index: 10; animation: popIn 0.2s; pointer-events: none; opacity: 0; transition: 0.2s; }
         .editing .edit-controls-floating { opacity: 1; pointer-events: auto; }
         .btn-float { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #fff; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.5); color: #fff; font-size: 14px; transition: transform 0.2s; }
@@ -139,17 +163,20 @@
         .btn-reorder { background: var(--secondary); border-color: #fff; }
         @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
         .btn-add-item { display: none; } 
+        /* Botão para adicionar item só aparece no modo edição */
         .editing .btn-add-item { display: block; width: 100%; max-width: 400px; padding: 20px; background: rgba(250, 204, 21, 0.1); border: 2px dashed var(--edit-mode); color: var(--edit-mode); border-radius: 16px; cursor: pointer; font-size: 16px; font-weight: 800; margin-top: 15px; text-align: center; }
+        /* Efeito visual quando em modo edição */
         .editing .btn-large, .editing .workout-select-card, .editing .exercise-card { border: 1px dashed #555; opacity: 0.8; }
         .editing .card-wrapper > button, .editing .workout-select-card, .editing .exercise-card { pointer-events: none; }
         .editing .edit-input, .editing .edit-controls-floating, .editing .weight-display, .editing .btn-video { pointer-events: auto; }
 
+        /* Botão Finalizar Fixo */
         .footer-fixed { position: fixed; bottom: 0; left: 0; width: 100%; padding: 20px; background: linear-gradient(to top, var(--bg) 80%, transparent); display: flex; justify-content: center; z-index: 90; pointer-events: none; }
         .btn-finish { width: 100%; max-width: 400px; padding: 20px; background: var(--success); color: #000; font-weight: 900; border: none; border-radius: 50px; font-size: 18px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 5px 25px rgba(74, 222, 128, 0.4); cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; pointer-events: auto; transition: transform 0.2s; }
         .btn-finish:active { transform: scale(0.98); }
         .btn-finish:disabled { background: #333; color: #555; box-shadow: none; cursor: default; }
 
-        /* --- MODAL PERSONALIZADO (NOVO SISTEMA) --- */
+        /* --- MODAL UNIVERSAL (Janelas de Diálogo) --- */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; text-align: center; backdrop-filter: blur(5px); }
         .msg-content { background: #1a1a1a; padding: 30px; border-radius: 25px; border: 2px solid var(--primary); max-width: 400px; width: 100%; box-shadow: 0 0 30px rgba(192, 132, 252, 0.2); }
         .msg-title { font-weight: 800; font-size: 22px; color: var(--text); margin-bottom: 15px; }
@@ -166,12 +193,12 @@
         .hist-workout { font-size: 14px; color: #aaa; font-weight: 500; }
         .skipped-list { color: var(--secondary); font-size: 11px; margin-top: 8px; border-top: 1px solid #333; padding-top: 5px; font-weight: 600; }
 
-        /* --- RODAPÉ DE VERSÃO E STATUS --- */
+        /* --- RODAPÉ --- */
         #db-status { position: fixed; bottom: 5px; right: 5px; font-size: 10px; color: #555; z-index: 200; font-weight: bold; }
         .version-label { position: fixed; bottom: 5px; left: 0; width: 100%; text-align: center; font-size: 10px; color: #333; pointer-events: none; opacity: 0.5; font-weight: bold; }
         .status-online { color: var(--success) !important; }
 
-        /* --- TEMAS DE CORES PARA USUÁRIOS --- */
+        /* --- TEMAS DE CORES DOS USUÁRIOS --- */
         .theme-1 { background: linear-gradient(135deg, #005f73, #0ea5e9); } .bd-theme-1 { border-left-color: #0ea5e9; } .txt-theme-1 { color: #0ea5e9; }
         .theme-2 { background: linear-gradient(135deg, #831843, #ec4899); } .bd-theme-2 { border-left-color: #ec4899; } .txt-theme-2 { color: #ec4899; }
         .theme-3 { background: linear-gradient(135deg, #4c1d95, #8b5cf6); } .bd-theme-3 { border-left-color: #8b5cf6; } .txt-theme-3 { color: #8b5cf6; }
@@ -182,10 +209,15 @@
 </head>
 <body>
 
-    <div id="db-status">⚪ Offline</div>
-    <div class="version-label">Versão: Tatu-Bola Blindado 🛡️</div>
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <div style="color:#666; font-size:12px; font-weight:bold; letter-spacing:1px">CARREGANDO DADOS...</div>
+    </div>
 
-    <div id="screen-menu" class="screen visible">
+    <div id="db-status">⚪ Conectando...</div>
+    <div class="version-label">Versão: Capivara Cibernética 2.0 🐹</div>
+
+    <div id="screen-menu" class="screen">
         <div class="header-bar">
             <div class="app-title"><span class="app-logo">⚡</span> SUPERTREINO</div>
             <div class="header-actions">
@@ -274,6 +306,12 @@
         </div>
     </div>
 
+    <div id="goodbye-screen" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#121212; z-index:9999; flex-direction:column; align-items:center; justify-content:center; color:#fff; text-align:center;">
+        <div style="font-size:50px;">👋</div>
+        <h1 style="color:var(--primary)">Até logo!</h1>
+        <p>Você pode fechar o aplicativo agora.</p>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
         import { getDatabase, ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
@@ -290,19 +328,25 @@
         };
 
         let db;
+        // Função que inicia o Firebase
         async function startFirebase() {
             try {
                 const app = initializeApp(firebaseConfig);
                 const auth = getAuth();
-                await signInAnonymously(auth);
+                await signInAnonymously(auth); // Login anônimo
                 db = getDatabase(app);
-                document.getElementById('db-status').innerText = "🟢 Online";
-                document.getElementById('db-status').classList.add('status-online');
-                // Exporta funções do Firebase para uso global no window.app
+                
+                // Expondo funções do Firebase globalmente para o window.app usar
                 window.dbRef = ref; window.dbSet = set; window.dbOnValue = onValue;
                 window.dbPush = push; window.dbRemove = remove; window.dbInstance = db;
+                
+                // Só inicia o App quando o Firebase estiver pronto
                 if(window.app) window.app.init();
-            } catch(e) { console.error("Erro Conexão:", e); if(window.app) window.app.init(); }
+            } catch(e) { 
+                console.error("Erro Conexão:", e);
+                // Se der erro, tenta iniciar mesmo assim (mas vai ficar travado no loading se não tiver dados)
+                if(window.app) window.app.init(); 
+            }
         }
         startFirebase();
     </script>
@@ -314,120 +358,163 @@
     </script>
 
     <script>
+    // Mensagens de motivação e fujão
     const successMessages = ["Tá pago! Agora pode chorar no banho.", "A dor é temporária, a glória é eterna.", "Suor é gordura chorando!", "Treino feito! Finja que consegue andar.", "Mais um dia vencido. O sofá te espera.", "Você treina para comer sem culpa!", "Shape de respeito em construção.", "Parabéns! Você é melhor que quem não veio.", "Zero dias sem reclamar, mas zero sem treinar!", "Diz a lenda que depois da dor vem o músculo.", "A meta é ficar irreconhecível.", "Foco, força e fé!", "Não pare quando doer, pare quando acabar.", "Frango não tem vez aqui!", "Quem tem pena é galinha!", "Seu único limite é a sua mente.", "Shape se constrói com cara feia.", "Sorria, você ficou mais forte.", "Descanse, mas não desista.", "Hoje você venceu a preguiça.", "Treinar é vida. O resto é intervalo.", "Calma, respira e agacha!", "Se não for para suar, nem saio de casa.", "Ficar monstro é obrigação.", "Vença a si mesmo todos os dias.", "Disciplina é liberdade.", "O único treino ruim é o que não aconteceu.", "Transforme dor em poder.", "Faça os dias contarem.", "Seu corpo pode tudo.", "Você aguenta mais uma!", "Levanta esse peso!", "Sem dor, sem ganho.", "Todo campeão já foi um frango.", "O sucesso começa fora da zona de conforto.", "Não deseje que fosse fácil.", "Faça por você.", "O esforço de hoje é o orgulho de amanhã.", "Treino bom é treino que descabela.", "Se não pode voar, corra.", "Musculação: levantar coisas pesadas.", "Se consegue ler isso sem tremer, treinou errado.", "Academia: meu playground.", "Menos mimimi, mais agachamento.", "Não espere incentivo, o shape é seu.", "Vá treinar!", "Corpo são, mente sã, perna doendo.", "A vida começa depois do treino.", "Seus músculos não sabem contar.", "Supere seus limites.", "Não é sobre tempo, é prioridade.", "Desculpas não queimam calorias.", "Treino concluído com ódio e sucesso.", "Amanhã você vai agradecer.", "Se está fácil, aumenta o peso.", "Foco no objetivo.", "Você não chegou até aqui pra parar.", "Seja sua motivação.", "Dor muscular é troféu.", "Treinar cura tudo.", "O impossível é só questão de opinião.", "Seja sua melhor versão.", "Não tenha medo de falhar.", "Cada gota de suor conta.", "Respeite o processo.", "Construindo um corpo blindado.", "Treino é terapia.", "Não diminua a meta.", "Vencedores treinam.", "Hoje tá pago com juros.", "Se quer algo novo, faça algo novo.", "A dor de hoje é força.", "Não pare até se orgulhar.", "Você é seu adversário.", "Levanta a cabeça e o peso.", "Firme igual rocha.", "Treino de hoje: Sobreviver.", "Ame o processo.", "Fim de treino! Coma proteína.", "Sentindo as pernas? Não. Valeu? Sim.", "Falha muscular é vida.", "Aprenda a descansar.", "Vai doer? Vai.", "Treino de perna se lamenta.", "O corpo ideal tem alguém feliz dentro.", "Hospital da alma.", "Seu corpo ouve sua mente.", "Faça seu 'eu' do futuro feliz.", "Não é sorte, é suor.", "Constância é a chave.", "Esmaga que cresce!", "Bora ficar gigante!", "Shape inexplicável.", "Treino de gente grande.", "Sai da frente que tô passando!", "Hoje o treino rendeu.", "Missão dada é missão cumprida.", "Nada vence o trabalho duro.", "O topo é logo ali.", "Monstro saindo da jaula!", "Foco total.", "Sem massagem!", "Dale!", "Brabo demais!"];
     const quitMessages = ["Já vai? O sofá te chamou?", "Fugindo do leg day?", "Sua mãe disse que você podia sair?", "Volta aqui, frango!", "Ei, o treino não acabou!", "Desistir é para os fracos.", "Você prometeu que ia treinar!", "A porta da rua é serventia da vergonha.", "Vai deixar o peso ganhar?", "Não ouse sair agora!", "O cronômetro tá te julgando.", "Vai chorar no banho ou terminar?", "Se sair agora, vira estatística.", "Quem foge não cresce.", "Tá com medinho?", "Volta pro treino, soldado!", "Sair agora = Frango pra sempre.", "Acha que o shape vem por osmose?", "Não me decepcione.", "Você é melhor que isso.", "Onde você pensa que vai?", "Fica! Vai ter bolo (mentira).", "Se sair, o treino não conta.", "Honre seu suor.", "Termina isso logo!", "Preguiça não define caráter.", "Vai sair sem terminar? Que feio.", "O peso tá leve, volta lá.", "Não seja um desistente.", "Falta pouco, aguenta!", "A dor passa, a vergonha fica.", "Você não é de açúcar.", "Vai derreter se continuar?", "Sair agora é derrota.", "Mostre do que é feito.", "Não clique nesse botão!", "Bloqueado por falta de vergonha.", "Volte e termine o serviço.", "Sua avó treinaria mais que isso.", "Tá doendo? Que bom.", "Sem desculpas.", "Vai sair de fininho?", "Eu vi você clicando em voltar!", "O treino não é opcional.", "Compromisso é tudo.", "Não traia seu corpo.", "Se sair, paga 10 flexões.", "Vai correr da raia?", "Não seja essa pessoa.", "Termina e a gente conversa.", "Fuga das galinhas?", "Você consegue, volta lá.", "Não desperdice o tempo.", "Foco!", "Disciplina!", "Cadê a força de vontade?", "Vai se arrepender se sair.", "O espelho não mente.", "Não saia!", "Volta!", "Fica!", "Treina!", "Esmaga!", "Não foge!", "Você é guerreiro ou vítima?", "Encare o desafio.", "Não tem atalho.", "Se sair, o shape murcha.", "Cancele a saída, não o treino.", "Persistência é tudo.", "Não seja medíocre.", "Supere a vontade de ir embora.", "O resultado vem pra quem fica.", "Não desista.", "Lute contra a preguiça.", "Seja forte.", "Aguenta firme.", "Tá acabando (quase).", "Não me irrite.", "Volta pro supino.", "Não abandone os pesos.", "Eles sentem sua falta.", "Se sair, zero whey hoje.", "Você aguenta.", "Confio em você.", "Bora!", "Não para!", "Continua!", "Mais um pouco!", "Vai valer a pena!", "Não saia da tela.", "Mantenha o foco.", "Olho no objetivo.", "Se sair, engorda 1kg.", "Brincadeira (ou não).", "Fica aí.", "Treino sério.", "Sem corpo mole.", "Bora monstro!", "Vence isso!"];
     const incompleteMessages = ["Roubando repetição? Que feio.", "Vai deixar exercício pra amanhã?", "Treino pela metade, resultado pela metade.", "Acha que eu não vi essa caixa vazia?", "Assim você não fica monstro.", "Tá esquecendo coisa pra trás!", "Volta lá e marca tudo.", "Não adianta mentir pro app.", "Seu bíceps tá chorando.", "Finalizar assim? Sério?", "Você consegue fazer tudo!", "Não seja preguiçoso.", "Faltou um ali, ó.", "O treino é completo ou não é.", "Quem rouba no treino, rouba na vida.", "Tá com pressa de que?", "Termina o serviço.", "Não faça serviço de porco.", "Seja honesto com seu treino.", "Vai deixar buraco no treino?", "Isso não é um treino completo.", "Falta exercício!", "Olha as caixinhas vazias.", "Preenche tudo!", "Não me engana.", "O shape não vem pela metade.", "Vai ficar devendo?", "Paga o que deve!", "Não finalizo se não terminar.", "Volta e faz direito.", "Tá achando que é festa?", "Treino sério exige tudo.", "Não pule o leg day.", "Nem o supino.", "Completa isso aí.", "Estou de olho.", "Não valida treino fofo.", "Quer resultado? Faça tudo.", "Sem atalhos.", "O caminho é completo.", "Não deixe nada pra trás.", "Zere o treino.", "Marque todas as opções.", "Falta pouco, não desista.", "Faça valer a pena.", "Não seja meio termo.", "Tudo ou nada.", "100% ou 0%.", "Vai sair devendo?", "O app sabe que faltou.", "Não mente pra mim.", "Seu corpo sabe.", "Termina!", "Faz tudo!", "Não enrola.", "Sem migué.", "Que vergonha...", "Pensei que fosse monstro.", "Cadê a disciplina?", "Falta um check.", "Ou dois.", "Ou três.", "Tá quase, não para.", "Finalizar incompleto é pecado.", "O deus do ferro tá vendo.", "Não decepcione o Arnold.", "Faça por merecer.", "Conquiste o botão finalizar.", "Ele só libera se fizer tudo.", "Bloqueado por preguiça.", "Volte e treine.", "Não tem essa de pular.", "Cada exercício conta.", "Não desperdice.", "Valorize seu tempo.", "Faça bem feito.", "Qualidade total.", "Não aceito meio treino.", "Sou exigente.", "Você também deveria ser.", "Bora marcar tudo.", "Tica tudo!", "Checklist incompleto.", "Erro 404: Exercício não encontrado.", "Corrija isso.", "Agora sim (se fizer).", "Vai logo!", "Quero ver tudo verde.", "Sem caixas vazias.", "Preenchimento obrigatório.", "Treino é sagrado.", "Amém?", "Bora terminar!"];
 
-    const DB_KEY_DATA = 'gymData_tatu_bola';
-    const DB_KEY_HIST = 'gymHistory_tatu_bola';
+    const DB_KEY_DATA = 'gymData_capivara';
+    const DB_KEY_HIST = 'gymHistory_capivara';
 
     window.app = {
         data: {}, historyData: [], currentUser: null, currentWorkoutIndex: null, isTraining: false,
         isMenuEditing: false, isSelectEditing: false, isActiveEditing: false,
         quitAttempts: 0, 
 
+        // --- INICIALIZAÇÃO ---
         init: function() {
-            // Inicializa estado para capturar botão voltar na home
+            // Se o histórico de navegação não estiver definido, define como Menu
             if (!history.state || history.state.screen !== 'screen-menu') {
                 history.replaceState({ screen: 'screen-menu' }, '');
             }
             
-            // --- LÓGICA DO BOTÃO VOLTAR E FUJÃO (ATUALIZADA) ---
+            // Lógica do Botão Voltar (Navegação Global)
             window.onpopstate = (event) => {
-                // Caso 1: Treino em andamento (Modo Fujão)
+                // SE ESTIVER TREINANDO (Modo Fujão)
                 if (this.isTraining) {
+                    // Empurra o estado de volta para impedir a saída imediata
                     history.pushState({ screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex }, '');
                     const randomMsg = quitMessages[Math.floor(Math.random() * quitMessages.length)];
+                    
+                    // Abre o Modal do Fujão
                     this.showCustomModal(
                         'danger',
+                        'FUJÃO?',
                         `🚨 ${randomMsg}\n\nSair cancela o progresso.`,
                         () => {
+                            // Se confirmar saída:
                             this.isTraining = false;
-                            window.onbeforeunload = null;
+                            window.onbeforeunload = null; // Remove proteção de refresh
                             localStorage.removeItem('tempWorkoutState'); 
-                            window.history.back(); 
+                            
+                            // Volta duas vezes no histórico ou força ida para Home
+                            // O ideal é forçar a navegação limpa
+                            this.goHome();
                         }
                     );
                     return;
                 }
                 
-                // Caso 2: Tela Inicial (Pedir para Sair do App)
+                // SE ESTIVER NA HOME E APERTAR VOLTAR (Sair do App)
                 const currentScreen = document.querySelector('.screen.visible').id;
                 if (currentScreen === 'screen-menu' || !event.state) {
-                     // Empurra o estado de volta para não sair "sem querer" antes da confirmação
-                    history.pushState({ screen: 'screen-menu' }, '');
+                    history.pushState({ screen: 'screen-menu' }, ''); // Mantém na página
                     this.showCustomModal(
                         'danger',
                         'SAIR DO APP',
                         'Deseja fechar o Super Treino?',
                         () => {
-                            // Tenta fechar. Em muitos celulares isso apenas minimiza ou não faz nada por segurança,
-                            // mas é o comando correto. Se falhar, o usuário fecha manualmente.
+                            // Exibe tela de despedida
+                            document.getElementById('goodbye-screen').style.display = 'flex';
+                            // Tenta fechar a janela (pode falhar dependendo do navegador)
                             window.close();
-                            // Fallback visual caso window.close seja bloqueado pelo navegador
-                            document.body.innerHTML = "<div style='display:flex;justify-content:center;align-items:center;height:100vh;color:#fff;background:#121212;flex-direction:column'><h1>Até logo! 💪</h1><p>Pode fechar a janela.</p></div>";
                         }
                     );
                     return;
                 }
 
-                // Navegação normal
+                // Navegação normal (voltar entre telas)
                 if (event.state) this.restoreScreen(event.state);
                 else this.toggleScreen('screen-menu'); 
             };
 
-            // Detectar Refresh do Navegador durante treino
+            // Bloqueio de Refresh (Puxar para atualizar ou F5) durante treino
             window.addEventListener('beforeunload', (e) => {
                 if (this.isTraining) {
                     e.preventDefault();
-                    e.returnValue = ''; // Exige padrão navegador, mas vamos tentar mostrar nosso modal ao voltar
+                    e.returnValue = ''; // Padrão para navegadores exibirem alerta nativo
                     return '';
                 }
             });
 
+            // Carrega os dados (com loader bloqueante)
             this.loadData();
         },
 
+        // --- CARREGAMENTO DE DADOS (ONLINE FIRST) ---
         loadData: function() {
+            // Mantém o overlay de loading visível
+            document.getElementById('loading-overlay').style.display = 'flex';
+
             if (window.dbInstance) {
+                // Escuta alterações nos usuários
                 window.dbOnValue(window.dbRef(window.dbInstance, 'users'), (snap) => {
                     this.data = snap.val() || {}; 
-                    this.refreshCurrentScreen();
+                    document.getElementById('db-status').innerText = "🟢 Online";
+                    document.getElementById('db-status').classList.add('status-online');
+                    this.checkLoadComplete(); // Verifica se pode tirar o loading
                 });
+                // Escuta alterações no histórico
                 window.dbOnValue(window.dbRef(window.dbInstance, 'history'), (snap) => {
                     const val = snap.val();
                     const allHist = val ? Object.keys(val).map(k => ({...val[k], firebaseId: k})).sort((a,b) => b.id - a.id) : [];
-                    this.historyData = this.currentUser ? allHist.filter(h => h.user === this.data[this.currentUser]?.name) : [];
-                    if(document.getElementById('screen-history').classList.contains('visible')) this.renderHistoryList();
-                    if(document.getElementById('screen-gamification').classList.contains('visible')) this.updateMedalsUI();
+                    
+                    // Filtra histórico para o usuário atual (se houver)
+                    if (this.currentUser) {
+                        this.historyData = allHist.filter(h => h.user === this.data[this.currentUser]?.name);
+                    } else {
+                        // Se não tem usuário logado, guarda tudo temporariamente
+                        this.historyData = allHist;
+                    }
+                    
+                    this.checkLoadComplete(); // Verifica se pode tirar o loading
                 });
             } else {
-                this.data = JSON.parse(localStorage.getItem(DB_KEY_DATA)) || {};
-                const allHist = JSON.parse(localStorage.getItem(DB_KEY_HIST)) || [];
-                // Garante que o histórico carregado seja filtrado pelo usuário atual se houver
-                this.historyData = this.currentUser ? allHist.filter(h => h.user === this.data[this.currentUser]?.name) : [];
+                // Se Firebase falhar totalmente (fallback, mas o loading vai ficar rodando até conectar)
+                console.log("Aguardando Firebase...");
+            }
+        },
+
+        // Verifica se já temos dados suficientes para liberar a tela
+        checkLoadComplete: function() {
+            // Se já baixou os dados de usuários (mesmo que vazio), libera a tela
+            if (this.data) {
+                document.getElementById('loading-overlay').style.display = 'none';
                 this.refreshCurrentScreen();
             }
         },
 
+        // Salva dados no Firebase
         save: function() { 
             if(window.dbInstance) window.dbSet(window.dbRef(window.dbInstance, 'users'), this.data);
-            else localStorage.setItem(DB_KEY_DATA, JSON.stringify(this.data)); 
         },
 
-        handleBack: function() { window.history.back(); },
+        // Botão voltar genérico do app (Header)
+        handleBack: function() { 
+            // Se for treino ativo, simula o botão voltar do navegador para cair no onpopstate (Fujão)
+            if (this.isTraining) {
+                history.back();
+            } else {
+                window.history.back(); 
+            }
+        },
 
+        // Navegação entre telas
         navigate: function(screenId, stateData = {}) {
             const newState = { screen: screenId, ...stateData };
             history.pushState(newState, '');
             this.restoreScreen(newState);
         },
 
+        // Ir para Home e limpar estado de usuário
         goHome: function() {
             this.currentUser = null;
+            this.isTraining = false;
+            window.onbeforeunload = null;
             this.navigate('screen-menu');
         },
 
+        // Restaura a tela correta baseada no estado do histórico
         restoreScreen: function(state) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('visible'));
             document.getElementById(state.screen).classList.add('visible');
@@ -436,10 +523,11 @@
             if (state.screen === 'screen-menu') { this.currentUser = null; this.renderMenu(); }
             else if (state.screen === 'screen-workout-select') { this.currentUser = state.userId; this.renderWorkoutSelectScreen(); }
             else if (state.screen === 'screen-active-workout') { this.currentUser = state.userId; this.currentWorkoutIndex = state.wIndex; this.renderActiveWorkout(); }
-            else if (state.screen === 'screen-history') { this.renderHistoryList(); } // Agora chama o renderizador
+            else if (state.screen === 'screen-history') { this.renderHistoryList(); }
             else if (state.screen === 'screen-gamification') { this.updateMedalsUI(); }
         },
 
+        // Atualiza a tela atual (usado quando os dados mudam em tempo real)
         refreshCurrentScreen: function() {
             const current = document.querySelector('.screen.visible').id;
             if (current === 'screen-menu') this.renderMenu();
@@ -448,7 +536,7 @@
             if (current === 'screen-gamification') this.updateMedalsUI();
         },
 
-        // --- SISTEMA DE MODAL UNIVERSAL (Callback Pattern) ---
+        // --- MODAL UNIVERSAL ---
         showCustomModal: function(type, titleText, msgText, confirmCallback, cancelCallback) {
             const modal = document.getElementById('custom-modal');
             const title = document.getElementById('d-title');
@@ -463,7 +551,6 @@
             if(type === 'danger') color = 'var(--danger)';
             if(type === 'warning') color = 'var(--accent)';
             if(type === 'success') color = 'var(--success)';
-            if(type === 'info') color = '#1DB954'; // Spotify green
 
             modal.querySelector('.msg-content').style.borderColor = color;
             title.style.color = color;
@@ -476,7 +563,6 @@
                 btn.onclick = () => { modal.style.display = 'none'; if(confirmCallback) confirmCallback(); };
                 actions.appendChild(btn);
             } else {
-                // Botão Cancelar
                 const btnNo = document.createElement('button');
                 btnNo.className = 'btn-dialog btn-secondary';
                 btnNo.innerText = "NÃO";
@@ -486,7 +572,6 @@
                 };
                 actions.appendChild(btnNo);
 
-                // Botão Confirmar
                 const btnYes = document.createElement('button');
                 btnYes.className = 'btn-dialog btn-primary';
                 btnYes.innerText = "SIM";
@@ -500,26 +585,27 @@
             modal.style.display = 'flex';
         },
 
-        // --- INTEGRAÇÃO SPOTIFY SEGURA ---
         confirmSpotify: function() {
             this.showCustomModal(
-                'info',
-                'SPOTIFY',
-                'Deseja abrir o aplicativo do Spotify?',
+                'info', 'SPOTIFY', 'Deseja abrir o aplicativo do Spotify?',
                 () => { window.location.href = 'spotify:'; }
             );
         },
 
         openGamification: function() {
-             // Força recarregamento antes de mostrar
-             this.loadData();
              this.navigate('screen-gamification');
         },
 
         updateMedalsUI: function() {
             if(!this.historyData) return;
+            // Filtra histórico para usuário atual se necessário (redundância segura)
+            let myHist = this.historyData;
+            if(this.currentUser && this.data[this.currentUser]) {
+                 myHist = this.historyData.filter(h => h.user === this.data[this.currentUser].name);
+            }
+
             const uniqueDates = new Set();
-            this.historyData.forEach(h => {
+            myHist.forEach(h => {
                 const parts = h.date.split('/'); 
                 uniqueDates.add(`${parts[2]}-${parts[1]}-${parts[0]}`); 
             });
@@ -597,7 +683,6 @@
                 btn.onclick = () => this.navigate('screen-workout-select', { userId: id });
                 if(this.isMenuEditing) {
                     const ctrl = document.createElement('div'); ctrl.className = 'edit-controls-floating';
-                    // Botão Delete agora usa o novo modal, passando o evento e ID
                     ctrl.innerHTML = `<div class="btn-float btn-del" onclick="window.app.deleteUser(event, '${id}')">X</div>
                         ${idx > 0 ? `<div class="btn-float btn-reorder" onclick="window.app.reorderUser('${id}', -1)">⬆️</div>` : ''}
                         ${idx < userKeys.length - 1 ? `<div class="btn-float btn-reorder" onclick="window.app.reorderUser('${id}', 1)">⬇️</div>` : ''}`;
@@ -608,6 +693,7 @@
             this.updateEditIcon('btn-edit-menu', 'screen-menu', this.isMenuEditing);
         },
         
+        // --- LÓGICA DE SUGESTÃO DE TREINO (CORRIGIDA) ---
         renderWorkoutSelectScreen: function() {
             if(!this.currentUser || !this.data[this.currentUser]) return;
             const u = this.data[this.currentUser];
@@ -618,18 +704,26 @@
                 if(!u.workouts) u.workouts = [];
             }
 
-            const lastEntry = this.historyData.length > 0 ? this.historyData[0] : null;
-            let recIdx = 0;
+            // Garante que o histórico está atualizado para este usuário
+            const myHist = this.historyData.filter(h => h.user === u.name);
+            const lastEntry = myHist.length > 0 ? myHist[0] : null; // Pega o mais recente
+            
+            let recIdx = 0; // Padrão: Treino A (Índice 0)
+            
             if (lastEntry && u.workouts.length > 0) {
+                // Se tem histórico, procura qual foi o último feito
                 const lastIdx = u.workouts.findIndex(w => w.title === lastEntry.workoutTitle);
                 if (lastIdx !== -1) {
+                    // Sugere o próximo da lista circularmente
                     recIdx = (lastIdx + 1) % u.workouts.length;
                 }
             }
+            // Se o histórico estiver vazio, recIdx continua sendo 0 (Treino A), conforme pedido
 
             u.workouts.forEach((w, idx) => {
                 const wrap = document.createElement('div'); wrap.className = 'card-wrapper';
-                const isRec = (idx === recIdx && u.workouts.length > 0 && (this.historyData.length > 0 || idx === 0)); 
+                // Lógica visual de sugestão
+                const isRec = (idx === recIdx && u.workouts.length > 0); 
                 
                 const card = document.createElement('div');
                 card.className = `workout-select-card bd-${u.themeId} ${isRec?'suggested-workout':''}`;
@@ -667,11 +761,12 @@
 
             const hasExercises = w.exercises && w.exercises.length > 0;
             
+            // Se for um novo acesso ao treino, ativa o modo Fujão
             if (!this.isTraining) {
                 localStorage.removeItem('tempWorkoutState');
                 if(hasExercises) {
                     this.isTraining = true;
-                    // Ativa proteção de reload do navegador
+                    // Proteção contra refresh do navegador
                     window.onbeforeunload = function() { return "Treino rodando."; };
                 }
             }
@@ -682,7 +777,7 @@
             const cont = document.getElementById('active-workout-container');
             document.getElementById('active-title').innerText = w.title;
             document.getElementById('active-title').className = `user-title txt-${u.themeId}`;
-            cont.innerHTML = '';
+            cont.innerHTML = ''; // Limpa antes de renderizar (Corrige duplicação)
             const btnFinish = document.getElementById('btn-finish-main');
 
             if (!hasExercises) {
@@ -690,6 +785,7 @@
                 cont.innerHTML = '<p class="empty-msg">Este treino está vazio.<br>Toque na caneta ✏️ para adicionar.</p>';
                 btnFinish.disabled = true; btnFinish.innerText = "Adicione exercícios";
                 this.isTraining = false; 
+                window.onbeforeunload = null;
             } else {
                 const anyChecked = myState.some(Boolean);
                 btnFinish.disabled = !anyChecked;
@@ -742,17 +838,29 @@
             localStorage.setItem('tempWorkoutState', JSON.stringify(saveObj));
         },
 
-        // --- CORREÇÃO: Função atualizada para recarregar dados antes de exibir ---
         showHistory: function() {
-            // Recarrega os dados do localStorage ou Firebase para garantir sincronia
-            this.loadData();
-            this.navigate('screen-history');
+            // Recarrega do banco/local para garantir que não sumiu nada
+            if (this.data && this.currentUser) {
+                // A lógica de filtragem já acontece no dbOnValue, apenas navegamos
+                this.navigate('screen-history');
+            } else {
+                this.loadData();
+                this.navigate('screen-history');
+            }
         },
 
         renderHistoryList: function() {
             const list = document.getElementById('history-list'); list.innerHTML = '';
-            if(!this.historyData.length) list.innerHTML = '<p class="empty-msg">Histórico vazio.</p>';
-            this.historyData.forEach(h => {
+            
+            // Filtra novamente para garantir
+            let myHist = this.historyData;
+            if(this.currentUser && this.data[this.currentUser]) {
+                 myHist = this.historyData.filter(h => h.user === this.data[this.currentUser].name);
+            }
+
+            if(!myHist.length) list.innerHTML = '<p class="empty-msg">Histórico vazio.</p>';
+            
+            myHist.forEach(h => {
                 const div = document.createElement('div'); div.className = 'history-item';
                 div.innerHTML = `
                     <div class="hist-top">
@@ -774,7 +882,6 @@
         renameEx: function(i, val) { if(val) { this.data[this.currentUser].workouts[this.currentWorkoutIndex].exercises[i].name = val; this.save(); } },
         updateExMeta: function(i, field, val) { if(val) { this.data[this.currentUser].workouts[this.currentWorkoutIndex].exercises[i][field] = val; this.save(); } },
         
-        // --- FUNÇÕES DE DELETAR (Substituído confirm() por Modal Custom) ---
         deleteUser: function(e, id) { 
             e.stopPropagation(); 
             this.showCustomModal('warning', 'APAGAR', 'Excluir este usuário permanentemente?', () => {
@@ -800,25 +907,15 @@
         },
         delHist: function(id, fid) { 
             this.showCustomModal('warning', 'APAGAR', 'Remover do histórico?', () => {
-                if(window.dbInstance&&fid) window.dbRemove(window.dbRef(window.dbInstance, `history/${fid}`)); 
-                else { 
-                     const allHist = JSON.parse(localStorage.getItem(DB_KEY_HIST)) || [];
-                     const newHist = allHist.filter(x=>x.id!==id);
-                     localStorage.setItem(DB_KEY_HIST, JSON.stringify(newHist));
-                     // Atualiza os dados locais
-                     this.historyData = newHist.filter(h => h.user === this.data[this.currentUser].name);
-                     this.renderHistoryList(); 
-                }
+                // Remove direto do Firebase. O evento onValue vai atualizar a lista e a sugestão automaticamente.
+                if(window.dbInstance && fid) {
+                    window.dbRemove(window.dbRef(window.dbInstance, `history/${fid}`)); 
+                } 
             });
         },
         clearAllHistory: function() { 
             this.showCustomModal('danger', 'LIMPAR TUDO', 'Apagar TODO o histórico?', () => {
                 if(window.dbInstance) window.dbRemove(window.dbRef(window.dbInstance, 'history')); 
-                else { 
-                    localStorage.removeItem(DB_KEY_HIST); 
-                    this.historyData=[]; 
-                    this.renderHistoryList(); 
-                }
             });
         },
         
@@ -872,7 +969,7 @@
             const btn = document.getElementById('btn-finish-main'); btn.innerText = "Salvando..."; btn.disabled = true;
             const wName = this.data[this.currentUser].workouts[this.currentWorkoutIndex].title;
             this.isTraining = false; 
-            window.onbeforeunload = null;
+            window.onbeforeunload = null; // Libera a proteção de sair
             this.quitAttempts = 0;
             localStorage.removeItem('tempWorkoutState');
             
@@ -884,12 +981,6 @@
         saveHist: function(t, l, c, s) {
             const reg = { id: Date.now(), date: new Date().toLocaleDateString('pt-BR'), user: this.data[this.currentUser].name, workoutTitle: t, location: null, cheat: c, skipped: s };
             if(window.dbInstance) window.dbPush(window.dbRef(window.dbInstance, 'history'), reg);
-            else { 
-                const allHist = JSON.parse(localStorage.getItem(DB_KEY_HIST)) || [];
-                allHist.unshift(reg);
-                localStorage.setItem(DB_KEY_HIST, JSON.stringify(allHist));
-                this.historyData = allHist.filter(h => h.user === this.data[this.currentUser].name);
-            }
             
             const randomMsg = successMessages[Math.floor(Math.random()*successMessages.length)];
             this.showCustomModal('success', 'PARABÉNS', randomMsg, () => this.goHome());
