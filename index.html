@@ -23,7 +23,6 @@
             --primary: #c084fc; --secondary: #fb923c; --accent: #facc15;
             --success: #4ade80; --danger: #ef4444; --edit-mode: #facc15;
             --bronze: #cd7f32; --silver: #c0c0c0; --gold: #ffd700;
-            
             --color-1: #38bdf8; --color-2: #f472b6; --color-3: #a78bfa;
             --color-4: #fb923c; --color-5: #22d3ee; --color-6: #4ade80;
         }
@@ -83,8 +82,7 @@
             font-size: 18px; font-weight: 700; cursor: pointer; color: #fff; 
             box-shadow: 0 8px 20px rgba(0,0,0,0.3); text-transform: uppercase;
             text-align: left; display: flex; justify-content: space-between; align-items: center;
-            transition: transform 0.1s, box-shadow 0.1s;
-            font-family: 'Poppins', sans-serif;
+            transition: transform 0.1s, box-shadow 0.1s; font-family: 'Poppins', sans-serif;
         }
         .btn-large:active { transform: scale(0.98); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         
@@ -320,7 +318,6 @@
         init: function() {
             if (!history.state) history.replaceState({ screen: 'screen-menu' }, '');
             
-            // Loop Fujão
             window.onpopstate = (event) => {
                 if (this.isTraining) {
                     const randomMsg = quitMessages[Math.floor(Math.random() * quitMessages.length)];
@@ -353,7 +350,7 @@
                     if(document.getElementById('screen-gamification').classList.contains('visible')) this.updateMedalsUI();
                 });
             } else {
-                this.data = JSON.parse(localStorage.getItem('gymData_v48')) || {};
+                this.data = JSON.parse(localStorage.getItem('gymData_v49')) || {};
                 this.historyData = JSON.parse(localStorage.getItem('gymHistory')) || [];
                 this.refreshCurrentScreen();
             }
@@ -361,7 +358,7 @@
 
         save: function() { 
             if(window.dbInstance) window.dbSet(window.dbRef(window.dbInstance, 'users'), this.data);
-            else localStorage.setItem('gymData_v48', JSON.stringify(this.data)); 
+            else localStorage.setItem('gymData_v49', JSON.stringify(this.data)); 
         },
 
         handleBack: function() { window.history.back(); },
@@ -397,12 +394,6 @@
             if (current === 'screen-workout-select') this.renderWorkoutSelectScreen();
             if (current === 'screen-active-workout') this.renderActiveWorkout();
             if (current === 'screen-gamification') this.updateMedalsUI();
-        },
-
-        // --- MEDALHAS ---
-        openGamification: function() {
-            this.navigate('screen-gamification');
-            this.updateMedalsUI();
         },
 
         updateMedalsUI: function() {
@@ -469,7 +460,7 @@
             return Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
         },
 
-        // --- AI COACH GLOBAL ---
+        // --- CORREÇÃO IA COACH ---
         consultAI: function() {
             if(!this.currentUser) return;
             const u = this.data[this.currentUser];
@@ -478,27 +469,28 @@
                 return;
             }
 
-            let promptText = `Atue como meu Preparador Físico Virtual e Personal Trainer de Elite. Analise minha rotina completa de musculação abaixo. Verifique o volume, a divisão de grupos musculares, escolha de exercícios e sugira melhorias para hipertrofia e segurança:\n\n`;
-            
+            let promptText = `Atue como meu Preparador Físico Virtual. Analise minha rotina:\n\n`;
             u.workouts.forEach(w => {
-                promptText += `👉 TREINO ${w.title}:\n`;
-                if(w.exercises && w.exercises.length > 0) {
+                promptText += `👉 ${w.title}:\n`;
+                if(w.exercises) {
                     w.exercises.forEach(ex => {
-                        const carga = ex.weight ? `${ex.weight}kg` : "Peso do corpo/Livre";
-                        promptText += `- ${ex.name}: ${ex.sets} séries x ${ex.reps} reps (Carga: ${carga})\n`;
+                        const carga = ex.weight ? `${ex.weight}kg` : "Livre";
+                        promptText += `- ${ex.name}: ${ex.sets}x${ex.reps} (${carga})\n`;
                     });
-                } else {
-                    promptText += "(Ainda sem exercícios cadastrados)\n";
                 }
                 promptText += `\n`;
             });
+            promptText += `\nMe dê feedback sobre volume e sugestões.`;
 
-            promptText += `\nPor favor, me dê um feedback sobre:\n1. Balanceamento muscular (estou esquecendo algo?)\n2. Volume de treino\n3. Sugestão de técnicas de intensidade para os exercícios listados.`;
-
-            // Deep Link
-            const encodedPrompt = encodeURIComponent(promptText);
-            const url = `https://gemini.google.com/app?text=${encodedPrompt}`;
-            window.open(url, '_blank');
+            const encoded = encodeURIComponent(promptText);
+            
+            // Tenta abrir o App Nativo (Android)
+            if (/Android/i.test(navigator.userAgent)) {
+                 window.location.href = `intent://gemini.google.com/app?text=${encoded}#Intent;scheme=https;package=com.google.android.apps.bard;S.browser_fallback_url=https://gemini.google.com/app?text=${encoded};end`;
+            } else {
+                // Fallback (iOS/PC)
+                window.location.href = `https://gemini.google.com/app?text=${encoded}`;
+            }
         },
 
         renderMenu: function() {
