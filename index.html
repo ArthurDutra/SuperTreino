@@ -22,6 +22,7 @@
             --bg: #121212; --card: #1f1f23; --text: #ffffff; 
             --primary: #c084fc; --secondary: #fb923c; --accent: #facc15;
             --success: #4ade80; --danger: #ef4444; --edit-mode: #facc15;
+            --spotify: #1DB954; /* Verde Spotify */
             --bronze: #cd7f32; --silver: #c0c0c0; --gold: #ffd700;
             
             --color-1: #38bdf8; --color-2: #f472b6; --color-3: #a78bfa;
@@ -74,16 +75,27 @@
         .medal-desc { font-size: 10px; color: #888; display: block; margin-top: 5px; }
         .medal-progress { font-size: 10px; color: var(--accent); font-weight: bold; margin-top: 5px; display: block; }
 
-        /* Botão AI Coach */
+        /* Botão AI Coach (Estilo Novo) */
         .btn-ai-coach {
-            width: 100%; padding: 15px; margin-bottom: 20px;
-            background: linear-gradient(90deg, #2b2b2b, #1a1a1a);
-            border: 2px solid var(--primary); border-radius: 16px;
-            color: var(--primary); font-weight: 800; text-transform: uppercase;
+            width: 100%; padding: 18px; margin-top: 20px;
+            background: linear-gradient(135deg, #4c1d95, #c084fc);
+            border: none; border-radius: 20px;
+            color: #fff; font-weight: 800; text-transform: uppercase;
             display: flex; align-items: center; justify-content: center; gap: 10px;
-            box-shadow: 0 4px 15px rgba(192, 132, 252, 0.1); cursor: pointer;
+            box-shadow: 0 5px 20px rgba(192, 132, 252, 0.3); cursor: pointer;
+            letter-spacing: 1px; font-size: 14px;
         }
-        .btn-ai-coach:active { transform: scale(0.98); background: var(--primary); color: #000; }
+        .btn-ai-coach:active { transform: scale(0.98); }
+
+        /* Botão Spotify */
+        .btn-spotify {
+            width: 100%; padding: 12px; margin-bottom: 15px;
+            background: #191414; border: 2px solid var(--spotify); border-radius: 50px;
+            color: var(--spotify); font-weight: 700; font-size: 14px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            cursor: pointer; transition: 0.2s;
+        }
+        .btn-spotify:active { background: var(--spotify); color: #000; transform: scale(0.98); }
 
         /* LISTAS & CARDS */
         #user-list, #workout-select-list { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 10px; }
@@ -94,8 +106,7 @@
             font-size: 18px; font-weight: 700; cursor: pointer; color: #fff; 
             box-shadow: 0 8px 20px rgba(0,0,0,0.3); text-transform: uppercase;
             text-align: left; display: flex; justify-content: space-between; align-items: center;
-            transition: transform 0.1s, box-shadow 0.1s;
-            font-family: 'Poppins', sans-serif;
+            transition: transform 0.1s, box-shadow 0.1s; font-family: 'Poppins', sans-serif;
         }
         .btn-large:active { transform: scale(0.98); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         
@@ -202,7 +213,15 @@
             <span class="user-title" id="select-user-title">...</span>
             <button class="btn-icon" id="btn-edit-select" onclick="window.app.toggleSelectEditMode()" title="Editar">✏️</button>
         </div>
+        
         <div id="workout-select-list"></div>
+        
+        <div class="card-wrapper" style="width:100%; max-width:400px; margin:20px auto 0 auto;">
+            <button class="btn-ai-coach" onclick="window.app.consultAI()">
+                <span style="font-size:24px">🤖💪</span> Preparador Físico Virtual
+            </button>
+        </div>
+
         <button id="btn-add-workout" class="btn-add-item" onclick="window.app.addWorkout()">+ NOVO TREINO</button>
     </div>
 
@@ -214,8 +233,8 @@
         </div>
         
         <div class="card-wrapper" style="width:100%; max-width:400px; margin:0 auto;">
-            <button class="btn-ai-coach" onclick="window.app.consultAI()">
-                <span style="font-size:24px">🧠</span> Avaliar com IA
+            <button class="btn-spotify" onclick="window.open('https://open.spotify.com', '_blank')">
+                <span style="font-size:18px">🎧</span> SOLTAR O SOM NO SPOTIFY
             </button>
         </div>
 
@@ -252,66 +271,39 @@
         <h3 style="margin-left:10px; color:#888; font-size:12px;">SEMANA ATUAL</h3>
         <div class="medal-shelf">
             <div class="medal-box" id="medal-week-3">
-                <span class="medal-icon">🥉</span>
-                <span class="medal-title">Bronze</span>
-                <span class="medal-desc">3 dias</span>
-                <span class="medal-progress" id="prog-week-3">0/3</span>
+                <span class="medal-icon">🥉</span><span class="medal-title">Bronze</span><span class="medal-desc">3 dias</span><span class="medal-progress" id="prog-week-3">0/3</span>
             </div>
             <div class="medal-box" id="medal-week-4">
-                <span class="medal-icon">🥈</span>
-                <span class="medal-title">Prata</span>
-                <span class="medal-desc">4 dias</span>
-                <span class="medal-progress" id="prog-week-4">0/4</span>
+                <span class="medal-icon">🥈</span><span class="medal-title">Prata</span><span class="medal-desc">4 dias</span><span class="medal-progress" id="prog-week-4">0/4</span>
             </div>
             <div class="medal-box" id="medal-week-5">
-                <span class="medal-icon">🥇</span>
-                <span class="medal-title">Ouro</span>
-                <span class="medal-desc">5 dias</span>
-                <span class="medal-progress" id="prog-week-5">0/5</span>
+                <span class="medal-icon">🥇</span><span class="medal-title">Ouro</span><span class="medal-desc">5 dias</span><span class="medal-progress" id="prog-week-5">0/5</span>
             </div>
         </div>
 
-        <h3 style="margin-left:10px; color:#888; font-size:12px;">MÊS ATUAL (SEMANAS COMPLETAS)</h3>
+        <h3 style="margin-left:10px; color:#888; font-size:12px;">MÊS ATUAL (SEMANAS)</h3>
         <div class="medal-shelf">
             <div class="medal-box" id="medal-month-2">
-                <span class="medal-icon">🥉</span>
-                <span class="medal-title">Bronze</span>
-                <span class="medal-desc">2 sem.</span>
-                <span class="medal-progress" id="prog-month-2">0/2</span>
+                <span class="medal-icon">🥉</span><span class="medal-title">Bronze</span><span class="medal-desc">2 sem.</span><span class="medal-progress" id="prog-month-2">0/2</span>
             </div>
             <div class="medal-box" id="medal-month-3">
-                <span class="medal-icon">🥈</span>
-                <span class="medal-title">Prata</span>
-                <span class="medal-desc">3 sem.</span>
-                <span class="medal-progress" id="prog-month-3">0/3</span>
+                <span class="medal-icon">🥈</span><span class="medal-title">Prata</span><span class="medal-desc">3 sem.</span><span class="medal-progress" id="prog-month-3">0/3</span>
             </div>
             <div class="medal-box" id="medal-month-4">
-                <span class="medal-icon">🥇</span>
-                <span class="medal-title">Ouro</span>
-                <span class="medal-desc">4 sem.</span>
-                <span class="medal-progress" id="prog-month-4">0/4</span>
+                <span class="medal-icon">🥇</span><span class="medal-title">Ouro</span><span class="medal-desc">4 sem.</span><span class="medal-progress" id="prog-month-4">0/4</span>
             </div>
         </div>
 
-        <h3 style="margin-left:10px; color:#888; font-size:12px;">ANO ATUAL (MESES ATIVOS)</h3>
+        <h3 style="margin-left:10px; color:#888; font-size:12px;">ANO ATUAL (MESES)</h3>
         <div class="medal-shelf">
             <div class="medal-box" id="medal-year-8">
-                <span class="medal-icon">🥉</span>
-                <span class="medal-title">Bronze</span>
-                <span class="medal-desc">8 meses</span>
-                <span class="medal-progress" id="prog-year-8">0/8</span>
+                <span class="medal-icon">🥉</span><span class="medal-title">Bronze</span><span class="medal-desc">8 meses</span><span class="medal-progress" id="prog-year-8">0/8</span>
             </div>
             <div class="medal-box" id="medal-year-9">
-                <span class="medal-icon">🥈</span>
-                <span class="medal-title">Prata</span>
-                <span class="medal-desc">9 meses</span>
-                <span class="medal-progress" id="prog-year-9">0/9</span>
+                <span class="medal-icon">🥈</span><span class="medal-title">Prata</span><span class="medal-desc">9 meses</span><span class="medal-progress" id="prog-year-9">0/9</span>
             </div>
             <div class="medal-box" id="medal-year-10">
-                <span class="medal-icon">🥇</span>
-                <span class="medal-title">Ouro</span>
-                <span class="medal-desc">10 meses</span>
-                <span class="medal-progress" id="prog-year-10">0/10</span>
+                <span class="medal-icon">🥇</span><span class="medal-title">Ouro</span><span class="medal-desc">10 meses</span><span class="medal-progress" id="prog-year-10">0/10</span>
             </div>
         </div>
     </div>
@@ -364,9 +356,9 @@
     </script>
 
     <script>
-    const successMessages = ["Tá pago!", "Mais um pra conta!", "Ficou gigante!", "Sem dor sem ganho!", "Amanhã tem mais!", "Shape vindo!", "Parabéns monstro!", "Suor é gordura chorando!", "Treino de gente grande!", "Missão cumprida!"];
-    const quitMessages = ["Já vai?", "Fugindo?", "O treino não acabou!", "Volta aqui frango!", "Desistir? Jamais!", "Tá com medo do peso?", "Sair agora é derrota.", "Fica mais um pouco!", "Não me decepcione!", "Honre o treino!"];
-    const incompleteMessages = ["Esqueceu de marcar?", "Treino incompleto?", "Faltou exercício!", "Não rouba!", "Marca tudo aí!", "Deixou pra trás?", "Faz direito!", "Tá devendo repetição?", "Completa isso!", "Sem migué!"];
+    const successMessages = ["Tá pago! Agora pode chorar no banho.", "A dor é temporária, a glória é eterna.", "Suor é gordura chorando!", "Treino feito! Finja que consegue andar.", "Mais um dia vencido. O sofá te espera.", "Você treina para comer sem culpa!", "Shape de respeito em construção.", "Parabéns! Você é melhor que quem não veio.", "Zero dias sem reclamar, mas zero sem treinar!", "Diz a lenda que depois da dor vem o músculo.", "A meta é ficar irreconhecível.", "Foco, força e fé!", "Não pare quando doer, pare quando acabar.", "Frango não tem vez aqui!", "Quem tem pena é galinha!", "Seu único limite é a sua mente.", "Shape se constrói com cara feia.", "Sorria, você ficou mais forte.", "Descanse, mas não desista.", "Hoje você venceu a preguiça.", "Treinar é vida. O resto é intervalo.", "Calma, respira e agacha!", "Se não for para suar, nem saio de casa.", "Ficar monstro é obrigação.", "Vença a si mesmo todos os dias.", "Disciplina é liberdade.", "O único treino ruim é o que não aconteceu.", "Transforme dor em poder.", "Faça os dias contarem.", "Seu corpo pode tudo.", "Você aguenta mais uma!", "Levanta esse peso!", "Sem dor, sem ganho.", "Todo campeão já foi um frango.", "O sucesso começa fora da zona de conforto.", "Não deseje que fosse fácil.", "Faça por você.", "O esforço de hoje é o orgulho de amanhã.", "Treino bom é treino que descabela.", "Se não pode voar, corra.", "Musculação: levantar coisas pesadas.", "Se consegue ler isso sem tremer, treinou errado.", "Academia: meu playground.", "Menos mimimi, mais agachamento.", "Não espere incentivo, o shape é seu.", "Vá treinar!", "Corpo são, mente sã, perna doendo.", "A vida começa depois do treino.", "Seus músculos não sabem contar.", "Supere seus limites.", "Não é sobre tempo, é prioridade.", "Desculpas não queimam calorias.", "Treino concluído com ódio e sucesso.", "Amanhã você vai agradecer.", "Se está fácil, aumenta o peso.", "Foco no objetivo.", "Você não chegou até aqui pra parar.", "Seja sua motivação.", "Dor muscular é troféu.", "Treinar cura tudo.", "O impossível é só questão de opinião.", "Seja sua melhor versão.", "Não tenha medo de falhar.", "Cada gota de suor conta.", "Respeite o processo.", "Construindo um corpo blindado.", "Treino é terapia.", "Não diminua a meta.", "Vencedores treinam.", "Hoje tá pago com juros.", "Se quer algo novo, faça algo novo.", "A dor de hoje é força.", "Não pare até se orgulhar.", "Você é seu adversário.", "Levanta a cabeça e o peso.", "Firme igual rocha.", "Treino de hoje: Sobreviver.", "Ame o processo.", "Fim de treino! Coma proteína.", "Sentindo as pernas? Não. Valeu? Sim.", "Falha muscular é vida.", "Aprenda a descansar.", "Vai doer? Vai.", "Treino de perna se lamenta.", "O corpo ideal tem alguém feliz dentro.", "Hospital da alma.", "Seu corpo ouve sua mente.", "Faça seu 'eu' do futuro feliz.", "Não é sorte, é suor.", "Constância é a chave.", "Esmaga que cresce!", "Bora ficar gigante!", "Shape inexplicável.", "Treino de gente grande.", "Sai da frente que tô passando!", "Hoje o treino rendeu.", "Missão dada é missão cumprida.", "Nada vence o trabalho duro.", "O topo é logo ali.", "Monstro saindo da jaula!", "Foco total.", "Sem massagem!", "Dale!", "Brabo demais!"];
+    const quitMessages = ["Já vai? O sofá te chamou?", "Fugindo do leg day?", "Sua mãe disse que você podia sair?", "Volta aqui, frango!", "Ei, o treino não acabou!", "Desistir é para os fracos.", "Você prometeu que ia treinar!", "A porta da rua é serventia da vergonha.", "Vai deixar o peso ganhar?", "Não ouse sair agora!", "O cronômetro tá te julgando.", "Vai chorar no banho ou terminar?", "Se sair agora, vira estatística.", "Quem foge não cresce.", "Tá com medinho?", "Volta pro treino, soldado!", "Sair agora = Frango pra sempre.", "Acha que o shape vem por osmose?", "Não me decepcione.", "Você é melhor que isso.", "Onde você pensa que vai?", "Fica! Vai ter bolo (mentira).", "Se sair, o treino não conta.", "Honre seu suor.", "Termina isso logo!", "Preguiça não define caráter.", "Vai sair sem terminar? Que feio.", "O peso tá leve, volta lá.", "Não seja um desistente.", "Falta pouco, aguenta!", "A dor passa, a vergonha fica.", "Você não é de açúcar.", "Vai derreter se continuar?", "Sair agora é derrota.", "Mostre do que é feito.", "Não clique nesse botão!", "Bloqueado por falta de vergonha.", "Volte e termine o serviço.", "Sua avó treinaria mais que isso.", "Tá doendo? Que bom.", "Sem desculpas.", "Vai sair de fininho?", "Eu vi você clicando em voltar!", "O treino não é opcional.", "Compromisso é tudo.", "Não traia seu corpo.", "Se sair, paga 10 flexões.", "Vai correr da raia?", "Não seja essa pessoa.", "Termina e a gente conversa.", "Fuga das galinhas?", "Você consegue, volta lá.", "Não desperdice o tempo.", "Foco!", "Disciplina!", "Cadê a força de vontade?", "Vai se arrepender se sair.", "O espelho não mente.", "Não saia!", "Volta!", "Fica!", "Treina!", "Esmaga!", "Não foge!", "Você é guerreiro ou vítima?", "Encare o desafio.", "Não tem atalho.", "Se sair, o shape murcha.", "Cancele a saída, não o treino.", "Persistência é tudo.", "Não seja medíocre.", "Supere a vontade de ir embora.", "O resultado vem pra quem fica.", "Não desista.", "Lute contra a preguiça.", "Seja forte.", "Aguenta firme.", "Tá acabando (quase).", "Não me irrite.", "Volta pro supino.", "Não abandone os pesos.", "Eles sentem sua falta.", "Se sair, zero whey hoje.", "Você aguenta.", "Confio em você.", "Bora!", "Não para!", "Continua!", "Mais um pouco!", "Vai valer a pena!", "Não saia da tela.", "Mantenha o foco.", "Olho no objetivo.", "Se sair, engorda 1kg.", "Brincadeira (ou não).", "Fica aí.", "Treino sério.", "Sem corpo mole.", "Bora monstro!", "Vence isso!"];
+    const incompleteMessages = ["Roubando repetição? Que feio.", "Vai deixar exercício pra amanhã?", "Treino pela metade, resultado pela metade.", "Acha que eu não vi essa caixa vazia?", "Assim você não fica monstro.", "Tá esquecendo coisa pra trás!", "Volta lá e marca tudo.", "Não adianta mentir pro app.", "Seu bíceps tá chorando.", "Finalizar assim? Sério?", "Você consegue fazer tudo!", "Não seja preguiçoso.", "Faltou um ali, ó.", "O treino é completo ou não é.", "Quem rouba no treino, rouba na vida.", "Tá com pressa de que?", "Termina o serviço.", "Não faça serviço de porco.", "Seja honesto com seu treino.", "Vai deixar buraco no treino?", "Isso não é um treino completo.", "Falta exercício!", "Olha as caixinhas vazias.", "Preenche tudo!", "Não me engana.", "O shape não vem pela metade.", "Vai ficar devendo?", "Paga o que deve!", "Não finalizo se não terminar.", "Volta e faz direito.", "Tá achando que é festa?", "Treino sério exige tudo.", "Não pule o leg day.", "Nem o supino.", "Completa isso aí.", "Estou de olho.", "Não valida treino fofo.", "Quer resultado? Faça tudo.", "Sem atalhos.", "O caminho é completo.", "Não deixe nada pra trás.", "Zere o treino.", "Marque todas as opções.", "Falta pouco, não desista.", "Faça valer a pena.", "Não seja meio termo.", "Tudo ou nada.", "100% ou 0%.", "Vai sair devendo?", "O app sabe que faltou.", "Não mente pra mim.", "Seu corpo sabe.", "Termina!", "Faz tudo!", "Não enrola.", "Sem migué.", "Que vergonha...", "Pensei que fosse monstro.", "Cadê a disciplina?", "Falta um check.", "Ou dois.", "Ou três.", "Tá quase, não para.", "Finalizar incompleto é pecado.", "O deus do ferro tá vendo.", "Não decepcione o Arnold.", "Faça por merecer.", "Conquiste o botão finalizar.", "Ele só libera se fizer tudo.", "Bloqueado por preguiça.", "Volte e treine.", "Não tem essa de pular.", "Cada exercício conta.", "Não desperdice.", "Valorize seu tempo.", "Faça bem feito.", "Qualidade total.", "Não aceito meio treino.", "Sou exigente.", "Você também deveria ser.", "Bora marcar tudo.", "Tica tudo!", "Checklist incompleto.", "Erro 404: Exercício não encontrado.", "Corrija isso.", "Agora sim (se fizer).", "Vai logo!", "Quero ver tudo verde.", "Sem caixas vazias.", "Preenchimento obrigatório.", "Treino é sagrado.", "Amém?", "Bora terminar!"];
 
     window.app = {
         data: {}, historyData: [], currentUser: null, currentWorkoutIndex: null, isTraining: false,
@@ -376,11 +368,10 @@
         init: function() {
             if (!history.state) history.replaceState({ screen: 'screen-menu' }, '');
             
-            // Loop Fujão
             window.onpopstate = (event) => {
                 if (this.isTraining) {
                     const randomMsg = quitMessages[Math.floor(Math.random() * quitMessages.length)];
-                    if (confirm(`🚨 ${randomMsg}\n\nDeseja realmente sair?`)) {
+                    if (confirm(`🚨 ${randomMsg}\n\nO treino está rolando. Sair cancela tudo. Deseja realmente sair?`)) {
                         this.isTraining = false;
                         window.onbeforeunload = null;
                         this.quitAttempts = 0;
@@ -409,7 +400,7 @@
                     if(document.getElementById('screen-gamification').classList.contains('visible')) this.updateMedalsUI();
                 });
             } else {
-                this.data = JSON.parse(localStorage.getItem('gymData_v46')) || {};
+                this.data = JSON.parse(localStorage.getItem('gymData_v47')) || {};
                 this.historyData = JSON.parse(localStorage.getItem('gymHistory')) || [];
                 this.refreshCurrentScreen();
             }
@@ -417,7 +408,7 @@
 
         save: function() { 
             if(window.dbInstance) window.dbSet(window.dbRef(window.dbInstance, 'users'), this.data);
-            else localStorage.setItem('gymData_v46', JSON.stringify(this.data)); 
+            else localStorage.setItem('gymData_v47', JSON.stringify(this.data)); 
         },
 
         handleBack: function() { window.history.back(); },
@@ -440,7 +431,7 @@
             document.getElementById(state.screen).classList.add('visible');
             window.scrollTo(0,0);
 
-            if (state.screen === 'screen-menu') { this.currentUser = null; this.renderMenu(); }
+            if (state.screen === 'screen-menu') { this.currentUser = null; this.renderMenu(); this.renderMedals(); }
             else if (state.screen === 'screen-workout-select') { this.currentUser = state.userId; this.renderWorkoutSelectScreen(); }
             else if (state.screen === 'screen-active-workout') { this.currentUser = state.userId; this.currentWorkoutIndex = state.wIndex; this.renderActiveWorkout(); }
             else if (state.screen === 'screen-history') { this.renderHistoryList(); }
@@ -449,13 +440,13 @@
 
         refreshCurrentScreen: function() {
             const current = document.querySelector('.screen.visible').id;
-            if (current === 'screen-menu') this.renderMenu();
+            if (current === 'screen-menu') { this.renderMenu(); this.renderMedals(); }
             if (current === 'screen-workout-select') this.renderWorkoutSelectScreen();
             if (current === 'screen-active-workout') this.renderActiveWorkout();
             if (current === 'screen-gamification') this.updateMedalsUI();
         },
 
-        // --- NOVO: GAMIFICAÇÃO & DATA ---
+        // --- MEDALHAS ---
         openGamification: function() {
             this.navigate('screen-gamification');
             this.updateMedalsUI();
@@ -463,68 +454,46 @@
 
         updateMedalsUI: function() {
             if(!this.historyData) return;
-            
-            // 1. Processar Datas Únicas (Anti-Trapaça de Múltiplos Treinos no Dia)
             const uniqueDates = new Set();
             this.historyData.forEach(h => {
-                // Formato DD/MM/AAAA
                 const parts = h.date.split('/');
-                // Salva como YYYY-MM-DD para garantir unicidade
                 uniqueDates.add(`${parts[2]}-${parts[1]}-${parts[0]}`);
             });
-
-            const sortedDates = Array.from(uniqueDates).sort(); // Ordenado cronologicamente
+            const sortedDates = Array.from(uniqueDates).sort();
             document.getElementById('total-days-count').innerText = sortedDates.length;
 
-            // 2. Contadores
             const now = new Date();
             const currentWeekNum = this.getWeekNumber(now);
-            const currentMonthKey = `${now.getFullYear()}-${now.getMonth()}`; // YYYY-M
+            const currentMonthKey = `${now.getFullYear()}-${now.getMonth()}`;
             const currentYearKey = now.getFullYear();
 
             let daysInThisWeek = 0;
-            const weeksInMonth = {}; // Set de semanas únicas por mês
-            const monthsInYear = {}; // Set de meses únicos por ano
+            const weeksInMonth = {};
+            const monthsInYear = {};
 
             sortedDates.forEach(dateStr => {
                 const [y, m, d] = dateStr.split('-').map(Number);
                 const dateObj = new Date(y, m-1, d);
-                
                 const weekNum = this.getWeekNumber(dateObj);
                 const monthKey = `${y}-${m-1}`;
                 const yearKey = y;
 
-                // Contagem Semana Atual
-                if (y === now.getFullYear() && weekNum === currentWeekNum) {
-                    daysInThisWeek++;
-                }
-
-                // Contagem Geral para Medalhas de Mês/Ano
-                // Agrupa semanas no mês
+                if (y === now.getFullYear() && weekNum === currentWeekNum) daysInThisWeek++;
                 if (!weeksInMonth[monthKey]) weeksInMonth[monthKey] = new Set();
                 weeksInMonth[monthKey].add(weekNum);
-
-                // Agrupa meses no ano
-                // (Para simplificar, consideramos "meses ativos" se tiver pelo menos 1 treino, 
-                // mas a regra pedia 8 meses de medalha... vamos simplificar para "Meses Treinados"
-                // para não criar um banco de dados relacional complexo no browser)
                 if (!monthsInYear[yearKey]) monthsInYear[yearKey] = new Set();
                 monthsInYear[yearKey].add(m-1);
             });
 
-            // Atualiza UI Semana
             this.setMedalState('week-3', daysInThisWeek, 3);
             this.setMedalState('week-4', daysInThisWeek, 4);
             this.setMedalState('week-5', daysInThisWeek, 5);
 
-            // Atualiza UI Mês (Semanas Treinadas no Mês Atual)
-            // Lógica: Quantas semanas DIFERENTES eu treinei neste mês?
             const weeksDoneThisMonth = weeksInMonth[currentMonthKey] ? weeksInMonth[currentMonthKey].size : 0;
             this.setMedalState('month-2', weeksDoneThisMonth, 2);
             this.setMedalState('month-3', weeksDoneThisMonth, 3);
             this.setMedalState('month-4', weeksDoneThisMonth, 4);
 
-            // Atualiza UI Ano (Meses Treinados no Ano Atual)
             const monthsDoneThisYear = monthsInYear[currentYearKey] ? monthsInYear[currentYearKey].size : 0;
             this.setMedalState('year-8', monthsDoneThisYear, 8);
             this.setMedalState('year-9', monthsDoneThisYear, 9);
@@ -535,48 +504,47 @@
             const el = document.getElementById(`medal-${id}`);
             const prog = document.getElementById(`prog-${id}`);
             const isUnlocked = current >= target;
-            
             prog.innerText = `${Math.min(current, target)}/${target}`;
-            
-            if (isUnlocked) {
-                el.classList.add('medal-unlocked');
-                prog.style.color = '#fff';
-            } else {
-                el.classList.remove('medal-unlocked');
-                prog.style.color = 'var(--accent)';
-            }
+            if (isUnlocked) { el.classList.add('medal-unlocked'); prog.style.color = '#fff'; } 
+            else { el.classList.remove('medal-unlocked'); prog.style.color = 'var(--accent)'; }
         },
 
         getWeekNumber: function(d) {
-            // ISO 8601 Week Number (Semana começa na Segunda)
             d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
             d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
             var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
             return Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
         },
 
-        // --- NOVO: AI COACH ---
+        // --- AI COACH GLOBAL ---
         consultAI: function() {
             if(!this.currentUser) return;
             const u = this.data[this.currentUser];
-            const w = u.workouts[this.currentWorkoutIndex];
-            
-            if(!w.exercises || w.exercises.length === 0) {
-                alert("Adicione exercícios primeiro!");
+            if (!u.workouts || u.workouts.length === 0) {
+                alert("Você precisa cadastrar treinos primeiro!");
                 return;
             }
 
-            let promptText = `Atue como um Personal Trainer de elite. Analise este meu treino de ${w.title} e me dê um feedback sobre volume, escolha de exercícios e sugira melhorias ou técnicas de intensidade:\n\n`;
+            let promptText = `Atue como meu Preparador Físico Virtual e Personal Trainer de Elite. Analise minha rotina completa de musculação abaixo. Verifique o volume, a divisão de grupos musculares, escolha de exercícios e sugira melhorias para hipertrofia e segurança:\n\n`;
             
-            w.exercises.forEach(ex => {
-                const carga = ex.weight ? `${ex.weight}kg` : "Sem carga";
-                promptText += `- ${ex.name}: ${ex.sets} séries de ${ex.reps} reps (${carga})\n`;
+            u.workouts.forEach(w => {
+                promptText += `👉 TREINO ${w.title}:\n`;
+                if(w.exercises && w.exercises.length > 0) {
+                    w.exercises.forEach(ex => {
+                        const carga = ex.weight ? `${ex.weight}kg` : "Peso do corpo/Livre";
+                        promptText += `- ${ex.name}: ${ex.sets} séries x ${ex.reps} reps (Carga: ${carga})\n`;
+                    });
+                } else {
+                    promptText += "(Ainda sem exercícios cadastrados)\n";
+                }
+                promptText += `\n`;
             });
 
-            // Deep Link para o Gemini Web
+            promptText += `\nPor favor, me dê um feedback sobre:\n1. Balanceamento muscular (estou esquecendo algo?)\n2. Volume de treino\n3. Sugestão de técnicas de intensidade para os exercícios listados.`;
+
+            // Deep Link
             const encodedPrompt = encodeURIComponent(promptText);
             const url = `https://gemini.google.com/app?text=${encodedPrompt}`;
-            
             window.open(url, '_blank');
         },
 
@@ -765,7 +733,7 @@
             for(let c of chks) if(!c.checked) p = true;
             if(p) { const msg = incompleteMessages[Math.floor(Math.random()*incompleteMessages.length)]; if(!confirm(`👀 ${msg}\n\nFinalizar incompleto?`)) return; }
             
-            const btn = document.getElementById('btn-finish-main'); btn.innerText = "Localizando..."; btn.disabled = true;
+            const btn = document.getElementById('btn-finish-main'); btn.innerText = "Salvando..."; btn.disabled = true;
             document.getElementById('modal-msg').style.display = 'flex';
             document.getElementById('quote-text').innerText = successMessages[Math.floor(Math.random()*successMessages.length)];
             
