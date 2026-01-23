@@ -1,9 +1,8 @@
-/* SERVICE WORKER - CAPIVARA CIBERNÉTICA
-   Responsável por manter o App carregado mesmo com internet instável,
-   mas agora o App exige conexão para buscar dados frescos do Firebase.
+/* SERVICE WORKER - TAMANDUA BANDEIRA
+   Focando em garantir que o app sempre busque dados frescos.
 */
 
-const CACHE_NAME = 'super-treino-capivara-v2';
+const CACHE_NAME = 'super-treino-tamandua-bandeira';
 
 // Arquivos da interface gráfica para cache
 const urlsToCache = [
@@ -14,7 +13,7 @@ const urlsToCache = [
 ];
 
 self.addEventListener('install', event => {
-  self.skipWaiting(); // Ativa imediatamente
+  self.skipWaiting(); 
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(urlsToCache))
@@ -27,7 +26,7 @@ self.addEventListener('activate', event => {
       return Promise.all(
         cacheNames.map(cacheName => {
           if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName); // Limpa versões antigas
+            return caches.delete(cacheName); 
           }
         })
       );
