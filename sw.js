@@ -1,4 +1,4 @@
-const CACHE_NAME = 'super-treino-v51-lite';
+const CACHE_NAME = 'super-treino-v52-tatu-bola';
 const urlsToCache = [
   '/SuperTreino/',
   '/SuperTreino/index.html',
