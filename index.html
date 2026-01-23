@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Super Treino - Capivara Fix</title>
+    <title>Super Treino - Tamandua</title>
     
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/jpeg" href="icon.jpg">
@@ -42,12 +42,12 @@
 
         .empty-msg { text-align: center; color: #888; margin-top: 40px; font-style: italic; font-size: 14px; }
 
-        /* LOADING OVERLAY */
+        /* LOADING OVERLAY - GARANTIA DE DADOS */
         #loading-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #121212; z-index: 9999;
+            background: rgba(18, 18, 18, 0.95); z-index: 9999;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 0.5s;
+            transition: opacity 0.2s;
         }
         .spinner {
             width: 50px; height: 50px; border: 5px solid #333;
@@ -202,7 +202,7 @@
     </div>
 
     <div id="db-status">⚪ Conectando...</div>
-    <div class="version-label">Versão: Capivara Cibernética 2.1 (Hotfix) 🐹</div>
+    <div class="version-label">Versão: Tamandua Bandeira</div>
 
     <div id="screen-menu" class="screen">
         <div class="header-bar">
@@ -391,54 +391,74 @@
             this.loadData();
         },
 
+        // CONTROLADOR GLOBAL DE LOADING
+        toggleLoading: function(show) {
+            document.getElementById('loading-overlay').style.display = show ? 'flex' : 'none';
+        },
+
         loadData: function() {
-            document.getElementById('loading-overlay').style.display = 'flex';
+            this.toggleLoading(true);
             
-            // TRAVA DE SEGURANÇA: Se o Firebase não responder em 5 segundos, libera a tela
+            // Segurança: Se travar, libera em 8 seg
             setTimeout(() => {
                 if(document.getElementById('loading-overlay').style.display !== 'none') {
-                    console.warn("Firebase demorou. Liberando app.");
-                    document.getElementById('loading-overlay').style.display = 'none';
+                    console.warn("Demora no DB. Liberando...");
+                    this.toggleLoading(false);
                     if (!document.querySelector('.screen.visible')) this.toggleScreen('screen-menu');
                 }
-            }, 5000);
+            }, 8000);
 
             if (window.dbInstance) {
+                // Ao receber qualquer dado de usuário, atualiza E esconde loading
                 window.dbOnValue(window.dbRef(window.dbInstance, 'users'), (snap) => {
                     this.data = snap.val() || {}; 
                     document.getElementById('db-status').innerText = "🟢 Online";
                     document.getElementById('db-status').classList.add('status-online');
                     this.checkLoadComplete();
                 });
+                
+                // Ao receber qualquer dado de histórico, atualiza E esconde loading
                 window.dbOnValue(window.dbRef(window.dbInstance, 'history'), (snap) => {
                     const val = snap.val();
                     const allHist = val ? Object.keys(val).map(k => ({...val[k], firebaseId: k})).sort((a,b) => b.id - a.id) : [];
-                    if (this.currentUser) {
-                        this.historyData = allHist.filter(h => h.user === this.data[this.currentUser]?.name);
-                    } else {
-                        this.historyData = allHist;
+                    // Atualiza a memória local
+                    this.historyData = allHist;
+                    
+                    // Se estivermos na tela de histórico, força re-render imediato
+                    const currentScreen = document.querySelector('.screen.visible')?.id;
+                    if(currentScreen === 'screen-history') {
+                        this.renderHistoryList();
                     }
+                    if(currentScreen === 'screen-workout-select') {
+                        this.renderWorkoutSelectScreen(); // Atualiza sugestão de treino
+                    }
+                    
                     this.checkLoadComplete();
                 });
-            } else {
-                // Caso offline ou erro no init do firebase, o Timeout acima salvará
             }
         },
 
         checkLoadComplete: function() {
+            // Se temos o objeto data (mesmo vazio), consideramos carregado
             if (this.data) {
-                document.getElementById('loading-overlay').style.display = 'none';
-                // FIX CRÍTICO: Se nenhuma tela estiver visível (primeiro load), força o Menu
+                this.toggleLoading(false);
                 if (!document.querySelector('.screen.visible')) {
                     this.toggleScreen('screen-menu');
                 } else {
-                    this.refreshCurrentScreen();
+                    // Apenas atualiza UI sem mudar de tela
+                    // Não chamamos refreshCurrentScreen() aqui para evitar loop visual,
+                    // deixamos os listeners específicos cuidarem disso.
                 }
             }
         },
 
         save: function() { 
-            if(window.dbInstance) window.dbSet(window.dbRef(window.dbInstance, 'users'), this.data);
+            if(window.dbInstance) {
+                this.toggleLoading(true); // Bloqueia tela
+                window.dbSet(window.dbRef(window.dbInstance, 'users'), this.data)
+                    .then(() => this.toggleLoading(false)) // Libera só quando terminar
+                    .catch(() => this.toggleLoading(false));
+            }
         },
 
         handleBack: function() { 
@@ -469,14 +489,6 @@
             else if (state.screen === 'screen-active-workout') { this.currentUser = state.userId; this.currentWorkoutIndex = state.wIndex; this.renderActiveWorkout(); }
             else if (state.screen === 'screen-history') { this.renderHistoryList(); }
             else if (state.screen === 'screen-gamification') { this.updateMedalsUI(); }
-        },
-
-        refreshCurrentScreen: function() {
-            const current = document.querySelector('.screen.visible')?.id;
-            if (current === 'screen-menu') this.renderMenu();
-            if (current === 'screen-workout-select') this.renderWorkoutSelectScreen();
-            if (current === 'screen-active-workout') this.renderActiveWorkout();
-            if (current === 'screen-gamification') this.updateMedalsUI();
         },
 
         showCustomModal: function(type, titleText, msgText, confirmCallback, cancelCallback) {
@@ -540,8 +552,56 @@
             });
             const sortedDates = Array.from(uniqueDates).sort();
             document.getElementById('total-days-count').innerText = sortedDates.length;
-            // ... (Rest of medals logic is same)
-            // Mantido simplificado para caber no bloco, mas a lógica de medalhas não mudou
+            
+            // Lógica de medalhas (mantida)
+            const now = new Date();
+            const currentWeekNum = this.getWeekNumber(now);
+            const currentMonthKey = `${now.getFullYear()}-${now.getMonth()}`;
+            const currentYearKey = now.getFullYear();
+            let daysInThisWeek = 0;
+            const weeksInMonth = {};
+            const monthsInYear = {};
+
+            sortedDates.forEach(dateStr => {
+                const [y, m, d] = dateStr.split('-').map(Number);
+                const dateObj = new Date(y, m-1, d);
+                const weekNum = this.getWeekNumber(dateObj);
+                const monthKey = `${y}-${m-1}`;
+                const yearKey = y;
+                if (y === now.getFullYear() && weekNum === currentWeekNum) daysInThisWeek++;
+                if (!weeksInMonth[monthKey]) weeksInMonth[monthKey] = new Set();
+                weeksInMonth[monthKey].add(weekNum);
+                if (!monthsInYear[yearKey]) monthsInYear[yearKey] = new Set();
+                monthsInYear[yearKey].add(m-1);
+            });
+            
+            this.setMedalState('week-3', daysInThisWeek, 3);
+            this.setMedalState('week-4', daysInThisWeek, 4);
+            this.setMedalState('week-5', daysInThisWeek, 5);
+            const weeksDoneThisMonth = weeksInMonth[currentMonthKey] ? weeksInMonth[currentMonthKey].size : 0;
+            this.setMedalState('month-2', weeksDoneThisMonth, 2);
+            this.setMedalState('month-3', weeksDoneThisMonth, 3);
+            this.setMedalState('month-4', weeksDoneThisMonth, 4);
+            const monthsDoneThisYear = monthsInYear[currentYearKey] ? monthsInYear[currentYearKey].size : 0;
+            this.setMedalState('year-8', monthsDoneThisYear, 8);
+            this.setMedalState('year-9', monthsDoneThisYear, 9);
+            this.setMedalState('year-10', monthsDoneThisYear, 10);
+        },
+
+        setMedalState: function(id, current, target) {
+            const el = document.getElementById(`medal-${id}`);
+            const prog = document.getElementById(`prog-${id}`);
+            const isUnlocked = current >= target;
+            prog.innerText = `${Math.min(current, target)}/${target}`;
+            if (isUnlocked) { el.classList.add('medal-unlocked'); prog.style.color = '#fff'; } 
+            else { el.classList.remove('medal-unlocked'); prog.style.color = 'var(--accent)'; }
+        },
+
+        getWeekNumber: function(d) {
+            d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+            d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+            var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+            return Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
         },
 
         renderMenu: function() {
@@ -671,15 +731,24 @@
         },
 
         showHistory: function() {
-            if (this.data && this.currentUser) this.navigate('screen-history');
-            else { this.loadData(); this.navigate('screen-history'); }
+             // Força loading se os dados ainda não estiverem prontos, senão só navega
+             if (this.data && this.currentUser && this.historyData) {
+                 this.navigate('screen-history');
+             } else {
+                 this.loadData(); 
+                 this.navigate('screen-history');
+             }
         },
 
         renderHistoryList: function() {
             const list = document.getElementById('history-list'); list.innerHTML = '';
-            let myHist = this.historyData;
-            if(this.currentUser && this.data[this.currentUser]) myHist = this.historyData.filter(h => h.user === this.data[this.currentUser].name);
+            let myHist = this.historyData || [];
+            if(this.currentUser && this.data[this.currentUser]) {
+                 myHist = myHist.filter(h => h.user === this.data[this.currentUser].name);
+            }
+
             if(!myHist.length) list.innerHTML = '<p class="empty-msg">Histórico vazio.</p>';
+            
             myHist.forEach(h => {
                 const div = document.createElement('div'); div.className = 'history-item';
                 div.innerHTML = `<div class="hist-top"><div><div class="hist-date">${h.date}</div><div class="hist-workout">${h.workoutTitle}</div></div><div style="text-align:right"><button style="background:none;border:none;margin-top:5px" onclick="window.app.delHist(${h.id}, '${h.firebaseId||''}')">🗑️</button></div></div>${h.skipped && h.skipped.length ? `<div class="skipped-list">⚠️ Pulou: ${h.skipped.join(', ')}</div>` : ''}`;
@@ -687,7 +756,6 @@
             });
         },
 
-        // EDIT & DELETE FUNCTIONS
         toggleMenuEdit: function() { this.isMenuEditing = !this.isMenuEditing; this.renderMenu(); },
         toggleSelectEditMode: function() { this.isSelectEditing = !this.isSelectEditing; this.renderWorkoutSelectScreen(); },
         toggleActiveEditMode: function() { this.isActiveEditing = !this.isActiveEditing; this.renderActiveWorkout(); },
@@ -698,8 +766,29 @@
         deleteUser: function(e, id) { e.stopPropagation(); this.showCustomModal('warning', 'APAGAR', 'Excluir este usuário permanentemente?', () => { delete this.data[id]; this.save(); this.renderMenu(); }); },
         deleteWorkout: function(e, idx) { e.stopPropagation(); this.showCustomModal('warning', 'APAGAR', 'Excluir este treino?', () => { this.data[this.currentUser].workouts.splice(idx, 1); this.save(); this.renderWorkoutSelectScreen(); }); },
         deleteEx: function(i) { this.showCustomModal('warning', 'APAGAR', 'Excluir este exercício?', () => { this.data[this.currentUser].workouts[this.currentWorkoutIndex].exercises.splice(i,1); this.save(); this.renderActiveWorkout(); }); },
-        delHist: function(id, fid) { this.showCustomModal('warning', 'APAGAR', 'Remover do histórico?', () => { if(window.dbInstance && fid) window.dbRemove(window.dbRef(window.dbInstance, `history/${fid}`)); }); },
-        clearAllHistory: function() { this.showCustomModal('danger', 'LIMPAR TUDO', 'Apagar TODO o histórico?', () => { if(window.dbInstance) window.dbRemove(window.dbRef(window.dbInstance, 'history')); }); },
+        
+        // DELETAR HISTÓRICO COM LOADING
+        delHist: function(id, fid) { 
+            this.showCustomModal('warning', 'APAGAR', 'Remover do histórico?', () => { 
+                if(window.dbInstance && fid) {
+                    this.toggleLoading(true); // Bloqueia a tela
+                    window.dbRemove(window.dbRef(window.dbInstance, `history/${fid}`))
+                        // Não removemos o loading aqui. O onValue vai detectar a mudança e remover.
+                        .catch(() => this.toggleLoading(false));
+                } 
+            }); 
+        },
+        
+        // LIMPAR TUDO COM LOADING
+        clearAllHistory: function() { 
+            this.showCustomModal('danger', 'LIMPAR TUDO', 'Apagar TODO o histórico?', () => { 
+                if(window.dbInstance) {
+                    this.toggleLoading(true);
+                    window.dbRemove(window.dbRef(window.dbInstance, 'history'))
+                        .catch(() => this.toggleLoading(false));
+                }
+            }); 
+        },
         
         reorderWorkout: function(idx, d) {
             const workouts = this.data[this.currentUser].workouts;
@@ -733,17 +822,49 @@
                 this.showCustomModal('warning', 'ATENÇÃO', `👀 ${msg}\n\nFinalizar incompleto?`, () => this.processFinish(true));
             } else { this.processFinish(false); }
         },
+
+        // CORREÇÃO DO TRAVAMENTO AO FINALIZAR
         processFinish: function(incomplete) {
-            const btn = document.getElementById('btn-finish-main'); btn.innerText = "Salvando..."; btn.disabled = true;
+            const btn = document.getElementById('btn-finish-main'); 
+            btn.innerText = "Salvando..."; 
+            btn.disabled = true;
+            
+            // Chama o saveHist imediatamente. O saveHist ativa o loading-overlay.
+            // Se houver erro ou delay, o loading-overlay previne cliques duplos.
             const wName = this.data[this.currentUser].workouts[this.currentWorkoutIndex].title;
-            this.isTraining = false; window.onbeforeunload = null; this.quitAttempts = 0; localStorage.removeItem('tempWorkoutState');
-            setTimeout(() => { this.saveHist(wName, null, false, incomplete ? ["Incompleto"] : []); }, 1000);
+            this.saveHist(wName, null, false, incomplete ? ["Incompleto"] : []);
+            
+            // Removemos o setTimeout para não concorrer com o banco de dados.
+            // A limpeza de estado acontece após o sucesso no modal.
         },
+
         saveHist: function(t, l, c, s) {
+            this.toggleLoading(true); // Bloqueia a tela
             const reg = { id: Date.now(), date: new Date().toLocaleDateString('pt-BR'), user: this.data[this.currentUser].name, workoutTitle: t, location: null, cheat: c, skipped: s };
-            if(window.dbInstance) window.dbPush(window.dbRef(window.dbInstance, 'history'), reg);
-            const randomMsg = successMessages[Math.floor(Math.random()*successMessages.length)];
-            this.showCustomModal('success', 'PARABÉNS', randomMsg, () => this.goHome());
+            
+            if(window.dbInstance) {
+                // Envia para o Firebase
+                window.dbPush(window.dbRef(window.dbInstance, 'history'), reg)
+                    .then(() => {
+                        this.toggleLoading(false); // Libera a tela
+                        
+                        // Limpa estado APÓS sucesso
+                        this.isTraining = false; 
+                        window.onbeforeunload = null; 
+                        this.quitAttempts = 0; 
+                        localStorage.removeItem('tempWorkoutState');
+
+                        const randomMsg = successMessages[Math.floor(Math.random()*successMessages.length)];
+                        this.showCustomModal('success', 'PARABÉNS', randomMsg, () => this.goHome());
+                    })
+                    .catch((err) => {
+                        this.toggleLoading(false);
+                        alert("Erro ao salvar. Tente novamente.");
+                        const btn = document.getElementById('btn-finish-main'); 
+                        btn.innerText = "🏁 Finalizar"; 
+                        btn.disabled = false;
+                    });
+            }
         },
         
         toggleScreen: function(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('visible')); document.getElementById(id).classList.add('visible'); },
