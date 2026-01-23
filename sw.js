@@ -1,9 +1,9 @@
-const CACHE_NAME = 'super-treino-v54-mico-leao';
+const CACHE_NAME = 'super-treino-fenix-v1';
 const urlsToCache = [
-  '/SuperTreino/',
-  '/SuperTreino/index.html',
-  '/SuperTreino/manifest.json',
-  '/SuperTreino/icon.png'
+  './',
+  './index.html',
+  './manifest.json',
+  './icon.jpg'
 ];
 
 self.addEventListener('install', event => {
