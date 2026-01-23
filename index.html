@@ -22,22 +22,23 @@
             --bg: #121212; --card: #1f1f23; --text: #ffffff; 
             --primary: #c084fc; --secondary: #fb923c; --accent: #facc15;
             --success: #4ade80; --danger: #ef4444; --edit-mode: #facc15;
+            --spotify: #1DB954;
             --bronze: #cd7f32; --silver: #c0c0c0; --gold: #ffd700;
             
             --color-1: #38bdf8; --color-2: #f472b6; --color-3: #a78bfa;
             --color-4: #fb923c; --color-5: #22d3ee; --color-6: #4ade80;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
         
         body { 
             font-family: 'Poppins', sans-serif; background-color: var(--bg); color: var(--text); 
-            margin: 0; padding: 0; padding-bottom: 50px; 
+            margin: 0; padding: 0; padding-bottom: 50px; overscroll-behavior: none;
         }
         
-        .screen { display: none; padding: 20px; animation: fadeIn 0.4s; min-height: 100vh; flex-direction: column; position: relative; }
+        .screen { display: none; padding: 20px; animation: fadeIn 0.3s; min-height: 100vh; flex-direction: column; position: relative; }
         .visible { display: flex; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         .empty-msg { text-align: center; color: #888; margin-top: 40px; font-style: italic; font-size: 14px; font-weight: 400; }
 
@@ -55,37 +56,6 @@
         .btn-icon:active { transform: scale(0.9); }
         .icon-active { color: var(--edit-mode); transform: scale(1.1); text-shadow: 0 0 10px var(--edit-mode); }
 
-        /* GAMIFICAÇÃO */
-        .game-header { text-align: center; margin-bottom: 30px; }
-        .total-days-badge { 
-            background: linear-gradient(45deg, var(--primary), var(--secondary)); 
-            padding: 10px 20px; border-radius: 50px; font-weight: 800; font-size: 20px;
-            box-shadow: 0 0 20px rgba(192, 132, 252, 0.4); display: inline-block;
-        }
-        .medal-shelf { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 30px; }
-        .medal-box { 
-            background: var(--card); border: 1px solid #333; border-radius: 15px; 
-            padding: 15px; text-align: center; position: relative; opacity: 0.5; filter: grayscale(1);
-            transition: 0.3s;
-        }
-        .medal-unlocked { opacity: 1; filter: grayscale(0); border-color: var(--gold); box-shadow: 0 0 15px rgba(255, 215, 0, 0.1); }
-        .medal-icon { font-size: 40px; margin-bottom: 5px; display: block; }
-        .medal-title { font-size: 12px; font-weight: 700; color: #fff; text-transform: uppercase; display: block; }
-        .medal-desc { font-size: 10px; color: #888; display: block; margin-top: 5px; }
-        .medal-progress { font-size: 10px; color: var(--accent); font-weight: bold; margin-top: 5px; display: block; }
-
-        /* Botão AI Coach */
-        .btn-ai-coach {
-            width: 100%; padding: 18px; margin-top: 20px;
-            background: linear-gradient(135deg, #4c1d95, #c084fc);
-            border: none; border-radius: 20px;
-            color: #fff; font-weight: 800; text-transform: uppercase;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            box-shadow: 0 5px 20px rgba(192, 132, 252, 0.3); cursor: pointer;
-            letter-spacing: 1px; font-size: 14px;
-        }
-        .btn-ai-coach:active { transform: scale(0.98); }
-
         /* LISTAS & CARDS */
         #user-list, #workout-select-list { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 10px; }
         .card-wrapper { position: relative; width: 100%; max-width: 400px; }
@@ -95,10 +65,9 @@
             font-size: 18px; font-weight: 700; cursor: pointer; color: #fff; 
             box-shadow: 0 8px 20px rgba(0,0,0,0.3); text-transform: uppercase;
             text-align: left; display: flex; justify-content: space-between; align-items: center;
-            transition: transform 0.1s, box-shadow 0.1s;
-            font-family: 'Poppins', sans-serif;
+            transition: transform 0.1s; font-family: 'Poppins', sans-serif;
         }
-        .btn-large:active { transform: scale(0.98); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .btn-large:active { transform: scale(0.98); }
         
         .edit-input { 
             background: rgba(255,255,255,0.1); border: 1px solid #555; color: #fff; 
@@ -117,9 +86,8 @@
         .workout-select-card h3 { margin: 0 0 5px 0; font-size: 20px; overflow-wrap: break-word; }
         .workout-select-card p { margin: 0; color: #888; font-size: 14px; font-weight: 400; }
         .workout-select-card:active { transform: scale(0.98); background: #25252a; }
-        .suggested-workout { border: 2px solid var(--accent); box-shadow: 0 0 15px rgba(250, 204, 21, 0.15); }
-        .suggested-badge { position: absolute; right: 15px; top: 20px; background: var(--accent); color: #000; font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 20px; animation: pulse 2s infinite; }
 
+        /* EXERCÍCIOS */
         .workout-container { padding-bottom: 120px; }
         .exercise-card { background: var(--card); border-radius: 18px; padding: 20px; margin-bottom: 15px; border-left: 6px solid #555; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .exercise-header { display: flex; align-items: flex-start; gap: 15px; margin-bottom: 15px; }
@@ -128,6 +96,7 @@
         .custom-chk { width: 32px; height: 32px; background: #2a2a2a; border-radius: 10px; display: inline-block; position: relative; pointer-events: none; transition: 0.3s; border: 2px solid #444; }
         input:checked + .custom-chk { background: var(--success); border-color: var(--success); transform: scale(1.1); }
         input:checked + .custom-chk::after { content: '✔'; color: #000; position: absolute; left: 7px; top: 1px; font-weight: 800; font-size: 20px; }
+        
         .ex-info { flex-grow: 1; min-width: 0; }
         .ex-name { font-size: 18px; font-weight: 600; display: block; margin-bottom: 6px; color: #fff; word-wrap: break-word; }
         .ex-meta { display: flex; gap: 10px; align-items: center; font-size: 14px; color: #bbb; font-weight: 500; flex-wrap: wrap; }
@@ -141,6 +110,7 @@
         .weight-display { flex-grow: 1; text-align: center; font-size: 20px; font-weight: 800; color: var(--primary); font-family: 'Poppins', monospace; cursor: pointer; }
         .no-load { color: #666; font-size: 12px; font-family: 'Poppins', sans-serif; letter-spacing: 1px; text-transform: uppercase; }
 
+        /* EDIÇÃO */
         .edit-controls-floating { position: absolute; right: -10px; top: -10px; display: flex; flex-direction: column; gap: 8px; z-index: 10; animation: popIn 0.2s; pointer-events: none; opacity: 0; transition: 0.2s; }
         .editing .edit-controls-floating { opacity: 1; pointer-events: auto; }
         .btn-float { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #fff; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.5); color: #fff; font-size: 14px; transition: transform 0.2s; }
@@ -148,6 +118,7 @@
         .btn-del { background: var(--danger); }
         .btn-reorder { background: var(--secondary); border-color: #fff; }
         @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+        
         .btn-add-item { display: none; } 
         .editing .btn-add-item { display: block; width: 100%; max-width: 400px; padding: 20px; background: rgba(250, 204, 21, 0.1); border: 2px dashed var(--edit-mode); color: var(--edit-mode); border-radius: 16px; cursor: pointer; font-size: 16px; font-weight: 800; margin-top: 15px; text-align: center; }
         .editing .btn-large, .editing .workout-select-card, .editing .exercise-card { border: 1px dashed #555; opacity: 0.8; }
@@ -159,16 +130,33 @@
         .btn-finish:active { transform: scale(0.98); }
         .btn-finish:disabled { background: #333; color: #555; box-shadow: none; cursor: default; }
 
-        .history-item { background: var(--card); padding: 20px; border-radius: 16px; margin-bottom: 12px; display: flex; flex-direction: column; border-left: 5px solid #555; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .hist-top { display: flex; justify-content: space-between; width: 100%; align-items: flex-start; }
-        .hist-date { font-weight: 700; color: #fff; font-size: 15px; }
-        .hist-status { font-size: 24px; }
-        .hist-user { font-weight: 700; font-size: 13px; margin-top: 5px; display: block; opacity: 0.8; }
-        .hist-loc { font-size: 11px; color: var(--success); background: rgba(74, 222, 128, 0.1); padding: 5px 10px; border-radius: 6px; width: fit-content; margin-top: 10px; font-weight: 600; }
-        .skipped-list { color: var(--secondary); font-size: 11px; margin-top: 8px; border-top: 1px solid #333; padding-top: 5px; font-weight: 600; }
+        /* Botão Sair (Tela Inicial) */
+        .btn-exit { margin-top: 20px; background: #333; color: #888; font-size: 12px; padding: 10px 20px; border-radius: 20px; border: 1px solid #444; }
 
+        /* MODAIS PERSONALIZADOS (DIÁLOGO) */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; text-align: center; backdrop-filter: blur(5px); }
-        .msg-content { background: #1a1a1a; padding: 30px; border-radius: 25px; border: 2px solid var(--success); max-width: 400px; width: 100%; box-shadow: 0 0 30px rgba(74, 222, 128, 0.2); }
+        .msg-content { background: #1a1a1a; padding: 30px; border-radius: 25px; border: 2px solid var(--primary); max-width: 400px; width: 100%; box-shadow: 0 0 30px rgba(192, 132, 252, 0.2); }
+        .msg-title { font-weight: 800; font-size: 22px; color: var(--text); margin-bottom: 15px; }
+        .msg-text { color: #ccc; margin-bottom: 25px; font-style: italic; line-height: 1.5; font-size: 16px; }
+        .msg-actions { display: flex; gap: 10px; justify-content: center; }
+        .btn-dialog { padding: 12px 20px; border-radius: 12px; font-weight: bold; border: none; cursor: pointer; flex-grow: 1; text-transform: uppercase; }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-secondary { background: #333; color: #fff; }
+
+        /* Botão Spotify */
+        .btn-spotify { width: 100%; padding: 12px; margin-bottom: 15px; background: #191414; border: 2px solid var(--spotify); border-radius: 50px; color: var(--spotify); font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: 0.2s; }
+        
+        /* MEDALHAS */
+        .game-header { text-align: center; margin-bottom: 30px; }
+        .total-days-badge { background: linear-gradient(45deg, var(--primary), var(--secondary)); padding: 10px 20px; border-radius: 50px; font-weight: 800; font-size: 20px; box-shadow: 0 0 20px rgba(192, 132, 252, 0.4); display: inline-block; }
+        .medal-shelf { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 30px; }
+        .medal-box { background: var(--card); border: 1px solid #333; border-radius: 15px; padding: 15px; text-align: center; position: relative; opacity: 0.5; filter: grayscale(1); transition: 0.3s; }
+        .medal-unlocked { opacity: 1; filter: grayscale(0); border-color: var(--gold); box-shadow: 0 0 15px rgba(255, 215, 0, 0.1); }
+        .medal-icon { font-size: 40px; margin-bottom: 5px; display: block; }
+        .medal-title { font-size: 12px; font-weight: 700; color: #fff; text-transform: uppercase; display: block; }
+        .medal-desc { font-size: 10px; color: #888; display: block; margin-top: 5px; }
+        .medal-progress { font-size: 10px; color: var(--accent); font-weight: bold; margin-top: 5px; display: block; }
+
         #db-status { position: fixed; bottom: 5px; right: 5px; font-size: 10px; color: #555; z-index: 200; font-weight: bold; }
         .status-online { color: var(--success) !important; }
 
@@ -192,42 +180,30 @@
                 <button class="btn-icon" id="btn-edit-menu" onclick="window.app.toggleMenuEdit()" title="Editar">✏️</button>
             </div>
         </div>
-        
         <div id="user-list"></div>
         <button id="btn-add-user" class="btn-add-item" onclick="window.app.addUser()">+ NOVA PESSOA</button>
+        <center><button class="btn-exit" onclick="window.close()">Sair do App</button></center>
     </div>
 
     <div id="screen-workout-select" class="screen">
         <div class="header-bar">
-            <button class="btn-icon" onclick="window.app.handleBack()">⬅️</button>
+            <button class="btn-icon" onclick="window.history.back()">⬅️</button>
             <span class="user-title" id="select-user-title">...</span>
-            <div class="header-actions">
-                <button class="btn-icon" onclick="window.app.consultAI()" title="Avaliar com IA">🤖</button>
-                <button class="btn-icon" id="btn-edit-select" onclick="window.app.toggleSelectEditMode()" title="Editar">✏️</button>
-            </div>
+            <button class="btn-icon" id="btn-edit-select" onclick="window.app.toggleSelectEditMode()" title="Editar">✏️</button>
         </div>
-        
         <div id="workout-select-list"></div>
-        
-        <div class="card-wrapper" style="width:100%; max-width:400px; margin:20px auto 0 auto;">
-            <button class="btn-ai-coach" onclick="window.app.consultAI()">
-                <span style="font-size:24px">🤖💪</span> Preparador Físico Virtual
-            </button>
-        </div>
-
         <button id="btn-add-workout" class="btn-add-item" onclick="window.app.addWorkout()">+ NOVO TREINO</button>
     </div>
 
     <div id="screen-active-workout" class="screen">
         <div class="header-bar">
-            <button class="btn-icon" onclick="window.app.handleBack()">⬅️</button>
+            <button class="btn-icon" onclick="window.history.back()">⬅️</button>
             <span class="user-title" id="active-title">Treino A</span>
             <div class="header-actions">
-                <button class="btn-icon" onclick="window.open('https://open.spotify.com', '_blank')" title="Abrir Spotify">🎧</button>
+                <button class="btn-icon" onclick="window.open('https://open.spotify.com', '_blank')" title="Spotify">🎧</button>
                 <button class="btn-icon" id="btn-edit-active" onclick="window.app.toggleActiveEditMode()" title="Editar">✏️</button>
             </div>
         </div>
-        
         <div id="active-workout-container" class="workout-container"></div>
         <button id="btn-add-exercise" class="btn-add-item" onclick="window.app.addExercise()" style="margin-bottom: 80px;">+ NOVO EXERCÍCIO</button>
         <div class="footer-fixed">
@@ -237,12 +213,9 @@
 
     <div id="screen-history" class="screen">
         <div class="header-bar">
-            <button class="btn-icon" onclick="window.app.handleBack()">⬅️</button>
+            <button class="btn-icon" onclick="window.history.back()">⬅️</button>
             <span class="user-title">Histórico</span>
-            <div class="header-actions">
-                <button class="btn-icon" onclick="window.app.openGamification()" title="Conquistas">🏆</button>
-                <button class="btn-icon" onclick="window.app.clearAllHistory()">🗑️</button>
-            </div>
+            <button class="btn-icon" onclick="window.app.openGamification()" title="Conquistas">🏆</button>
         </div>
         <div id="history-list"></div>
     </div>
@@ -253,25 +226,21 @@
             <span class="user-title" style="color:var(--accent)">Conquistas</span>
             <div style="width:40px"></div>
         </div>
-
         <div class="game-header">
             <div class="total-days-badge">🔥 <span id="total-days-count">0</span> DIAS DE TREINO</div>
         </div>
-
         <h3 style="margin-left:10px; color:#888; font-size:12px;">SEMANA ATUAL</h3>
         <div class="medal-shelf">
             <div class="medal-box" id="medal-week-3"><span class="medal-icon">🥉</span><span class="medal-title">Bronze</span><span class="medal-desc">3 dias</span><span class="medal-progress" id="prog-week-3">0/3</span></div>
             <div class="medal-box" id="medal-week-4"><span class="medal-icon">🥈</span><span class="medal-title">Prata</span><span class="medal-desc">4 dias</span><span class="medal-progress" id="prog-week-4">0/4</span></div>
             <div class="medal-box" id="medal-week-5"><span class="medal-icon">🥇</span><span class="medal-title">Ouro</span><span class="medal-desc">5 dias</span><span class="medal-progress" id="prog-week-5">0/5</span></div>
         </div>
-
         <h3 style="margin-left:10px; color:#888; font-size:12px;">MÊS ATUAL (SEMANAS)</h3>
         <div class="medal-shelf">
             <div class="medal-box" id="medal-month-2"><span class="medal-icon">🥉</span><span class="medal-title">Bronze</span><span class="medal-desc">2 sem.</span><span class="medal-progress" id="prog-month-2">0/2</span></div>
             <div class="medal-box" id="medal-month-3"><span class="medal-icon">🥈</span><span class="medal-title">Prata</span><span class="medal-desc">3 sem.</span><span class="medal-progress" id="prog-month-3">0/3</span></div>
             <div class="medal-box" id="medal-month-4"><span class="medal-icon">🥇</span><span class="medal-title">Ouro</span><span class="medal-desc">4 sem.</span><span class="medal-progress" id="prog-month-4">0/4</span></div>
         </div>
-
         <h3 style="margin-left:10px; color:#888; font-size:12px;">ANO ATUAL (MESES)</h3>
         <div class="medal-shelf">
             <div class="medal-box" id="medal-year-8"><span class="medal-icon">🥉</span><span class="medal-title">Bronze</span><span class="medal-desc">8 meses</span><span class="medal-progress" id="prog-year-8">0/8</span></div>
@@ -280,12 +249,11 @@
         </div>
     </div>
 
-    <div id="modal-msg" class="modal-overlay">
+    <div id="custom-modal" class="modal-overlay">
         <div class="msg-content">
-            <h2 id="modal-title" style="color: var(--success); font-weight:800; font-size:24px;">TREINO CONCLUÍDO! 🔥</h2>
-            <p id="quote-text" style="color:#ddd; margin: 20px 0; font-style: italic; font-size: 16px; line-height:1.5;">...</p>
-            <span id="gps-status" style="font-size:12px; color:#aaa; font-weight:600;"></span>
-            <button class="btn-finish" style="margin-top:20px; width:100%" onclick="window.app.returnToMenu()">Fechar</button>
+            <div class="msg-title" id="d-title">TÍTULO</div>
+            <div class="msg-text" id="d-msg">Mensagem</div>
+            <div class="msg-actions" id="d-actions"></div>
         </div>
     </div>
 
@@ -311,7 +279,7 @@
                 const auth = getAuth();
                 await signInAnonymously(auth);
                 db = getDatabase(app);
-                document.getElementById('db-status').innerText = "🟢 Online (Seguro)";
+                document.getElementById('db-status').innerText = "🟢 Online";
                 document.getElementById('db-status').classList.add('status-online');
                 window.dbRef = ref; window.dbSet = set; window.dbOnValue = onValue;
                 window.dbPush = push; window.dbRemove = remove; window.dbInstance = db;
@@ -335,26 +303,28 @@
     window.app = {
         data: {}, historyData: [], currentUser: null, currentWorkoutIndex: null, isTraining: false,
         isMenuEditing: false, isSelectEditing: false, isActiveEditing: false,
-        quitAttempts: 0, 
 
         init: function() {
             if (!history.state) history.replaceState({ screen: 'screen-menu' }, '');
             
-            // Loop Fujão
+            // Loop Fujão & Block Back Button
             window.onpopstate = (event) => {
                 if (this.isTraining) {
+                    // Impede o "voltar" real empurrando o estado de novo
+                    history.pushState({ screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex }, '');
+                    
                     const randomMsg = quitMessages[Math.floor(Math.random() * quitMessages.length)];
-                    if (confirm(`🚨 ${randomMsg}\n\nDeseja realmente sair?`)) {
-                        this.isTraining = false;
-                        window.onbeforeunload = null;
-                        this.quitAttempts = 0;
-                        localStorage.removeItem('tempWorkoutState'); 
-                        if (event.state) this.restoreScreen(event.state);
-                        else this.toggleScreen('screen-workout-select'); 
-                    } else {
-                        this.quitAttempts++;
-                        history.pushState({ screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex }, '');
-                    }
+                    this.showCustomModal(
+                        'danger',
+                        `🚨 ${randomMsg}\n\nO treino está rolando. Sair cancela o tempo. Deseja realmente sair?`,
+                        () => {
+                            this.isTraining = false;
+                            window.onbeforeunload = null;
+                            localStorage.removeItem('tempWorkoutState'); 
+                            // Navegação forçada para fora
+                            this.navigate('screen-workout-select');
+                        }
+                    );
                 } else {
                     if (event.state) this.restoreScreen(event.state);
                     else this.toggleScreen('screen-menu'); 
@@ -368,20 +338,25 @@
                 });
                 window.dbOnValue(window.dbRef(window.dbInstance, 'history'), (snap) => {
                     const val = snap.val();
-                    this.historyData = val ? Object.keys(val).map(k => ({...val[k], firebaseId: k})).sort((a,b) => b.id - a.id) : [];
+                    const allHist = val ? Object.keys(val).map(k => ({...val[k], firebaseId: k})).sort((a,b) => b.id - a.id) : [];
+                    // Filtro Individual
+                    this.historyData = this.currentUser ? allHist.filter(h => h.user === this.data[this.currentUser]?.name) : [];
+                    
                     if(document.getElementById('screen-history').classList.contains('visible')) this.renderHistoryList();
                     if(document.getElementById('screen-gamification').classList.contains('visible')) this.updateMedalsUI();
                 });
             } else {
-                this.data = JSON.parse(localStorage.getItem('gymData_v49')) || {};
-                this.historyData = JSON.parse(localStorage.getItem('gymHistory')) || [];
+                this.data = JSON.parse(localStorage.getItem('gymData_v51')) || {};
+                const allHist = JSON.parse(localStorage.getItem('gymHistory')) || [];
+                // Filtro Individual Local
+                this.historyData = this.currentUser ? allHist.filter(h => h.user === this.data[this.currentUser]?.name) : [];
                 this.refreshCurrentScreen();
             }
         },
 
         save: function() { 
             if(window.dbInstance) window.dbSet(window.dbRef(window.dbInstance, 'users'), this.data);
-            else localStorage.setItem('gymData_v49', JSON.stringify(this.data)); 
+            else localStorage.setItem('gymData_v51', JSON.stringify(this.data)); 
         },
 
         handleBack: function() { window.history.back(); },
@@ -392,19 +367,12 @@
             this.restoreScreen(newState);
         },
 
-        returnToMenu: function() {
-            document.getElementById('modal-msg').style.display='none';
-            const jumps = 2 + this.quitAttempts;
-            this.quitAttempts = 0;
-            window.history.go(-jumps);
-        },
-
         restoreScreen: function(state) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('visible'));
             document.getElementById(state.screen).classList.add('visible');
             window.scrollTo(0,0);
 
-            if (state.screen === 'screen-menu') { this.currentUser = null; this.renderMenu(); this.renderMedals(); }
+            if (state.screen === 'screen-menu') { this.currentUser = null; this.renderMenu(); }
             else if (state.screen === 'screen-workout-select') { this.currentUser = state.userId; this.renderWorkoutSelectScreen(); }
             else if (state.screen === 'screen-active-workout') { this.currentUser = state.userId; this.currentWorkoutIndex = state.wIndex; this.renderActiveWorkout(); }
             else if (state.screen === 'screen-history') { this.renderHistoryList(); }
@@ -413,18 +381,83 @@
 
         refreshCurrentScreen: function() {
             const current = document.querySelector('.screen.visible').id;
-            if (current === 'screen-menu') { this.renderMenu(); this.renderMedals(); }
+            if (current === 'screen-menu') this.renderMenu();
             if (current === 'screen-workout-select') this.renderWorkoutSelectScreen();
             if (current === 'screen-active-workout') this.renderActiveWorkout();
             if (current === 'screen-gamification') this.updateMedalsUI();
+        },
+
+        // --- SISTEMA DE DIÁLOGO UNIFICADO ---
+        showCustomModal: function(type, msg, confirmCallback) {
+            const modal = document.getElementById('custom-modal');
+            const title = document.getElementById('d-title');
+            const text = document.getElementById('d-msg');
+            const actions = document.getElementById('d-actions');
+
+            text.innerText = msg;
+            actions.innerHTML = ''; // Limpa botões
+
+            if (type === 'success') {
+                modal.querySelector('.msg-content').style.borderColor = 'var(--success)';
+                title.innerText = "PARABÉNS!";
+                title.style.color = 'var(--success)';
+                const btn = document.createElement('button');
+                btn.className = 'btn-dialog btn-primary';
+                btn.innerText = "FECHAR";
+                btn.onclick = () => { modal.style.display = 'none'; confirmCallback(); };
+                actions.appendChild(btn);
+            } else if (type === 'warning') {
+                modal.querySelector('.msg-content').style.borderColor = 'var(--accent)';
+                title.innerText = "ATENÇÃO";
+                title.style.color = 'var(--accent)';
+                const btnYes = document.createElement('button');
+                btnYes.className = 'btn-dialog btn-primary';
+                btnYes.innerText = "SIM, FINALIZAR";
+                btnYes.onclick = () => { modal.style.display = 'none'; confirmCallback(); };
+                const btnNo = document.createElement('button');
+                btnNo.className = 'btn-dialog btn-secondary';
+                btnNo.innerText = "CANCELAR";
+                btnNo.onclick = () => { modal.style.display = 'none'; };
+                actions.appendChild(btnNo);
+                actions.appendChild(btnYes);
+            } else { // danger (Fujão)
+                modal.querySelector('.msg-content').style.borderColor = 'var(--danger)';
+                title.innerText = "FUJÃO?";
+                title.style.color = 'var(--danger)';
+                const btnYes = document.createElement('button');
+                btnYes.className = 'btn-dialog btn-primary';
+                btnYes.innerText = "SIM, SAIR";
+                btnYes.style.background = 'var(--danger)';
+                btnYes.onclick = () => { modal.style.display = 'none'; confirmCallback(); };
+                const btnNo = document.createElement('button');
+                btnNo.className = 'btn-dialog btn-secondary';
+                btnNo.innerText = "FICAR";
+                btnNo.onclick = () => { modal.style.display = 'none'; };
+                actions.appendChild(btnNo);
+                actions.appendChild(btnYes);
+            }
+            modal.style.display = 'flex';
+        },
+
+        // --- MEDALHAS ---
+        openGamification: function() {
+            // Recarrega o histórico específico do usuário atual antes de mostrar
+             if (window.dbInstance) {
+                // Já atualizado pelo listener
+             } else {
+                 const allHist = JSON.parse(localStorage.getItem('gymHistory')) || [];
+                 this.historyData = allHist.filter(h => h.user === this.data[this.currentUser]?.name);
+             }
+            this.navigate('screen-gamification');
+            this.updateMedalsUI();
         },
 
         updateMedalsUI: function() {
             if(!this.historyData) return;
             const uniqueDates = new Set();
             this.historyData.forEach(h => {
-                const parts = h.date.split('/');
-                uniqueDates.add(`${parts[2]}-${parts[1]}-${parts[0]}`);
+                const parts = h.date.split('/'); // DD/MM/YYYY
+                uniqueDates.add(`${parts[2]}-${parts[1]}-${parts[0]}`); // ISO
             });
             const sortedDates = Array.from(uniqueDates).sort();
             document.getElementById('total-days-count').innerText = sortedDates.length;
@@ -481,34 +514,6 @@
             d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
             var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
             return Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
-        },
-
-        // --- CORREÇÃO IA COACH ---
-        consultAI: function() {
-            if(!this.currentUser) return;
-            const u = this.data[this.currentUser];
-            if (!u.workouts || u.workouts.length === 0) {
-                alert("Você precisa cadastrar treinos primeiro!");
-                return;
-            }
-
-            let promptText = `Atue como meu Preparador Físico Virtual. Analise minha rotina:\n\n`;
-            u.workouts.forEach(w => {
-                promptText += `👉 ${w.title}:\n`;
-                if(w.exercises) {
-                    w.exercises.forEach(ex => {
-                        const carga = ex.weight ? `${ex.weight}kg` : "Livre";
-                        promptText += `- ${ex.name}: ${ex.sets}x${ex.reps} (${carga})\n`;
-                    });
-                }
-                promptText += `\n`;
-            });
-            promptText += `\nMe dê feedback sobre volume e sugestões.`;
-
-            const encoded = encodeURIComponent(promptText);
-            
-            // CORREÇÃO: ABRE DIRETO NO BROWSER OU APP
-            window.open(`https://gemini.google.com/app?text=${encoded}`, '_blank');
         },
 
         renderMenu: function() {
@@ -673,6 +678,7 @@
         deleteWorkout: function(e, idx) { e.stopPropagation(); if(confirm('Apagar treino?')) { this.data[this.currentUser].workouts.splice(idx, 1); this.save(); } },
         deleteEx: function(i) { if(confirm('Apagar?')) { this.data[this.currentUser].workouts[this.currentWorkoutIndex].exercises.splice(i,1); this.save(); this.renderActiveWorkout(); } },
         
+        // CORREÇÃO: Reordenação de Séries com Renomeação Automática (A/B/C)
         reorderUser: function(cid, d) {
             const e = Object.entries(this.data); const i = e.findIndex(([k])=>k===cid);
             if((d===-1&&i===0)||(d===1&&i===e.length-1)) return;
@@ -682,6 +688,27 @@
             const e = this.data[this.currentUser].workouts[this.currentWorkoutIndex].exercises;
             if((d===-1&&i===0)||(d===1&&i===e.length-1)) return;
             [e[i], e[i+d]] = [e[i+d], e[i]]; this.save(); this.renderActiveWorkout();
+        },
+        reorderWorkout: function(idx, d) {
+            const workouts = this.data[this.currentUser].workouts;
+            if ((d === -1 && idx === 0) || (d === 1 && idx === workouts.length - 1)) return;
+            
+            // Troca de posição no array
+            [workouts[idx], workouts[idx + d]] = [workouts[idx + d], workouts[idx]];
+            
+            // Renomeia os prefixos (A, B, C...)
+            const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            workouts.forEach((w, i) => {
+                const letter = letters[i] || '?';
+                const parts = w.title.split(' - ');
+                // Se tiver traço, preserva o nome, senão usa o titulo todo
+                const name = parts.length > 1 ? parts.slice(1).join(' - ') : w.title;
+                w.id = letter;
+                w.title = `${letter} - ${name}`;
+            });
+            
+            this.save();
+            this.renderWorkoutSelectScreen();
         },
 
         addUser: function() { const n=prompt("Nome:"); if(n) { this.data['u_'+Date.now()]={name:n, themeId:`theme-${Math.floor(Math.random()*6)+1}`, workouts:[]}; this.save(); this.renderMenu(); } },
@@ -694,53 +721,93 @@
         finishWorkout: function() {
             const chks = document.querySelectorAll('.ex-check'); let p = false;
             for(let c of chks) if(!c.checked) p = true;
-            if(p) { const msg = incompleteMessages[Math.floor(Math.random()*incompleteMessages.length)]; if(!confirm(`👀 ${msg}\n\nFinalizar incompleto?`)) return; }
             
-            const btn = document.getElementById('btn-finish-main'); btn.innerText = "Localizando..."; btn.disabled = true;
+            if(p) {
+                const msg = incompleteMessages[Math.floor(Math.random()*incompleteMessages.length)];
+                this.showCustomModal('warning', `👀 ${msg}\n\nFinalizar incompleto?`, () => this.processFinish(true));
+            } else {
+                this.processFinish(false);
+            }
+        },
+
+        processFinish: function(incomplete) {
+            const btn = document.getElementById('btn-finish-main'); btn.innerText = "Salvando..."; btn.disabled = true;
             
             const wName = this.data[this.currentUser].workouts[this.currentWorkoutIndex].title;
             this.isTraining = false; 
             window.onbeforeunload = null;
             this.quitAttempts = 0;
-            localStorage.removeItem('tempWorkoutState'); // Limpa memória
+            localStorage.removeItem('tempWorkoutState');
 
-            // GEOLOCALIZAÇÃO COM NOMINATIM (Bairro)
-            if(navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(pos => {
-                    const lat = pos.coords.latitude; const lon = pos.coords.longitude;
-                    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
-                    .then(r => r.json())
-                    .then(data => {
-                        let local = "Local Desconhecido";
-                        if(data.address) {
-                            local = data.address.suburb || data.address.neighbourhood || data.address.village || data.address.city_district || "Local Externo";
-                        }
-                        this.saveHist(wName, local, false, p?["Incompleto"]:[]);
-                    })
-                    .catch(() => this.saveHist(wName, "GPS Erro", false, p?["Incompleto"]:[]));
-                }, () => this.saveHist(wName, "GPS Off", false, p?["Incompleto"]:[]), {enableHighAccuracy:true, timeout:10000});
-            } else this.saveHist(wName, "Sem GPS", false, p?["Incompleto"]:[]);
+            // Simula delay de salvamento para "sentir" o app salvando e evitar erros
+            setTimeout(() => {
+                this.saveHist(wName, "Local Salvo", false, incomplete ? ["Incompleto"] : []);
+            }, 1000);
         },
+
         saveHist: function(t, l, c, s) {
             const reg = { id: Date.now(), date: new Date().toLocaleDateString('pt-BR'), user: this.data[this.currentUser].name, workoutTitle: t, location: l, cheat: c, skipped: s };
             if(window.dbInstance) window.dbPush(window.dbRef(window.dbInstance, 'history'), reg);
-            else { this.historyData.unshift(reg); localStorage.setItem('gymHistory', JSON.stringify(this.historyData)); }
+            else { 
+                const allHist = JSON.parse(localStorage.getItem('gymHistory')) || [];
+                allHist.unshift(reg);
+                localStorage.setItem('gymHistory', JSON.stringify(allHist));
+                this.historyData = allHist.filter(h => h.user === this.data[this.currentUser].name);
+            }
             
-            // Só mostra o modal DEPOIS de salvar
-            document.getElementById('modal-msg').style.display = 'flex';
-            document.getElementById('quote-text').innerText = successMessages[Math.floor(Math.random()*successMessages.length)];
-            document.getElementById('gps-status').innerText = `📍 ${l}`;
-            
-            document.getElementById('btn-finish-main').innerText = "🏁 Finalizar"; document.getElementById('btn-finish-main').disabled = false;
+            const randomMsg = successMessages[Math.floor(Math.random()*successMessages.length)];
+            this.showCustomModal('success', randomMsg, () => this.navigate('screen-menu'));
         },
         
         showHistory: function() { this.navigate('screen-history'); },
-        delHist: function(id, fid) { if(confirm('Apagar?')) { if(window.dbInstance&&fid) window.dbRemove(window.dbRef(window.dbInstance, `history/${fid}`)); else { this.historyData=this.historyData.filter(x=>x.id!==id); localStorage.setItem('gymHistory', JSON.stringify(this.historyData)); this.renderHistoryList(); } } },
+        delHist: function(id, fid) { if(confirm('Apagar?')) { if(window.dbInstance&&fid) window.dbRemove(window.dbRef(window.dbInstance, `history/${fid}`)); else { 
+             const allHist = JSON.parse(localStorage.getItem('gymHistory')) || [];
+             const newHist = allHist.filter(x=>x.id!==id);
+             localStorage.setItem('gymHistory', JSON.stringify(newHist));
+             this.historyData = newHist.filter(h => h.user === this.data[this.currentUser].name);
+             this.renderHistoryList(); 
+        } } },
         clearAllHistory: function() { if(confirm('Tudo?')) { if(window.dbInstance) window.dbRemove(window.dbRef(window.dbInstance, 'history')); else { localStorage.removeItem('gymHistory'); this.historyData=[]; this.renderHistoryList(); } } },
         
         goHome: function() { window.history.back(); }, 
         toggleScreen: function(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('visible')); document.getElementById(id).classList.add('visible'); },
         updateEditIcon: function(bid, sid, isE) { const b=document.getElementById(bid); const s=document.getElementById(sid); if(isE) { b.innerText='💾'; b.classList.add('icon-active'); s.classList.add('editing'); } else { b.innerText='✏️'; b.classList.remove('icon-active'); s.classList.remove('editing'); } }
+    };
+
+    // Override para adicionar reordenação na tela de série
+    window.app.renderWorkoutSelectScreen = function() {
+        if(!this.currentUser || !this.data[this.currentUser]) return;
+        const u = this.data[this.currentUser];
+        document.getElementById('select-user-title').innerText = u.name;
+        const list = document.getElementById('workout-select-list'); list.innerHTML = '';
+        if(!u.workouts || u.workouts.length === 0) {
+            list.innerHTML = `<p class="empty-msg">Nenhum treino cadastrado.<br>Toque na caneta ✏️ para criar.</p>`;
+            if(!u.workouts) u.workouts = [];
+        }
+        u.workouts.forEach((w, idx) => {
+            const wrap = document.createElement('div'); wrap.className = 'card-wrapper';
+            const card = document.createElement('div');
+            card.className = `workout-select-card bd-${u.themeId}`;
+            card.style.borderLeft = '5px solid';
+            card.onclick = () => this.navigate('screen-active-workout', { userId: this.currentUser, wIndex: idx });
+            let titleDisplay = `<h3>${w.title}</h3>`;
+            if(this.isSelectEditing) {
+                const parts = w.title.split(' - ');
+                const prefix = parts.length > 1 ? parts[0] + ' - ' : '';
+                const name = parts.length > 1 ? parts.slice(1).join(' - ') : w.title;
+                titleDisplay = `<h3>${prefix}<input type="text" class="edit-input" style="width:100%; display:block; margin-top:5px" value="${name}" onclick="event.stopPropagation()" onchange="window.app.renameWorkout(${idx}, '${prefix}', this.value)"></h3>`;
+            }
+            card.innerHTML = `${titleDisplay}<p>${w.exercises ? w.exercises.length : 0} exercícios</p>`;
+            if(this.isSelectEditing) {
+                const ctrl = document.createElement('div'); ctrl.className = 'edit-controls-floating';
+                ctrl.innerHTML = `<div class="btn-float btn-del" onclick="window.app.deleteWorkout(event, ${idx})">X</div>
+                                  <div class="btn-float btn-reorder" onclick="window.app.reorderWorkout(${idx}, -1)">⬆️</div>
+                                  <div class="btn-float btn-reorder" onclick="window.app.reorderWorkout(${idx}, 1)">⬇️</div>`;
+                wrap.appendChild(ctrl);
+            }
+            wrap.appendChild(card); list.appendChild(wrap);
+        });
+        this.updateEditIcon('btn-edit-select', 'screen-workout-select', this.isSelectEditing);
     };
 
     window.onload = function() { if(window.app && window.app.init) window.app.init(); };
