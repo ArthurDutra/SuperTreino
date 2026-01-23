@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Super Treino - Tamandua</title>
+    <title>Super Treino - Lobo Guara</title>
     
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/jpeg" href="icon.jpg">
@@ -40,12 +40,12 @@
         .visible { display: flex; } 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        .empty-msg { text-align: center; color: #888; margin-top: 40px; font-style: italic; font-size: 14px; }
+        .empty-msg { text-align: center; color: #888; margin-top: 40px; font-style: italic; font-size: 14px; width: 100%; display: block; }
 
-        /* LOADING OVERLAY - GARANTIA DE DADOS */
+        /* LOADING OVERLAY */
         #loading-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(18, 18, 18, 0.95); z-index: 9999;
+            background: rgba(18, 18, 18, 0.98); z-index: 9999;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             transition: opacity 0.2s;
         }
@@ -90,7 +90,7 @@
         .medal-progress { font-size: 10px; color: var(--accent); font-weight: bold; margin-top: 5px; display: block; }
 
         /* CARDS */
-        #user-list, #workout-select-list { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 10px; }
+        #user-list, #workout-select-list { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 10px; min-height: 100px; }
         .card-wrapper { position: relative; width: 100%; max-width: 400px; }
 
         .btn-large { 
@@ -202,7 +202,7 @@
     </div>
 
     <div id="db-status">⚪ Conectando...</div>
-    <div class="version-label">Versão: Tamandua Bandeira</div>
+    <div class="version-label">Versão: Lobo Guara</div>
 
     <div id="screen-menu" class="screen">
         <div class="header-bar">
@@ -344,7 +344,8 @@
     const incompleteMessages = ["Roubando repetição? Que feio.", "Vai deixar exercício pra amanhã?", "Treino pela metade, resultado pela metade.", "Acha que eu não vi essa caixa vazia?", "Assim você não fica monstro.", "Tá esquecendo coisa pra trás!", "Volta lá e marca tudo.", "Não adianta mentir pro app.", "Seu bíceps tá chorando.", "Finalizar assim? Sério?", "Você consegue fazer tudo!", "Não seja preguiçoso.", "Faltou um ali, ó.", "O treino é completo ou não é.", "Quem rouba no treino, rouba na vida.", "Tá com pressa de que?", "Termina o serviço.", "Não faça serviço de porco.", "Seja honesto com seu treino.", "Vai deixar buraco no treino?", "Isso não é um treino completo.", "Falta exercício!", "Olha as caixinhas vazias.", "Preenche tudo!", "Não me engana.", "O shape não vem pela metade.", "Vai ficar devendo?", "Paga o que deve!", "Não finalizo se não terminar.", "Volta e faz direito.", "Tá achando que é festa?", "Treino sério exige tudo.", "Não pule o leg day.", "Nem o supino.", "Completa isso aí.", "Estou de olho.", "Não valida treino fofo.", "Quer resultado? Faça tudo.", "Sem atalhos.", "O caminho é completo.", "Não deixe nada pra trás.", "Zere o treino.", "Marque todas as opções.", "Falta pouco, não desista.", "Faça valer a pena.", "Não seja meio termo.", "Tudo ou nada.", "100% ou 0%.", "Vai sair devendo?", "O app sabe que faltou.", "Não mente pra mim.", "Seu corpo sabe.", "Termina!", "Faz tudo!", "Não enrola.", "Sem migué.", "Que vergonha...", "Pensei que fosse monstro.", "Cadê a disciplina?", "Falta um check.", "Ou dois.", "Ou três.", "Tá quase, não para.", "Finalizar incompleto é pecado.", "O deus do ferro tá vendo.", "Não decepcione o Arnold.", "Faça por merecer.", "Conquiste o botão finalizar.", "Ele só libera se fizer tudo.", "Bloqueado por preguiça.", "Volte e treine.", "Não tem essa de pular.", "Cada exercício conta.", "Não desperdice.", "Valorize seu tempo.", "Faça bem feito.", "Qualidade total.", "Não aceito meio treino.", "Sou exigente.", "Você também deveria ser.", "Bora marcar tudo.", "Tica tudo!", "Checklist incompleto.", "Erro 404: Exercício não encontrado.", "Corrija isso.", "Agora sim (se fizer).", "Vai logo!", "Quero ver tudo verde.", "Sem caixas vazias.", "Preenchimento obrigatório.", "Treino é sagrado.", "Amém?", "Bora terminar!"];
 
     window.app = {
-        data: {}, historyData: [], currentUser: null, currentWorkoutIndex: null, isTraining: false,
+        data: {}, // Inicializa vazio para não quebrar
+        historyData: [], currentUser: null, currentWorkoutIndex: null, isTraining: false,
         isMenuEditing: false, isSelectEditing: false, isActiveEditing: false,
         quitAttempts: 0, 
 
@@ -391,7 +392,6 @@
             this.loadData();
         },
 
-        // CONTROLADOR GLOBAL DE LOADING
         toggleLoading: function(show) {
             document.getElementById('loading-overlay').style.display = show ? 'flex' : 'none';
         },
@@ -399,17 +399,16 @@
         loadData: function() {
             this.toggleLoading(true);
             
-            // Segurança: Se travar, libera em 8 seg
+            // Segurança: Se o Firebase não responder em 8s, libera o menu vazio
             setTimeout(() => {
                 if(document.getElementById('loading-overlay').style.display !== 'none') {
-                    console.warn("Demora no DB. Liberando...");
+                    console.warn("Demora no DB. Liberando app...");
                     this.toggleLoading(false);
                     if (!document.querySelector('.screen.visible')) this.toggleScreen('screen-menu');
                 }
             }, 8000);
 
             if (window.dbInstance) {
-                // Ao receber qualquer dado de usuário, atualiza E esconde loading
                 window.dbOnValue(window.dbRef(window.dbInstance, 'users'), (snap) => {
                     this.data = snap.val() || {}; 
                     document.getElementById('db-status').innerText = "🟢 Online";
@@ -417,21 +416,14 @@
                     this.checkLoadComplete();
                 });
                 
-                // Ao receber qualquer dado de histórico, atualiza E esconde loading
                 window.dbOnValue(window.dbRef(window.dbInstance, 'history'), (snap) => {
                     const val = snap.val();
                     const allHist = val ? Object.keys(val).map(k => ({...val[k], firebaseId: k})).sort((a,b) => b.id - a.id) : [];
-                    // Atualiza a memória local
                     this.historyData = allHist;
                     
-                    // Se estivermos na tela de histórico, força re-render imediato
                     const currentScreen = document.querySelector('.screen.visible')?.id;
-                    if(currentScreen === 'screen-history') {
-                        this.renderHistoryList();
-                    }
-                    if(currentScreen === 'screen-workout-select') {
-                        this.renderWorkoutSelectScreen(); // Atualiza sugestão de treino
-                    }
+                    if(currentScreen === 'screen-history') this.renderHistoryList();
+                    if(currentScreen === 'screen-workout-select') this.renderWorkoutSelectScreen();
                     
                     this.checkLoadComplete();
                 });
@@ -439,24 +431,25 @@
         },
 
         checkLoadComplete: function() {
-            // Se temos o objeto data (mesmo vazio), consideramos carregado
-            if (this.data) {
+            // Verifica se data já foi definido (não é undefined)
+            if (this.data !== undefined) {
                 this.toggleLoading(false);
+                // Se nenhuma tela estiver visível, FORÇA o menu principal
                 if (!document.querySelector('.screen.visible')) {
                     this.toggleScreen('screen-menu');
                 } else {
-                    // Apenas atualiza UI sem mudar de tela
-                    // Não chamamos refreshCurrentScreen() aqui para evitar loop visual,
-                    // deixamos os listeners específicos cuidarem disso.
+                    // Se já estiver em uma tela, atualiza (importante para lista de usuários)
+                    const current = document.querySelector('.screen.visible').id;
+                    if (current === 'screen-menu') this.renderMenu();
                 }
             }
         },
 
         save: function() { 
             if(window.dbInstance) {
-                this.toggleLoading(true); // Bloqueia tela
+                this.toggleLoading(true);
                 window.dbSet(window.dbRef(window.dbInstance, 'users'), this.data)
-                    .then(() => this.toggleLoading(false)) // Libera só quando terminar
+                    .then(() => this.toggleLoading(false))
                     .catch(() => this.toggleLoading(false));
             }
         },
@@ -553,7 +546,6 @@
             const sortedDates = Array.from(uniqueDates).sort();
             document.getElementById('total-days-count').innerText = sortedDates.length;
             
-            // Lógica de medalhas (mantida)
             const now = new Date();
             const currentWeekNum = this.getWeekNumber(now);
             const currentMonthKey = `${now.getFullYear()}-${now.getMonth()}`;
@@ -605,9 +597,18 @@
         },
 
         renderMenu: function() {
-            const list = document.getElementById('user-list'); list.innerHTML = '';
-            const userKeys = Object.keys(this.data);
-            if (userKeys.length === 0) list.innerHTML = '<p class="empty-msg">Nenhum usuário encontrado.<br>Toque na caneta ✏️ e no + para começar.</p>';
+            const list = document.getElementById('user-list'); 
+            if (!list) return; // Proteção contra crash
+            list.innerHTML = '';
+            
+            const userKeys = Object.keys(this.data || {});
+            
+            // MENSAGEM DE VAZIO CORRIGIDA
+            if (userKeys.length === 0) {
+                list.innerHTML = '<span class="empty-msg">Nenhum usuário encontrado.<br>Toque na caneta ✏️ e no + para começar.</span>';
+                return;
+            }
+            
             userKeys.forEach((id, idx) => {
                 const u = this.data[id];
                 const wrap = document.createElement('div'); wrap.className = 'card-wrapper';
@@ -731,7 +732,6 @@
         },
 
         showHistory: function() {
-             // Força loading se os dados ainda não estiverem prontos, senão só navega
              if (this.data && this.currentUser && this.historyData) {
                  this.navigate('screen-history');
              } else {
@@ -767,19 +767,16 @@
         deleteWorkout: function(e, idx) { e.stopPropagation(); this.showCustomModal('warning', 'APAGAR', 'Excluir este treino?', () => { this.data[this.currentUser].workouts.splice(idx, 1); this.save(); this.renderWorkoutSelectScreen(); }); },
         deleteEx: function(i) { this.showCustomModal('warning', 'APAGAR', 'Excluir este exercício?', () => { this.data[this.currentUser].workouts[this.currentWorkoutIndex].exercises.splice(i,1); this.save(); this.renderActiveWorkout(); }); },
         
-        // DELETAR HISTÓRICO COM LOADING
         delHist: function(id, fid) { 
             this.showCustomModal('warning', 'APAGAR', 'Remover do histórico?', () => { 
                 if(window.dbInstance && fid) {
-                    this.toggleLoading(true); // Bloqueia a tela
+                    this.toggleLoading(true); 
                     window.dbRemove(window.dbRef(window.dbInstance, `history/${fid}`))
-                        // Não removemos o loading aqui. O onValue vai detectar a mudança e remover.
                         .catch(() => this.toggleLoading(false));
                 } 
             }); 
         },
         
-        // LIMPAR TUDO COM LOADING
         clearAllHistory: function() { 
             this.showCustomModal('danger', 'LIMPAR TUDO', 'Apagar TODO o histórico?', () => { 
                 if(window.dbInstance) {
@@ -823,37 +820,26 @@
             } else { this.processFinish(false); }
         },
 
-        // CORREÇÃO DO TRAVAMENTO AO FINALIZAR
         processFinish: function(incomplete) {
             const btn = document.getElementById('btn-finish-main'); 
             btn.innerText = "Salvando..."; 
             btn.disabled = true;
-            
-            // Chama o saveHist imediatamente. O saveHist ativa o loading-overlay.
-            // Se houver erro ou delay, o loading-overlay previne cliques duplos.
             const wName = this.data[this.currentUser].workouts[this.currentWorkoutIndex].title;
             this.saveHist(wName, null, false, incomplete ? ["Incompleto"] : []);
-            
-            // Removemos o setTimeout para não concorrer com o banco de dados.
-            // A limpeza de estado acontece após o sucesso no modal.
         },
 
         saveHist: function(t, l, c, s) {
-            this.toggleLoading(true); // Bloqueia a tela
+            this.toggleLoading(true); 
             const reg = { id: Date.now(), date: new Date().toLocaleDateString('pt-BR'), user: this.data[this.currentUser].name, workoutTitle: t, location: null, cheat: c, skipped: s };
             
             if(window.dbInstance) {
-                // Envia para o Firebase
                 window.dbPush(window.dbRef(window.dbInstance, 'history'), reg)
                     .then(() => {
-                        this.toggleLoading(false); // Libera a tela
-                        
-                        // Limpa estado APÓS sucesso
+                        this.toggleLoading(false);
                         this.isTraining = false; 
                         window.onbeforeunload = null; 
                         this.quitAttempts = 0; 
                         localStorage.removeItem('tempWorkoutState');
-
                         const randomMsg = successMessages[Math.floor(Math.random()*successMessages.length)];
                         this.showCustomModal('success', 'PARABÉNS', randomMsg, () => this.goHome());
                     })
