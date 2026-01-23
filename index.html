@@ -23,6 +23,7 @@
             --primary: #c084fc; --secondary: #fb923c; --accent: #facc15;
             --success: #4ade80; --danger: #ef4444; --edit-mode: #facc15;
             --bronze: #cd7f32; --silver: #c0c0c0; --gold: #ffd700;
+            
             --color-1: #38bdf8; --color-2: #f472b6; --color-3: #a78bfa;
             --color-4: #fb923c; --color-5: #22d3ee; --color-6: #4ade80;
         }
@@ -73,6 +74,18 @@
         .medal-desc { font-size: 10px; color: #888; display: block; margin-top: 5px; }
         .medal-progress { font-size: 10px; color: var(--accent); font-weight: bold; margin-top: 5px; display: block; }
 
+        /* Botão AI Coach */
+        .btn-ai-coach {
+            width: 100%; padding: 18px; margin-top: 20px;
+            background: linear-gradient(135deg, #4c1d95, #c084fc);
+            border: none; border-radius: 20px;
+            color: #fff; font-weight: 800; text-transform: uppercase;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            box-shadow: 0 5px 20px rgba(192, 132, 252, 0.3); cursor: pointer;
+            letter-spacing: 1px; font-size: 14px;
+        }
+        .btn-ai-coach:active { transform: scale(0.98); }
+
         /* LISTAS & CARDS */
         #user-list, #workout-select-list { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 10px; }
         .card-wrapper { position: relative; width: 100%; max-width: 400px; }
@@ -82,7 +95,8 @@
             font-size: 18px; font-weight: 700; cursor: pointer; color: #fff; 
             box-shadow: 0 8px 20px rgba(0,0,0,0.3); text-transform: uppercase;
             text-align: left; display: flex; justify-content: space-between; align-items: center;
-            transition: transform 0.1s, box-shadow 0.1s; font-family: 'Poppins', sans-serif;
+            transition: transform 0.1s, box-shadow 0.1s;
+            font-family: 'Poppins', sans-serif;
         }
         .btn-large:active { transform: scale(0.98); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         
@@ -192,7 +206,15 @@
                 <button class="btn-icon" id="btn-edit-select" onclick="window.app.toggleSelectEditMode()" title="Editar">✏️</button>
             </div>
         </div>
+        
         <div id="workout-select-list"></div>
+        
+        <div class="card-wrapper" style="width:100%; max-width:400px; margin:20px auto 0 auto;">
+            <button class="btn-ai-coach" onclick="window.app.consultAI()">
+                <span style="font-size:24px">🤖💪</span> Preparador Físico Virtual
+            </button>
+        </div>
+
         <button id="btn-add-workout" class="btn-add-item" onclick="window.app.addWorkout()">+ NOVO TREINO</button>
     </div>
 
@@ -318,6 +340,7 @@
         init: function() {
             if (!history.state) history.replaceState({ screen: 'screen-menu' }, '');
             
+            // Loop Fujão
             window.onpopstate = (event) => {
                 if (this.isTraining) {
                     const randomMsg = quitMessages[Math.floor(Math.random() * quitMessages.length)];
@@ -484,13 +507,8 @@
 
             const encoded = encodeURIComponent(promptText);
             
-            // Tenta abrir o App Nativo (Android)
-            if (/Android/i.test(navigator.userAgent)) {
-                 window.location.href = `intent://gemini.google.com/app?text=${encoded}#Intent;scheme=https;package=com.google.android.apps.bard;S.browser_fallback_url=https://gemini.google.com/app?text=${encoded};end`;
-            } else {
-                // Fallback (iOS/PC)
-                window.location.href = `https://gemini.google.com/app?text=${encoded}`;
-            }
+            // CORREÇÃO: ABRE DIRETO NO BROWSER OU APP
+            window.open(`https://gemini.google.com/app?text=${encoded}`, '_blank');
         },
 
         renderMenu: function() {
