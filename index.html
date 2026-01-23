@@ -65,9 +65,10 @@
             font-size: 18px; font-weight: 700; cursor: pointer; color: #fff; 
             box-shadow: 0 8px 20px rgba(0,0,0,0.3); text-transform: uppercase;
             text-align: left; display: flex; justify-content: space-between; align-items: center;
-            transition: transform 0.1s; font-family: 'Poppins', sans-serif;
+            transition: transform 0.1s, box-shadow 0.1s;
+            font-family: 'Poppins', sans-serif;
         }
-        .btn-large:active { transform: scale(0.98); }
+        .btn-large:active { transform: scale(0.98); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         
         .edit-input { 
             background: rgba(255,255,255,0.1); border: 1px solid #555; color: #fff; 
@@ -77,6 +78,7 @@
         .edit-input:focus { border-color: var(--accent); outline: none; }
         .edit-input-inline { width: 50px; text-align: center; margin: 0 2px; background: #333; border: none; display: inline-block; }
 
+        /* CARDS DE TREINO */
         .workout-select-card {
             background: var(--card); border: 1px solid #333; color: #fff;
             padding: 25px; border-radius: 20px; cursor: pointer;
@@ -86,6 +88,8 @@
         .workout-select-card h3 { margin: 0 0 5px 0; font-size: 20px; overflow-wrap: break-word; }
         .workout-select-card p { margin: 0; color: #888; font-size: 14px; font-weight: 400; }
         .workout-select-card:active { transform: scale(0.98); background: #25252a; }
+        .suggested-workout { border: 2px solid var(--accent); box-shadow: 0 0 15px rgba(250, 204, 21, 0.15); }
+        .suggested-badge { position: absolute; right: 15px; top: 20px; background: var(--accent); color: #000; font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 20px; animation: pulse 2s infinite; }
 
         /* EXERCÍCIOS */
         .workout-container { padding-bottom: 120px; }
@@ -118,7 +122,6 @@
         .btn-del { background: var(--danger); }
         .btn-reorder { background: var(--secondary); border-color: #fff; }
         @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
-        
         .btn-add-item { display: none; } 
         .editing .btn-add-item { display: block; width: 100%; max-width: 400px; padding: 20px; background: rgba(250, 204, 21, 0.1); border: 2px dashed var(--edit-mode); color: var(--edit-mode); border-radius: 16px; cursor: pointer; font-size: 16px; font-weight: 800; margin-top: 15px; text-align: center; }
         .editing .btn-large, .editing .workout-select-card, .editing .exercise-card { border: 1px dashed #555; opacity: 0.8; }
@@ -130,9 +133,6 @@
         .btn-finish:active { transform: scale(0.98); }
         .btn-finish:disabled { background: #333; color: #555; box-shadow: none; cursor: default; }
 
-        /* Botão Sair (Tela Inicial) */
-        .btn-exit { margin-top: 20px; background: #333; color: #888; font-size: 12px; padding: 10px 20px; border-radius: 20px; border: 1px solid #444; }
-
         /* MODAIS PERSONALIZADOS (DIÁLOGO) */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; text-align: center; backdrop-filter: blur(5px); }
         .msg-content { background: #1a1a1a; padding: 30px; border-radius: 25px; border: 2px solid var(--primary); max-width: 400px; width: 100%; box-shadow: 0 0 30px rgba(192, 132, 252, 0.2); }
@@ -143,9 +143,6 @@
         .btn-primary { background: var(--primary); color: #fff; }
         .btn-secondary { background: #333; color: #fff; }
 
-        /* Botão Spotify */
-        .btn-spotify { width: 100%; padding: 12px; margin-bottom: 15px; background: #191414; border: 2px solid var(--spotify); border-radius: 50px; color: var(--spotify); font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: 0.2s; }
-        
         /* MEDALHAS */
         .game-header { text-align: center; margin-bottom: 30px; }
         .total-days-badge { background: linear-gradient(45deg, var(--primary), var(--secondary)); padding: 10px 20px; border-radius: 50px; font-weight: 800; font-size: 20px; box-shadow: 0 0 20px rgba(192, 132, 252, 0.4); display: inline-block; }
@@ -157,7 +154,15 @@
         .medal-desc { font-size: 10px; color: #888; display: block; margin-top: 5px; }
         .medal-progress { font-size: 10px; color: var(--accent); font-weight: bold; margin-top: 5px; display: block; }
 
+        /* Histórico Cards - Estética Padrão */
+        .history-item { background: var(--card); padding: 20px; border-radius: 20px; margin-bottom: 12px; display: flex; flex-direction: column; border-left: 5px solid #555; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid #333; }
+        .hist-top { display: flex; justify-content: space-between; width: 100%; align-items: flex-start; }
+        .hist-date { font-weight: 800; color: #fff; font-size: 16px; margin-bottom: 5px; }
+        .hist-workout { font-size: 14px; color: #aaa; font-weight: 500; }
+        .skipped-list { color: var(--secondary); font-size: 11px; margin-top: 8px; border-top: 1px solid #333; padding-top: 5px; font-weight: 600; }
+
         #db-status { position: fixed; bottom: 5px; right: 5px; font-size: 10px; color: #555; z-index: 200; font-weight: bold; }
+        .version-label { position: fixed; bottom: 5px; left: 0; width: 100%; text-align: center; font-size: 10px; color: #333; pointer-events: none; opacity: 0.5; font-weight: bold; }
         .status-online { color: var(--success) !important; }
 
         .theme-1 { background: linear-gradient(135deg, #005f73, #0ea5e9); } .bd-theme-1 { border-left-color: #0ea5e9; }
@@ -171,25 +176,29 @@
 <body>
 
     <div id="db-status">⚪ Offline</div>
+    <div class="version-label">Versão: Tatu-Bola 🦔</div>
 
     <div id="screen-menu" class="screen visible">
         <div class="header-bar">
             <div class="app-title"><span class="app-logo">⚡</span> SUPERTREINO</div>
             <div class="header-actions">
-                <button class="btn-icon" onclick="window.app.showHistory()" title="Histórico">📋</button>
                 <button class="btn-icon" id="btn-edit-menu" onclick="window.app.toggleMenuEdit()" title="Editar">✏️</button>
             </div>
         </div>
+        
         <div id="user-list"></div>
         <button id="btn-add-user" class="btn-add-item" onclick="window.app.addUser()">+ NOVA PESSOA</button>
-        <center><button class="btn-exit" onclick="window.close()">Sair do App</button></center>
     </div>
 
     <div id="screen-workout-select" class="screen">
         <div class="header-bar">
-            <button class="btn-icon" onclick="window.history.back()">⬅️</button>
+            <button class="btn-icon" onclick="window.app.goHome()">⬅️</button>
             <span class="user-title" id="select-user-title">...</span>
-            <button class="btn-icon" id="btn-edit-select" onclick="window.app.toggleSelectEditMode()" title="Editar">✏️</button>
+            <div class="header-actions">
+                <button class="btn-icon" onclick="window.app.showHistory()" title="Histórico">📋</button>
+                <button class="btn-icon" onclick="window.app.consultAI()" title="Avaliar com IA">🤖</button>
+                <button class="btn-icon" id="btn-edit-select" onclick="window.app.toggleSelectEditMode()" title="Editar">✏️</button>
+            </div>
         </div>
         <div id="workout-select-list"></div>
         <button id="btn-add-workout" class="btn-add-item" onclick="window.app.addWorkout()">+ NOVO TREINO</button>
@@ -197,13 +206,14 @@
 
     <div id="screen-active-workout" class="screen">
         <div class="header-bar">
-            <button class="btn-icon" onclick="window.history.back()">⬅️</button>
+            <button class="btn-icon" onclick="window.app.handleBack()">⬅️</button>
             <span class="user-title" id="active-title">Treino A</span>
             <div class="header-actions">
                 <button class="btn-icon" onclick="window.open('https://open.spotify.com', '_blank')" title="Spotify">🎧</button>
                 <button class="btn-icon" id="btn-edit-active" onclick="window.app.toggleActiveEditMode()" title="Editar">✏️</button>
             </div>
         </div>
+        
         <div id="active-workout-container" class="workout-container"></div>
         <button id="btn-add-exercise" class="btn-add-item" onclick="window.app.addExercise()" style="margin-bottom: 80px;">+ NOVO EXERCÍCIO</button>
         <div class="footer-fixed">
@@ -213,9 +223,12 @@
 
     <div id="screen-history" class="screen">
         <div class="header-bar">
-            <button class="btn-icon" onclick="window.history.back()">⬅️</button>
+            <button class="btn-icon" onclick="window.app.handleBack()">⬅️</button>
             <span class="user-title">Histórico</span>
-            <button class="btn-icon" onclick="window.app.openGamification()" title="Conquistas">🏆</button>
+            <div class="header-actions">
+                <button class="btn-icon" onclick="window.app.openGamification()" title="Conquistas">🏆</button>
+                <button class="btn-icon" onclick="window.app.clearAllHistory()">🗑️</button>
+            </div>
         </div>
         <div id="history-list"></div>
     </div>
@@ -226,21 +239,25 @@
             <span class="user-title" style="color:var(--accent)">Conquistas</span>
             <div style="width:40px"></div>
         </div>
+
         <div class="game-header">
             <div class="total-days-badge">🔥 <span id="total-days-count">0</span> DIAS DE TREINO</div>
         </div>
+
         <h3 style="margin-left:10px; color:#888; font-size:12px;">SEMANA ATUAL</h3>
         <div class="medal-shelf">
             <div class="medal-box" id="medal-week-3"><span class="medal-icon">🥉</span><span class="medal-title">Bronze</span><span class="medal-desc">3 dias</span><span class="medal-progress" id="prog-week-3">0/3</span></div>
             <div class="medal-box" id="medal-week-4"><span class="medal-icon">🥈</span><span class="medal-title">Prata</span><span class="medal-desc">4 dias</span><span class="medal-progress" id="prog-week-4">0/4</span></div>
             <div class="medal-box" id="medal-week-5"><span class="medal-icon">🥇</span><span class="medal-title">Ouro</span><span class="medal-desc">5 dias</span><span class="medal-progress" id="prog-week-5">0/5</span></div>
         </div>
+
         <h3 style="margin-left:10px; color:#888; font-size:12px;">MÊS ATUAL (SEMANAS)</h3>
         <div class="medal-shelf">
             <div class="medal-box" id="medal-month-2"><span class="medal-icon">🥉</span><span class="medal-title">Bronze</span><span class="medal-desc">2 sem.</span><span class="medal-progress" id="prog-month-2">0/2</span></div>
             <div class="medal-box" id="medal-month-3"><span class="medal-icon">🥈</span><span class="medal-title">Prata</span><span class="medal-desc">3 sem.</span><span class="medal-progress" id="prog-month-3">0/3</span></div>
             <div class="medal-box" id="medal-month-4"><span class="medal-icon">🥇</span><span class="medal-title">Ouro</span><span class="medal-desc">4 sem.</span><span class="medal-progress" id="prog-month-4">0/4</span></div>
         </div>
+
         <h3 style="margin-left:10px; color:#888; font-size:12px;">ANO ATUAL (MESES)</h3>
         <div class="medal-shelf">
             <div class="medal-box" id="medal-year-8"><span class="medal-icon">🥉</span><span class="medal-title">Bronze</span><span class="medal-desc">8 meses</span><span class="medal-progress" id="prog-year-8">0/8</span></div>
@@ -303,6 +320,7 @@
     window.app = {
         data: {}, historyData: [], currentUser: null, currentWorkoutIndex: null, isTraining: false,
         isMenuEditing: false, isSelectEditing: false, isActiveEditing: false,
+        quitAttempts: 0, 
 
         init: function() {
             if (!history.state) history.replaceState({ screen: 'screen-menu' }, '');
@@ -310,18 +328,15 @@
             // Loop Fujão & Block Back Button
             window.onpopstate = (event) => {
                 if (this.isTraining) {
-                    // Impede o "voltar" real empurrando o estado de novo
                     history.pushState({ screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex }, '');
-                    
                     const randomMsg = quitMessages[Math.floor(Math.random() * quitMessages.length)];
                     this.showCustomModal(
                         'danger',
-                        `🚨 ${randomMsg}\n\nO treino está rolando. Sair cancela o tempo. Deseja realmente sair?`,
+                        `🚨 ${randomMsg}\n\nO treino está rolando. Sair cancela o progresso.`,
                         () => {
                             this.isTraining = false;
                             window.onbeforeunload = null;
                             localStorage.removeItem('tempWorkoutState'); 
-                            // Navegação forçada para fora
                             this.navigate('screen-workout-select');
                         }
                     );
@@ -339,16 +354,13 @@
                 window.dbOnValue(window.dbRef(window.dbInstance, 'history'), (snap) => {
                     const val = snap.val();
                     const allHist = val ? Object.keys(val).map(k => ({...val[k], firebaseId: k})).sort((a,b) => b.id - a.id) : [];
-                    // Filtro Individual
                     this.historyData = this.currentUser ? allHist.filter(h => h.user === this.data[this.currentUser]?.name) : [];
-                    
                     if(document.getElementById('screen-history').classList.contains('visible')) this.renderHistoryList();
                     if(document.getElementById('screen-gamification').classList.contains('visible')) this.updateMedalsUI();
                 });
             } else {
                 this.data = JSON.parse(localStorage.getItem('gymData_v51')) || {};
                 const allHist = JSON.parse(localStorage.getItem('gymHistory')) || [];
-                // Filtro Individual Local
                 this.historyData = this.currentUser ? allHist.filter(h => h.user === this.data[this.currentUser]?.name) : [];
                 this.refreshCurrentScreen();
             }
@@ -395,7 +407,7 @@
             const actions = document.getElementById('d-actions');
 
             text.innerText = msg;
-            actions.innerHTML = ''; // Limpa botões
+            actions.innerHTML = ''; 
 
             if (type === 'success') {
                 modal.querySelector('.msg-content').style.borderColor = 'var(--success)';
@@ -420,7 +432,7 @@
                 btnNo.onclick = () => { modal.style.display = 'none'; };
                 actions.appendChild(btnNo);
                 actions.appendChild(btnYes);
-            } else { // danger (Fujão)
+            } else { // danger
                 modal.querySelector('.msg-content').style.borderColor = 'var(--danger)';
                 title.innerText = "FUJÃO?";
                 title.style.color = 'var(--danger)';
@@ -441,7 +453,6 @@
 
         // --- MEDALHAS ---
         openGamification: function() {
-            // Recarrega o histórico específico do usuário atual antes de mostrar
              if (window.dbInstance) {
                 // Já atualizado pelo listener
              } else {
@@ -456,8 +467,8 @@
             if(!this.historyData) return;
             const uniqueDates = new Set();
             this.historyData.forEach(h => {
-                const parts = h.date.split('/'); // DD/MM/YYYY
-                uniqueDates.add(`${parts[2]}-${parts[1]}-${parts[0]}`); // ISO
+                const parts = h.date.split('/'); 
+                uniqueDates.add(`${parts[2]}-${parts[1]}-${parts[0]}`); 
             });
             const sortedDates = Array.from(uniqueDates).sort();
             document.getElementById('total-days-count').innerText = sortedDates.length;
@@ -516,6 +527,32 @@
             return Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
         },
 
+        // --- IA COACH ---
+        consultAI: function() {
+            if(!this.currentUser) return;
+            const u = this.data[this.currentUser];
+            if (!u.workouts || u.workouts.length === 0) {
+                alert("Cadastre treinos primeiro!");
+                return;
+            }
+
+            let promptText = `Atue como meu Personal Trainer. Analise minha rotina:\n\n`;
+            u.workouts.forEach(w => {
+                promptText += `👉 ${w.title}:\n`;
+                if(w.exercises) {
+                    w.exercises.forEach(ex => {
+                        const carga = ex.weight ? `${ex.weight}kg` : "Livre";
+                        promptText += `- ${ex.name}: ${ex.sets}x${ex.reps} (${carga})\n`;
+                    });
+                }
+                promptText += `\n`;
+            });
+            promptText += `\nMe dê feedback sobre volume e sugestões.`;
+
+            const encoded = encodeURIComponent(promptText);
+            window.open(`https://gemini.google.com/app?text=${encoded}`, '_blank');
+        },
+
         renderMenu: function() {
             const list = document.getElementById('user-list'); list.innerHTML = '';
             const userKeys = Object.keys(this.data);
@@ -568,7 +605,9 @@
                 card.innerHTML = `${titleDisplay}<p>${w.exercises ? w.exercises.length : 0} exercícios</p>`;
                 if(this.isSelectEditing) {
                     const ctrl = document.createElement('div'); ctrl.className = 'edit-controls-floating';
-                    ctrl.innerHTML = `<div class="btn-float btn-del" onclick="window.app.deleteWorkout(event, ${idx})">X</div>`;
+                    ctrl.innerHTML = `<div class="btn-float btn-del" onclick="window.app.deleteWorkout(event, ${idx})">X</div>
+                                      <div class="btn-float btn-reorder" onclick="window.app.reorderWorkout(${idx}, -1)">⬆️</div>
+                                      <div class="btn-float btn-reorder" onclick="window.app.reorderWorkout(${idx}, 1)">⬇️</div>`;
                     wrap.appendChild(ctrl);
                 }
                 wrap.appendChild(card); list.appendChild(wrap);
@@ -655,10 +694,9 @@
                 const div = document.createElement('div'); div.className = 'history-item';
                 div.innerHTML = `
                     <div class="hist-top">
-                        <div><span class="hist-date">${h.date}</span><span class="hist-user" style="color:${uColor}">${h.user}</span><span>${h.workoutTitle}</span></div>
+                        <div><div class="hist-date">${h.date}</div><div class="hist-workout">${h.workoutTitle}</div></div>
                         <div style="text-align:right"><button style="background:none;border:none;margin-top:5px" onclick="window.app.delHist(${h.id}, '${h.firebaseId||''}')">🗑️</button></div>
                     </div>
-                    <div class="hist-loc">📍 ${h.location}</div>
                     ${h.skipped && h.skipped.length ? `<div class="skipped-list">⚠️ Pulou: ${h.skipped.join(', ')}</div>` : ''}
                 `;
                 list.appendChild(div);
@@ -678,7 +716,25 @@
         deleteWorkout: function(e, idx) { e.stopPropagation(); if(confirm('Apagar treino?')) { this.data[this.currentUser].workouts.splice(idx, 1); this.save(); } },
         deleteEx: function(i) { if(confirm('Apagar?')) { this.data[this.currentUser].workouts[this.currentWorkoutIndex].exercises.splice(i,1); this.save(); this.renderActiveWorkout(); } },
         
-        // CORREÇÃO: Reordenação de Séries com Renomeação Automática (A/B/C)
+        // Reordenação de Séries com Troca de Nome (A/B/C)
+        reorderWorkout: function(idx, d) {
+            const workouts = this.data[this.currentUser].workouts;
+            if ((d === -1 && idx === 0) || (d === 1 && idx === workouts.length - 1)) return;
+            
+            [workouts[idx], workouts[idx + d]] = [workouts[idx + d], workouts[idx]];
+            
+            const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            workouts.forEach((w, i) => {
+                const letter = letters[i] || '?';
+                const parts = w.title.split(' - ');
+                const name = parts.length > 1 ? parts.slice(1).join(' - ') : w.title;
+                w.id = letter;
+                w.title = `${letter} - ${name}`;
+            });
+            this.save();
+            this.renderWorkoutSelectScreen();
+        },
+
         reorderUser: function(cid, d) {
             const e = Object.entries(this.data); const i = e.findIndex(([k])=>k===cid);
             if((d===-1&&i===0)||(d===1&&i===e.length-1)) return;
@@ -688,27 +744,6 @@
             const e = this.data[this.currentUser].workouts[this.currentWorkoutIndex].exercises;
             if((d===-1&&i===0)||(d===1&&i===e.length-1)) return;
             [e[i], e[i+d]] = [e[i+d], e[i]]; this.save(); this.renderActiveWorkout();
-        },
-        reorderWorkout: function(idx, d) {
-            const workouts = this.data[this.currentUser].workouts;
-            if ((d === -1 && idx === 0) || (d === 1 && idx === workouts.length - 1)) return;
-            
-            // Troca de posição no array
-            [workouts[idx], workouts[idx + d]] = [workouts[idx + d], workouts[idx]];
-            
-            // Renomeia os prefixos (A, B, C...)
-            const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            workouts.forEach((w, i) => {
-                const letter = letters[i] || '?';
-                const parts = w.title.split(' - ');
-                // Se tiver traço, preserva o nome, senão usa o titulo todo
-                const name = parts.length > 1 ? parts.slice(1).join(' - ') : w.title;
-                w.id = letter;
-                w.title = `${letter} - ${name}`;
-            });
-            
-            this.save();
-            this.renderWorkoutSelectScreen();
         },
 
         addUser: function() { const n=prompt("Nome:"); if(n) { this.data['u_'+Date.now()]={name:n, themeId:`theme-${Math.floor(Math.random()*6)+1}`, workouts:[]}; this.save(); this.renderMenu(); } },
@@ -732,14 +767,12 @@
 
         processFinish: function(incomplete) {
             const btn = document.getElementById('btn-finish-main'); btn.innerText = "Salvando..."; btn.disabled = true;
-            
             const wName = this.data[this.currentUser].workouts[this.currentWorkoutIndex].title;
             this.isTraining = false; 
             window.onbeforeunload = null;
             this.quitAttempts = 0;
             localStorage.removeItem('tempWorkoutState');
-
-            // Simula delay de salvamento para "sentir" o app salvando e evitar erros
+            
             setTimeout(() => {
                 this.saveHist(wName, "Local Salvo", false, incomplete ? ["Incompleto"] : []);
             }, 1000);
@@ -756,7 +789,7 @@
             }
             
             const randomMsg = successMessages[Math.floor(Math.random()*successMessages.length)];
-            this.showCustomModal('success', randomMsg, () => this.navigate('screen-menu'));
+            this.showCustomModal('success', randomMsg, () => this.navigate('screen-menu')); // Sair para Home
         },
         
         showHistory: function() { this.navigate('screen-history'); },
@@ -772,42 +805,6 @@
         goHome: function() { window.history.back(); }, 
         toggleScreen: function(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('visible')); document.getElementById(id).classList.add('visible'); },
         updateEditIcon: function(bid, sid, isE) { const b=document.getElementById(bid); const s=document.getElementById(sid); if(isE) { b.innerText='💾'; b.classList.add('icon-active'); s.classList.add('editing'); } else { b.innerText='✏️'; b.classList.remove('icon-active'); s.classList.remove('editing'); } }
-    };
-
-    // Override para adicionar reordenação na tela de série
-    window.app.renderWorkoutSelectScreen = function() {
-        if(!this.currentUser || !this.data[this.currentUser]) return;
-        const u = this.data[this.currentUser];
-        document.getElementById('select-user-title').innerText = u.name;
-        const list = document.getElementById('workout-select-list'); list.innerHTML = '';
-        if(!u.workouts || u.workouts.length === 0) {
-            list.innerHTML = `<p class="empty-msg">Nenhum treino cadastrado.<br>Toque na caneta ✏️ para criar.</p>`;
-            if(!u.workouts) u.workouts = [];
-        }
-        u.workouts.forEach((w, idx) => {
-            const wrap = document.createElement('div'); wrap.className = 'card-wrapper';
-            const card = document.createElement('div');
-            card.className = `workout-select-card bd-${u.themeId}`;
-            card.style.borderLeft = '5px solid';
-            card.onclick = () => this.navigate('screen-active-workout', { userId: this.currentUser, wIndex: idx });
-            let titleDisplay = `<h3>${w.title}</h3>`;
-            if(this.isSelectEditing) {
-                const parts = w.title.split(' - ');
-                const prefix = parts.length > 1 ? parts[0] + ' - ' : '';
-                const name = parts.length > 1 ? parts.slice(1).join(' - ') : w.title;
-                titleDisplay = `<h3>${prefix}<input type="text" class="edit-input" style="width:100%; display:block; margin-top:5px" value="${name}" onclick="event.stopPropagation()" onchange="window.app.renameWorkout(${idx}, '${prefix}', this.value)"></h3>`;
-            }
-            card.innerHTML = `${titleDisplay}<p>${w.exercises ? w.exercises.length : 0} exercícios</p>`;
-            if(this.isSelectEditing) {
-                const ctrl = document.createElement('div'); ctrl.className = 'edit-controls-floating';
-                ctrl.innerHTML = `<div class="btn-float btn-del" onclick="window.app.deleteWorkout(event, ${idx})">X</div>
-                                  <div class="btn-float btn-reorder" onclick="window.app.reorderWorkout(${idx}, -1)">⬆️</div>
-                                  <div class="btn-float btn-reorder" onclick="window.app.reorderWorkout(${idx}, 1)">⬇️</div>`;
-                wrap.appendChild(ctrl);
-            }
-            wrap.appendChild(card); list.appendChild(wrap);
-        });
-        this.updateEditIcon('btn-edit-select', 'screen-workout-select', this.isSelectEditing);
     };
 
     window.onload = function() { if(window.app && window.app.init) window.app.init(); };
