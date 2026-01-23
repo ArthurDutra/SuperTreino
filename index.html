@@ -22,7 +22,6 @@
             --bg: #121212; --card: #1f1f23; --text: #ffffff; 
             --primary: #c084fc; --secondary: #fb923c; --accent: #facc15;
             --success: #4ade80; --danger: #ef4444; --edit-mode: #facc15;
-            --spotify: #1DB954; /* Verde Spotify */
             --bronze: #cd7f32; --silver: #c0c0c0; --gold: #ffd700;
             
             --color-1: #38bdf8; --color-2: #f472b6; --color-3: #a78bfa;
@@ -75,28 +74,6 @@
         .medal-desc { font-size: 10px; color: #888; display: block; margin-top: 5px; }
         .medal-progress { font-size: 10px; color: var(--accent); font-weight: bold; margin-top: 5px; display: block; }
 
-        /* Botão AI Coach (Estilo Novo) */
-        .btn-ai-coach {
-            width: 100%; padding: 18px; margin-top: 20px;
-            background: linear-gradient(135deg, #4c1d95, #c084fc);
-            border: none; border-radius: 20px;
-            color: #fff; font-weight: 800; text-transform: uppercase;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            box-shadow: 0 5px 20px rgba(192, 132, 252, 0.3); cursor: pointer;
-            letter-spacing: 1px; font-size: 14px;
-        }
-        .btn-ai-coach:active { transform: scale(0.98); }
-
-        /* Botão Spotify */
-        .btn-spotify {
-            width: 100%; padding: 12px; margin-bottom: 15px;
-            background: #191414; border: 2px solid var(--spotify); border-radius: 50px;
-            color: var(--spotify); font-weight: 700; font-size: 14px;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            cursor: pointer; transition: 0.2s;
-        }
-        .btn-spotify:active { background: var(--spotify); color: #000; transform: scale(0.98); }
-
         /* LISTAS & CARDS */
         #user-list, #workout-select-list { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 10px; }
         .card-wrapper { position: relative; width: 100%; max-width: 400px; }
@@ -106,7 +83,8 @@
             font-size: 18px; font-weight: 700; cursor: pointer; color: #fff; 
             box-shadow: 0 8px 20px rgba(0,0,0,0.3); text-transform: uppercase;
             text-align: left; display: flex; justify-content: space-between; align-items: center;
-            transition: transform 0.1s, box-shadow 0.1s; font-family: 'Poppins', sans-serif;
+            transition: transform 0.1s, box-shadow 0.1s;
+            font-family: 'Poppins', sans-serif;
         }
         .btn-large:active { transform: scale(0.98); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         
@@ -211,17 +189,12 @@
         <div class="header-bar">
             <button class="btn-icon" onclick="window.app.handleBack()">⬅️</button>
             <span class="user-title" id="select-user-title">...</span>
-            <button class="btn-icon" id="btn-edit-select" onclick="window.app.toggleSelectEditMode()" title="Editar">✏️</button>
+            <div class="header-actions">
+                <button class="btn-icon" onclick="window.app.consultAI()" title="Avaliar com IA">🤖</button>
+                <button class="btn-icon" id="btn-edit-select" onclick="window.app.toggleSelectEditMode()" title="Editar">✏️</button>
+            </div>
         </div>
-        
         <div id="workout-select-list"></div>
-        
-        <div class="card-wrapper" style="width:100%; max-width:400px; margin:20px auto 0 auto;">
-            <button class="btn-ai-coach" onclick="window.app.consultAI()">
-                <span style="font-size:24px">🤖💪</span> Preparador Físico Virtual
-            </button>
-        </div>
-
         <button id="btn-add-workout" class="btn-add-item" onclick="window.app.addWorkout()">+ NOVO TREINO</button>
     </div>
 
@@ -229,15 +202,12 @@
         <div class="header-bar">
             <button class="btn-icon" onclick="window.app.handleBack()">⬅️</button>
             <span class="user-title" id="active-title">Treino A</span>
-            <button class="btn-icon" id="btn-edit-active" onclick="window.app.toggleActiveEditMode()" title="Editar">✏️</button>
+            <div class="header-actions">
+                <button class="btn-icon" onclick="window.open('https://open.spotify.com', '_blank')" title="Abrir Spotify">🎧</button>
+                <button class="btn-icon" id="btn-edit-active" onclick="window.app.toggleActiveEditMode()" title="Editar">✏️</button>
+            </div>
         </div>
         
-        <div class="card-wrapper" style="width:100%; max-width:400px; margin:0 auto;">
-            <button class="btn-spotify" onclick="window.open('https://open.spotify.com', '_blank')">
-                <span style="font-size:18px">🎧</span> SOLTAR O SOM NO SPOTIFY
-            </button>
-        </div>
-
         <div id="active-workout-container" class="workout-container"></div>
         <button id="btn-add-exercise" class="btn-add-item" onclick="window.app.addExercise()" style="margin-bottom: 80px;">+ NOVO EXERCÍCIO</button>
         <div class="footer-fixed">
@@ -270,41 +240,23 @@
 
         <h3 style="margin-left:10px; color:#888; font-size:12px;">SEMANA ATUAL</h3>
         <div class="medal-shelf">
-            <div class="medal-box" id="medal-week-3">
-                <span class="medal-icon">🥉</span><span class="medal-title">Bronze</span><span class="medal-desc">3 dias</span><span class="medal-progress" id="prog-week-3">0/3</span>
-            </div>
-            <div class="medal-box" id="medal-week-4">
-                <span class="medal-icon">🥈</span><span class="medal-title">Prata</span><span class="medal-desc">4 dias</span><span class="medal-progress" id="prog-week-4">0/4</span>
-            </div>
-            <div class="medal-box" id="medal-week-5">
-                <span class="medal-icon">🥇</span><span class="medal-title">Ouro</span><span class="medal-desc">5 dias</span><span class="medal-progress" id="prog-week-5">0/5</span>
-            </div>
+            <div class="medal-box" id="medal-week-3"><span class="medal-icon">🥉</span><span class="medal-title">Bronze</span><span class="medal-desc">3 dias</span><span class="medal-progress" id="prog-week-3">0/3</span></div>
+            <div class="medal-box" id="medal-week-4"><span class="medal-icon">🥈</span><span class="medal-title">Prata</span><span class="medal-desc">4 dias</span><span class="medal-progress" id="prog-week-4">0/4</span></div>
+            <div class="medal-box" id="medal-week-5"><span class="medal-icon">🥇</span><span class="medal-title">Ouro</span><span class="medal-desc">5 dias</span><span class="medal-progress" id="prog-week-5">0/5</span></div>
         </div>
 
         <h3 style="margin-left:10px; color:#888; font-size:12px;">MÊS ATUAL (SEMANAS)</h3>
         <div class="medal-shelf">
-            <div class="medal-box" id="medal-month-2">
-                <span class="medal-icon">🥉</span><span class="medal-title">Bronze</span><span class="medal-desc">2 sem.</span><span class="medal-progress" id="prog-month-2">0/2</span>
-            </div>
-            <div class="medal-box" id="medal-month-3">
-                <span class="medal-icon">🥈</span><span class="medal-title">Prata</span><span class="medal-desc">3 sem.</span><span class="medal-progress" id="prog-month-3">0/3</span>
-            </div>
-            <div class="medal-box" id="medal-month-4">
-                <span class="medal-icon">🥇</span><span class="medal-title">Ouro</span><span class="medal-desc">4 sem.</span><span class="medal-progress" id="prog-month-4">0/4</span>
-            </div>
+            <div class="medal-box" id="medal-month-2"><span class="medal-icon">🥉</span><span class="medal-title">Bronze</span><span class="medal-desc">2 sem.</span><span class="medal-progress" id="prog-month-2">0/2</span></div>
+            <div class="medal-box" id="medal-month-3"><span class="medal-icon">🥈</span><span class="medal-title">Prata</span><span class="medal-desc">3 sem.</span><span class="medal-progress" id="prog-month-3">0/3</span></div>
+            <div class="medal-box" id="medal-month-4"><span class="medal-icon">🥇</span><span class="medal-title">Ouro</span><span class="medal-desc">4 sem.</span><span class="medal-progress" id="prog-month-4">0/4</span></div>
         </div>
 
         <h3 style="margin-left:10px; color:#888; font-size:12px;">ANO ATUAL (MESES)</h3>
         <div class="medal-shelf">
-            <div class="medal-box" id="medal-year-8">
-                <span class="medal-icon">🥉</span><span class="medal-title">Bronze</span><span class="medal-desc">8 meses</span><span class="medal-progress" id="prog-year-8">0/8</span>
-            </div>
-            <div class="medal-box" id="medal-year-9">
-                <span class="medal-icon">🥈</span><span class="medal-title">Prata</span><span class="medal-desc">9 meses</span><span class="medal-progress" id="prog-year-9">0/9</span>
-            </div>
-            <div class="medal-box" id="medal-year-10">
-                <span class="medal-icon">🥇</span><span class="medal-title">Ouro</span><span class="medal-desc">10 meses</span><span class="medal-progress" id="prog-year-10">0/10</span>
-            </div>
+            <div class="medal-box" id="medal-year-8"><span class="medal-icon">🥉</span><span class="medal-title">Bronze</span><span class="medal-desc">8 meses</span><span class="medal-progress" id="prog-year-8">0/8</span></div>
+            <div class="medal-box" id="medal-year-9"><span class="medal-icon">🥈</span><span class="medal-title">Prata</span><span class="medal-desc">9 meses</span><span class="medal-progress" id="prog-year-9">0/9</span></div>
+            <div class="medal-box" id="medal-year-10"><span class="medal-icon">🥇</span><span class="medal-title">Ouro</span><span class="medal-desc">10 meses</span><span class="medal-progress" id="prog-year-10">0/10</span></div>
         </div>
     </div>
 
@@ -368,10 +320,11 @@
         init: function() {
             if (!history.state) history.replaceState({ screen: 'screen-menu' }, '');
             
+            // Loop Fujão
             window.onpopstate = (event) => {
                 if (this.isTraining) {
                     const randomMsg = quitMessages[Math.floor(Math.random() * quitMessages.length)];
-                    if (confirm(`🚨 ${randomMsg}\n\nO treino está rolando. Sair cancela tudo. Deseja realmente sair?`)) {
+                    if (confirm(`🚨 ${randomMsg}\n\nDeseja realmente sair?`)) {
                         this.isTraining = false;
                         window.onbeforeunload = null;
                         this.quitAttempts = 0;
@@ -400,7 +353,7 @@
                     if(document.getElementById('screen-gamification').classList.contains('visible')) this.updateMedalsUI();
                 });
             } else {
-                this.data = JSON.parse(localStorage.getItem('gymData_v47')) || {};
+                this.data = JSON.parse(localStorage.getItem('gymData_v48')) || {};
                 this.historyData = JSON.parse(localStorage.getItem('gymHistory')) || [];
                 this.refreshCurrentScreen();
             }
@@ -408,7 +361,7 @@
 
         save: function() { 
             if(window.dbInstance) window.dbSet(window.dbRef(window.dbInstance, 'users'), this.data);
-            else localStorage.setItem('gymData_v47', JSON.stringify(this.data)); 
+            else localStorage.setItem('gymData_v48', JSON.stringify(this.data)); 
         },
 
         handleBack: function() { window.history.back(); },
@@ -733,9 +686,7 @@
             for(let c of chks) if(!c.checked) p = true;
             if(p) { const msg = incompleteMessages[Math.floor(Math.random()*incompleteMessages.length)]; if(!confirm(`👀 ${msg}\n\nFinalizar incompleto?`)) return; }
             
-            const btn = document.getElementById('btn-finish-main'); btn.innerText = "Salvando..."; btn.disabled = true;
-            document.getElementById('modal-msg').style.display = 'flex';
-            document.getElementById('quote-text').innerText = successMessages[Math.floor(Math.random()*successMessages.length)];
+            const btn = document.getElementById('btn-finish-main'); btn.innerText = "Localizando..."; btn.disabled = true;
             
             const wName = this.data[this.currentUser].workouts[this.currentWorkoutIndex].title;
             this.isTraining = false; 
@@ -764,7 +715,12 @@
             const reg = { id: Date.now(), date: new Date().toLocaleDateString('pt-BR'), user: this.data[this.currentUser].name, workoutTitle: t, location: l, cheat: c, skipped: s };
             if(window.dbInstance) window.dbPush(window.dbRef(window.dbInstance, 'history'), reg);
             else { this.historyData.unshift(reg); localStorage.setItem('gymHistory', JSON.stringify(this.historyData)); }
+            
+            // Só mostra o modal DEPOIS de salvar
+            document.getElementById('modal-msg').style.display = 'flex';
+            document.getElementById('quote-text').innerText = successMessages[Math.floor(Math.random()*successMessages.length)];
             document.getElementById('gps-status').innerText = `📍 ${l}`;
+            
             document.getElementById('btn-finish-main').innerText = "🏁 Finalizar"; document.getElementById('btn-finish-main').disabled = false;
         },
         
