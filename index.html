@@ -56,6 +56,25 @@
         .btn-icon:active { transform: scale(0.9); }
         .icon-active { color: var(--edit-mode); transform: scale(1.1); text-shadow: 0 0 10px var(--edit-mode); }
 
+        /* GAMIFICAÇÃO */
+        .game-header { text-align: center; margin-bottom: 30px; }
+        .total-days-badge { 
+            background: linear-gradient(45deg, var(--primary), var(--secondary)); 
+            padding: 10px 20px; border-radius: 50px; font-weight: 800; font-size: 20px;
+            box-shadow: 0 0 20px rgba(192, 132, 252, 0.4); display: inline-block;
+        }
+        .medal-shelf { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 30px; }
+        .medal-box { 
+            background: var(--card); border: 1px solid #333; border-radius: 15px; 
+            padding: 15px; text-align: center; position: relative; opacity: 0.5; filter: grayscale(1);
+            transition: 0.3s;
+        }
+        .medal-unlocked { opacity: 1; filter: grayscale(0); border-color: var(--gold); box-shadow: 0 0 15px rgba(255, 215, 0, 0.1); }
+        .medal-icon { font-size: 40px; margin-bottom: 5px; display: block; }
+        .medal-title { font-size: 12px; font-weight: 700; color: #fff; text-transform: uppercase; display: block; }
+        .medal-desc { font-size: 10px; color: #888; display: block; margin-top: 5px; }
+        .medal-progress { font-size: 10px; color: var(--accent); font-weight: bold; margin-top: 5px; display: block; }
+
         /* LISTAS & CARDS */
         #user-list, #workout-select-list { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 10px; }
         .card-wrapper { position: relative; width: 100%; max-width: 400px; }
@@ -65,9 +84,10 @@
             font-size: 18px; font-weight: 700; cursor: pointer; color: #fff; 
             box-shadow: 0 8px 20px rgba(0,0,0,0.3); text-transform: uppercase;
             text-align: left; display: flex; justify-content: space-between; align-items: center;
-            transition: transform 0.1s; font-family: 'Poppins', sans-serif;
+            transition: transform 0.1s, box-shadow 0.1s;
+            font-family: 'Poppins', sans-serif;
         }
-        .btn-large:active { transform: scale(0.98); }
+        .btn-large:active { transform: scale(0.98); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         
         .edit-input { 
             background: rgba(255,255,255,0.1); border: 1px solid #555; color: #fff; 
@@ -86,6 +106,8 @@
         .workout-select-card h3 { margin: 0 0 5px 0; font-size: 20px; overflow-wrap: break-word; }
         .workout-select-card p { margin: 0; color: #888; font-size: 14px; font-weight: 400; }
         .workout-select-card:active { transform: scale(0.98); background: #25252a; }
+        .suggested-workout { border: 2px solid var(--accent); box-shadow: 0 0 15px rgba(250, 204, 21, 0.15); }
+        .suggested-badge { position: absolute; right: 15px; top: 20px; background: var(--accent); color: #000; font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 20px; animation: pulse 2s infinite; }
 
         /* EXERCÍCIOS */
         .workout-container { padding-bottom: 120px; }
@@ -96,7 +118,6 @@
         .custom-chk { width: 32px; height: 32px; background: #2a2a2a; border-radius: 10px; display: inline-block; position: relative; pointer-events: none; transition: 0.3s; border: 2px solid #444; }
         input:checked + .custom-chk { background: var(--success); border-color: var(--success); transform: scale(1.1); }
         input:checked + .custom-chk::after { content: '✔'; color: #000; position: absolute; left: 7px; top: 1px; font-weight: 800; font-size: 20px; }
-        
         .ex-info { flex-grow: 1; min-width: 0; }
         .ex-name { font-size: 18px; font-weight: 600; display: block; margin-bottom: 6px; color: #fff; word-wrap: break-word; }
         .ex-meta { display: flex; gap: 10px; align-items: center; font-size: 14px; color: #bbb; font-weight: 500; flex-wrap: wrap; }
@@ -129,9 +150,6 @@
         .btn-finish:active { transform: scale(0.98); }
         .btn-finish:disabled { background: #333; color: #555; box-shadow: none; cursor: default; }
 
-        /* Botão Sair (Tela Inicial) */
-        .btn-exit { margin-top: 20px; background: #333; color: #888; font-size: 12px; padding: 10px 20px; border-radius: 20px; border: 1px solid #444; }
-
         /* MODAIS PERSONALIZADOS */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; text-align: center; backdrop-filter: blur(5px); }
         .msg-content { background: #1a1a1a; padding: 30px; border-radius: 25px; border: 2px solid var(--primary); max-width: 400px; width: 100%; box-shadow: 0 0 30px rgba(192, 132, 252, 0.2); }
@@ -142,17 +160,7 @@
         .btn-primary { background: var(--primary); color: #fff; }
         .btn-secondary { background: #333; color: #fff; }
 
-        /* MEDALHAS */
-        .game-header { text-align: center; margin-bottom: 30px; }
-        .total-days-badge { background: linear-gradient(45deg, var(--primary), var(--secondary)); padding: 10px 20px; border-radius: 50px; font-weight: 800; font-size: 20px; box-shadow: 0 0 20px rgba(192, 132, 252, 0.4); display: inline-block; }
-        .medal-shelf { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 30px; }
-        .medal-box { background: var(--card); border: 1px solid #333; border-radius: 15px; padding: 15px; text-align: center; position: relative; opacity: 0.5; filter: grayscale(1); transition: 0.3s; }
-        .medal-unlocked { opacity: 1; filter: grayscale(0); border-color: var(--gold); box-shadow: 0 0 15px rgba(255, 215, 0, 0.1); }
-        .medal-icon { font-size: 40px; margin-bottom: 5px; display: block; }
-        .medal-title { font-size: 12px; font-weight: 700; color: #fff; text-transform: uppercase; display: block; }
-        .medal-desc { font-size: 10px; color: #888; display: block; margin-top: 5px; }
-        .medal-progress { font-size: 10px; color: var(--accent); font-weight: bold; margin-top: 5px; display: block; }
-
+        /* Histórico Cards */
         .history-item { background: var(--card); padding: 20px; border-radius: 20px; margin-bottom: 12px; display: flex; flex-direction: column; border-left: 5px solid #555; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid #333; }
         .hist-top { display: flex; justify-content: space-between; width: 100%; align-items: flex-start; }
         .hist-date { font-weight: 800; color: #fff; font-size: 16px; margin-bottom: 5px; }
@@ -175,7 +183,7 @@
 <body>
 
     <div id="db-status">⚪ Offline</div>
-    <div class="version-label">Versão: Capivara Blindada 🛡️</div>
+    <div class="version-label">Versão: Mico-Leão Dourado 🦁</div>
 
     <div id="screen-menu" class="screen visible">
         <div class="header-bar">
@@ -186,7 +194,6 @@
         </div>
         <div id="user-list"></div>
         <button id="btn-add-user" class="btn-add-item" onclick="window.app.addUser()">+ NOVA PESSOA</button>
-        <center><button class="btn-exit" onclick="window.close()">Sair do App</button></center>
     </div>
 
     <div id="screen-workout-select" class="screen">
@@ -318,7 +325,7 @@
         init: function() {
             if (!history.state) history.replaceState({ screen: 'screen-menu' }, '');
             
-            // Loop Fujão
+            // Loop Fujão & Block Back Button
             window.onpopstate = (event) => {
                 if (this.isTraining) {
                     history.pushState({ screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex }, '');
@@ -352,7 +359,7 @@
                     if(document.getElementById('screen-gamification').classList.contains('visible')) this.updateMedalsUI();
                 });
             } else {
-                this.data = JSON.parse(localStorage.getItem('gymData_v53')) || {};
+                this.data = JSON.parse(localStorage.getItem('gymData_v54')) || {};
                 const allHist = JSON.parse(localStorage.getItem('gymHistory')) || [];
                 this.historyData = this.currentUser ? allHist.filter(h => h.user === this.data[this.currentUser]?.name) : [];
                 this.refreshCurrentScreen();
@@ -361,7 +368,7 @@
 
         save: function() { 
             if(window.dbInstance) window.dbSet(window.dbRef(window.dbInstance, 'users'), this.data);
-            else localStorage.setItem('gymData_v53', JSON.stringify(this.data)); 
+            else localStorage.setItem('gymData_v54', JSON.stringify(this.data)); 
         },
 
         handleBack: function() { window.history.back(); },
@@ -373,15 +380,7 @@
         },
 
         // Função de retorno limpo ao menu
-        returnToMenu: function() {
-            document.getElementById('modal-msg').style.display='none';
-            // Volta da tela ativa para a tela de série
-            this.isTraining = false;
-            window.history.back(); // Simula o voltar do navegador
-        },
-        
         goHome: function() {
-            // Volta até o menu
             this.currentUser = null;
             this.navigate('screen-menu');
         },
@@ -568,10 +567,23 @@
                 list.innerHTML = `<p class="empty-msg">Nenhum treino cadastrado.<br>Toque na caneta ✏️ para criar.</p>`;
                 if(!u.workouts) u.workouts = [];
             }
+
+            // SUGESTÃO DE TREINO (FIX)
+            const lastEntry = this.historyData.length > 0 ? this.historyData[0] : null;
+            let recIdx = 0;
+            if (lastEntry && u.workouts.length > 0) {
+                const lastIdx = u.workouts.findIndex(w => w.title === lastEntry.workoutTitle);
+                if (lastIdx !== -1) {
+                    recIdx = (lastIdx + 1) % u.workouts.length;
+                }
+            }
+
             u.workouts.forEach((w, idx) => {
                 const wrap = document.createElement('div'); wrap.className = 'card-wrapper';
+                const isRec = (idx === recIdx && u.workouts.length > 0 && (this.historyData.length > 0 || idx === 0)); // Highlight A if new
+                
                 const card = document.createElement('div');
-                card.className = `workout-select-card bd-${u.themeId}`;
+                card.className = `workout-select-card bd-${u.themeId} ${isRec?'suggested-workout':''}`;
                 card.style.borderLeft = '5px solid';
                 card.onclick = () => this.navigate('screen-active-workout', { userId: this.currentUser, wIndex: idx });
                 let titleDisplay = `<h3>${w.title}</h3>`;
@@ -581,7 +593,10 @@
                     const name = parts.length > 1 ? parts.slice(1).join(' - ') : w.title;
                     titleDisplay = `<h3>${prefix}<input type="text" class="edit-input" style="width:100%; display:block; margin-top:5px" value="${name}" onclick="event.stopPropagation()" onchange="window.app.renameWorkout(${idx}, '${prefix}', this.value)"></h3>`;
                 }
-                card.innerHTML = `${titleDisplay}<p>${w.exercises ? w.exercises.length : 0} exercícios</p>`;
+                
+                const suggestedHtml = isRec ? '<div class="suggested-badge">SUGERIDO</div>' : '';
+                card.innerHTML = `${suggestedHtml}${titleDisplay}<p>${w.exercises ? w.exercises.length : 0} exercícios</p>`;
+                
                 if(this.isSelectEditing) {
                     const ctrl = document.createElement('div'); ctrl.className = 'edit-controls-floating';
                     ctrl.innerHTML = `<div class="btn-float btn-del" onclick="window.app.deleteWorkout(event, ${idx})">X</div>
@@ -602,12 +617,18 @@
             if (!w) return;
 
             const hasExercises = w.exercises && w.exercises.length > 0;
-            if (!this.isTraining && hasExercises) {
-                this.isTraining = true;
-                window.onbeforeunload = function() { return "Treino rodando."; };
+            
+            // CLEAN START IF NEW SESSION
+            if (!this.isTraining) {
+                // Se não estava treinando, é um treino novo. Limpa o cache anterior para resetar checkboxes.
+                localStorage.removeItem('tempWorkoutState');
+                if(hasExercises) {
+                    this.isTraining = true;
+                    window.onbeforeunload = function() { return "Treino rodando."; };
+                }
             }
 
-            // RECUPERA ESTADO
+            // RECUPERA ESTADO (Se existir, será do treino atual)
             const savedState = JSON.parse(localStorage.getItem('tempWorkoutState')) || {};
             const myState = (savedState.u === this.currentUser && savedState.w === this.currentWorkoutIndex) ? savedState.c : [];
 
@@ -780,7 +801,7 @@
             }
             
             const randomMsg = successMessages[Math.floor(Math.random()*successMessages.length)];
-            this.showCustomModal('success', randomMsg, () => this.returnToMenu());
+            this.showCustomModal('success', randomMsg, () => this.goHome());
         },
         
         showHistory: function() { this.navigate('screen-history'); },
