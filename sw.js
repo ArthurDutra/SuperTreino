@@ -1,8 +1,8 @@
-/* SERVICE WORKER - TAMANDUA BANDEIRA
-   Focando em garantir que o app sempre busque dados frescos.
+/* SERVICE WORKER - LOBO GUARA
+   Atualização crítica de renderização.
 */
 
-const CACHE_NAME = 'super-treino-tamandua-bandeira';
+const CACHE_NAME = 'super-treino-lobo-guara';
 
 // Arquivos da interface gráfica para cache
 const urlsToCache = [
