@@ -22,6 +22,8 @@
             --bg: #121212; --card: #1f1f23; --text: #ffffff; 
             --primary: #c084fc; --secondary: #fb923c; --accent: #facc15;
             --success: #4ade80; --danger: #ef4444; --edit-mode: #facc15;
+            --bronze: #cd7f32; --silver: #c0c0c0; --gold: #ffd700;
+            
             --color-1: #38bdf8; --color-2: #f472b6; --color-3: #a78bfa;
             --color-4: #fb923c; --color-5: #22d3ee; --color-6: #4ade80;
         }
@@ -53,6 +55,28 @@
         .btn-icon:active { transform: scale(0.9); }
         .icon-active { color: var(--edit-mode); transform: scale(1.1); text-shadow: 0 0 10px var(--edit-mode); }
 
+        /* MEDALHAS (GAMIFICAÇÃO) */
+        .medal-case {
+            display: flex; justify-content: space-around; background: var(--card);
+            padding: 15px; border-radius: 20px; margin-bottom: 20px;
+            border: 1px solid #333;
+        }
+        .medal-item { display: flex; flex-direction: column; align-items: center; position: relative; }
+        .medal-icon { font-size: 32px; filter: grayscale(100%); opacity: 0.5; transition: 0.3s; }
+        .medal-active { filter: grayscale(0%); opacity: 1; transform: scale(1.1); text-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
+        .medal-label { font-size: 10px; color: #888; margin-top: 5px; font-weight: 600; text-transform: uppercase; }
+        .medal-count { 
+            position: absolute; top: -5px; right: -5px; background: var(--primary); 
+            color: #fff; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 10px;
+            display: none;
+        }
+        .count-visible { display: block; }
+
+        /* Cores das Medalhas */
+        .bronze { color: var(--bronze); }
+        .silver { color: var(--silver); }
+        .gold { color: var(--gold); }
+
         /* LISTAS & CARDS */
         #user-list, #workout-select-list { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 10px; }
         .card-wrapper { position: relative; width: 100%; max-width: 400px; }
@@ -62,8 +86,7 @@
             font-size: 18px; font-weight: 700; cursor: pointer; color: #fff; 
             box-shadow: 0 8px 20px rgba(0,0,0,0.3); text-transform: uppercase;
             text-align: left; display: flex; justify-content: space-between; align-items: center;
-            transition: transform 0.1s, box-shadow 0.1s;
-            font-family: 'Poppins', sans-serif;
+            transition: transform 0.1s, box-shadow 0.1s; font-family: 'Poppins', sans-serif;
         }
         .btn-large:active { transform: scale(0.98); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         
@@ -129,10 +152,8 @@
         .history-item { background: var(--card); padding: 20px; border-radius: 16px; margin-bottom: 12px; display: flex; flex-direction: column; border-left: 5px solid #555; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .hist-top { display: flex; justify-content: space-between; width: 100%; align-items: flex-start; }
         .hist-date { font-weight: 700; color: #fff; font-size: 15px; }
-        .hist-status { font-size: 24px; }
         .hist-user { font-weight: 700; font-size: 13px; margin-top: 5px; display: block; opacity: 0.8; }
         .hist-loc { font-size: 11px; color: var(--success); background: rgba(74, 222, 128, 0.1); padding: 5px 10px; border-radius: 6px; width: fit-content; margin-top: 10px; font-weight: 600; }
-        .loc-bad { color: var(--secondary); background: rgba(251, 146, 60, 0.1); }
         .skipped-list { color: var(--secondary); font-size: 11px; margin-top: 8px; border-top: 1px solid #333; padding-top: 5px; font-weight: 600; }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; text-align: center; backdrop-filter: blur(5px); }
@@ -161,6 +182,26 @@
             </div>
         </div>
         
+        <div class="card-wrapper" style="width: 100%; margin-bottom: 20px;">
+            <div class="medal-case">
+                <div class="medal-item" id="medal-week">
+                    <span class="medal-icon">🏅</span>
+                    <span class="medal-label">Semana</span>
+                    <span class="medal-count">0</span>
+                </div>
+                <div class="medal-item" id="medal-month">
+                    <span class="medal-icon">🏆</span>
+                    <span class="medal-label">Mês</span>
+                    <span class="medal-count">0</span>
+                </div>
+                <div class="medal-item" id="medal-year">
+                    <span class="medal-icon">👑</span>
+                    <span class="medal-label">Ano</span>
+                    <span class="medal-count">0</span>
+                </div>
+            </div>
+        </div>
+
         <div id="user-list"></div>
         <button id="btn-add-user" class="btn-add-item" onclick="window.app.addUser()">+ NOVA PESSOA</button>
     </div>
@@ -249,49 +290,31 @@
     const quitMessages = ["Já vai? O sofá te chamou?", "Fugindo do leg day?", "Sua mãe disse que você podia sair?", "Volta aqui, frango!", "Ei, o treino não acabou!", "Desistir é para os fracos.", "Você prometeu que ia treinar!", "A porta da rua é serventia da vergonha.", "Vai deixar o peso ganhar?", "Não ouse sair agora!", "O cronômetro tá te julgando.", "Vai chorar no banho ou terminar?", "Se sair agora, vira estatística.", "Quem foge não cresce.", "Tá com medinho?", "Volta pro treino, soldado!", "Sair agora = Frango pra sempre.", "Acha que o shape vem por osmose?", "Não me decepcione.", "Você é melhor que isso.", "Onde você pensa que vai?", "Fica! Vai ter bolo (mentira).", "Se sair, o treino não conta.", "Honre seu suor.", "Termina isso logo!", "Preguiça não define caráter.", "Vai sair sem terminar? Que feio.", "O peso tá leve, volta lá.", "Não seja um desistente.", "Falta pouco, aguenta!", "A dor passa, a vergonha fica.", "Você não é de açúcar.", "Vai derreter se continuar?", "Sair agora é derrota.", "Mostre do que é feito.", "Não clique nesse botão!", "Bloqueado por falta de vergonha.", "Volte e termine o serviço.", "Sua avó treinaria mais que isso.", "Tá doendo? Que bom.", "Sem desculpas.", "Vai sair de fininho?", "Eu vi você clicando em voltar!", "O treino não é opcional.", "Compromisso é tudo.", "Não traia seu corpo.", "Se sair, paga 10 flexões.", "Vai correr da raia?", "Não seja essa pessoa.", "Termina e a gente conversa.", "Fuga das galinhas?", "Você consegue, volta lá.", "Não desperdice o tempo.", "Foco!", "Disciplina!", "Cadê a força de vontade?", "Vai se arrepender se sair.", "O espelho não mente.", "Não saia!", "Volta!", "Fica!", "Treina!", "Esmaga!", "Não foge!", "Você é guerreiro ou vítima?", "Encare o desafio.", "Não tem atalho.", "Se sair, o shape murcha.", "Cancele a saída, não o treino.", "Persistência é tudo.", "Não seja medíocre.", "Supere a vontade de ir embora.", "O resultado vem pra quem fica.", "Não desista.", "Lute contra a preguiça.", "Seja forte.", "Aguenta firme.", "Tá acabando (quase).", "Não me irrite.", "Volta pro supino.", "Não abandone os pesos.", "Eles sentem sua falta.", "Se sair, zero whey hoje.", "Você aguenta.", "Confio em você.", "Bora!", "Não para!", "Continua!", "Mais um pouco!", "Vai valer a pena!", "Não saia da tela.", "Mantenha o foco.", "Olho no objetivo.", "Se sair, engorda 1kg.", "Brincadeira (ou não).", "Fica aí.", "Treino sério.", "Sem corpo mole.", "Bora monstro!", "Vence isso!"];
     const incompleteMessages = ["Roubando repetição? Que feio.", "Vai deixar exercício pra amanhã?", "Treino pela metade, resultado pela metade.", "Acha que eu não vi essa caixa vazia?", "Assim você não fica monstro.", "Tá esquecendo coisa pra trás!", "Volta lá e marca tudo.", "Não adianta mentir pro app.", "Seu bíceps tá chorando.", "Finalizar assim? Sério?", "Você consegue fazer tudo!", "Não seja preguiçoso.", "Faltou um ali, ó.", "O treino é completo ou não é.", "Quem rouba no treino, rouba na vida.", "Tá com pressa de que?", "Termina o serviço.", "Não faça serviço de porco.", "Seja honesto com seu treino.", "Vai deixar buraco no treino?", "Isso não é um treino completo.", "Falta exercício!", "Olha as caixinhas vazias.", "Preenche tudo!", "Não me engana.", "O shape não vem pela metade.", "Vai ficar devendo?", "Paga o que deve!", "Não finalizo se não terminar.", "Volta e faz direito.", "Tá achando que é festa?", "Treino sério exige tudo.", "Não pule o leg day.", "Nem o supino.", "Completa isso aí.", "Estou de olho.", "Não valida treino fofo.", "Quer resultado? Faça tudo.", "Sem atalhos.", "O caminho é completo.", "Não deixe nada pra trás.", "Zere o treino.", "Marque todas as opções.", "Falta pouco, não desista.", "Faça valer a pena.", "Não seja meio termo.", "Tudo ou nada.", "100% ou 0%.", "Vai sair devendo?", "O app sabe que faltou.", "Não mente pra mim.", "Seu corpo sabe.", "Termina!", "Faz tudo!", "Não enrola.", "Sem migué.", "Que vergonha...", "Pensei que fosse monstro.", "Cadê a disciplina?", "Falta um check.", "Ou dois.", "Ou três.", "Tá quase, não para.", "Finalizar incompleto é pecado.", "O deus do ferro tá vendo.", "Não decepcione o Arnold.", "Faça por merecer.", "Conquiste o botão finalizar.", "Ele só libera se fizer tudo.", "Bloqueado por preguiça.", "Volte e treine.", "Não tem essa de pular.", "Cada exercício conta.", "Não desperdice.", "Valorize seu tempo.", "Faça bem feito.", "Qualidade total.", "Não aceito meio treino.", "Sou exigente.", "Você também deveria ser.", "Bora marcar tudo.", "Tica tudo!", "Checklist incompleto.", "Erro 404: Exercício não encontrado.", "Corrija isso.", "Agora sim (se fizer).", "Vai logo!", "Quero ver tudo verde.", "Sem caixas vazias.", "Preenchimento obrigatório.", "Treino é sagrado.", "Amém?", "Bora terminar!"];
 
-    const GYM_LAT = -19.8285; const GYM_LON = -40.3735; const GYM_RADIUS_KM = 0.1;
-
     window.app = {
-        data: {}, historyData: [], currentUser: null, currentWorkoutIndex: null, startTime: null,
+        data: {}, historyData: [], currentUser: null, currentWorkoutIndex: null, isTraining: false,
         isMenuEditing: false, isSelectEditing: false, isActiveEditing: false,
-        quitAttempts: 0, 
+        quitAttempts: 0,
 
         init: function() {
             if (!history.state) history.replaceState({ screen: 'screen-menu' }, '');
             
-            // Lógica do Fujão (LOOP INFINITO NO CELULAR)
             window.onpopstate = (event) => {
-                // Se estiver treinando e tentar voltar:
-                if (document.getElementById('screen-active-workout').classList.contains('visible') && this.startTime) {
+                if (this.isTraining) {
                     const randomMsg = quitMessages[Math.floor(Math.random() * quitMessages.length)];
-                    
-                    if (confirm(`🚨 ${randomMsg}\n\nO treino está rolando. Sair cancela o tempo. Deseja realmente sair?`)) {
-                        // CONFIRMOU SAIR (Botão OK):
-                        this.startTime = null; 
+                    if (confirm(`🚨 ${randomMsg}\n\nO treino está rolando. Sair cancela tudo. Deseja realmente sair?`)) {
+                        this.isTraining = false;
                         window.onbeforeunload = null;
-                        this.quitAttempts = 0; // Zera tentativas
-                        
-                        // Atualiza a tela para a anterior
+                        this.quitAttempts = 0;
+                        localStorage.removeItem('tempWorkoutState'); // Limpa estado temporário
                         if (event.state) this.restoreScreen(event.state);
-                        else this.toggleScreen('screen-workout-select');
-                        
+                        else this.toggleScreen('screen-workout-select'); 
                     } else {
-                        // CANCELOU (FICOU):
                         this.quitAttempts++;
-                        // Truque do Loop: Empurra o estado DE NOVO para bloquear o próximo "voltar"
-                        history.pushState({ 
-                            screen: 'screen-active-workout', 
-                            userId: this.currentUser, 
-                            wIndex: this.currentWorkoutIndex 
-                        }, '');
+                        history.pushState({ screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex }, '');
                     }
                 } else {
-                    // Fora do treino, navegação normal
                     if (event.state) this.restoreScreen(event.state);
-                    else {
-                        // Se acabou o histórico, garante que estamos no menu (e deixa fechar)
-                        this.toggleScreen('screen-menu');
-                    }
+                    else this.toggleScreen('screen-menu'); 
                 }
             };
 
@@ -306,9 +329,12 @@
                     if(document.getElementById('screen-history').classList.contains('visible')) {
                         this.renderHistoryList();
                     }
+                    if(document.getElementById('screen-menu').classList.contains('visible')) {
+                        this.renderMedals();
+                    }
                 });
             } else {
-                this.data = JSON.parse(localStorage.getItem('gymData_v44')) || {};
+                this.data = JSON.parse(localStorage.getItem('gymData_v45')) || {};
                 this.historyData = JSON.parse(localStorage.getItem('gymHistory')) || [];
                 this.refreshCurrentScreen();
             }
@@ -316,7 +342,7 @@
 
         save: function() { 
             if(window.dbInstance) window.dbSet(window.dbRef(window.dbInstance, 'users'), this.data);
-            else localStorage.setItem('gymData_v44', JSON.stringify(this.data)); 
+            else localStorage.setItem('gymData_v45', JSON.stringify(this.data)); 
         },
 
         handleBack: function() { window.history.back(); },
@@ -327,14 +353,10 @@
             this.restoreScreen(newState);
         },
 
-        // Função que limpa o "lixo" do histórico ao voltar pro menu APÓS FINALIZAR
         returnToMenu: function() {
             document.getElementById('modal-msg').style.display='none';
-            // Volta tudo que foi empilhado (telas normais + tentativas de fuga)
             const jumps = 2 + this.quitAttempts;
             this.quitAttempts = 0;
-            
-            // Volta no histórico real
             window.history.go(-jumps);
         },
 
@@ -343,7 +365,7 @@
             document.getElementById(state.screen).classList.add('visible');
             window.scrollTo(0,0);
 
-            if (state.screen === 'screen-menu') { this.currentUser = null; this.renderMenu(); }
+            if (state.screen === 'screen-menu') { this.currentUser = null; this.renderMenu(); this.renderMedals(); }
             else if (state.screen === 'screen-workout-select') { this.currentUser = state.userId; this.renderWorkoutSelectScreen(); }
             else if (state.screen === 'screen-active-workout') { this.currentUser = state.userId; this.currentWorkoutIndex = state.wIndex; this.renderActiveWorkout(); }
             else if (state.screen === 'screen-history') { this.renderHistoryList(); }
@@ -351,9 +373,83 @@
 
         refreshCurrentScreen: function() {
             const current = document.querySelector('.screen.visible').id;
-            if (current === 'screen-menu') this.renderMenu();
+            if (current === 'screen-menu') { this.renderMenu(); this.renderMedals(); }
             if (current === 'screen-workout-select') this.renderWorkoutSelectScreen();
             if (current === 'screen-active-workout') this.renderActiveWorkout();
+        },
+
+        // --- SISTEMA DE MEDALHAS (GAMIFICAÇÃO) ---
+        renderMedals: function() {
+            if (!this.historyData || this.historyData.length === 0) return;
+
+            const now = new Date();
+            const currentWeek = this.getWeekNumber(now);
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+
+            // Agrupar por semanas/meses/anos
+            const daysByWeek = {};
+            const weeksByMonth = {};
+            const monthsByYear = {};
+
+            this.historyData.forEach(h => {
+                const parts = h.date.split('/');
+                const date = new Date(parts[2], parts[1]-1, parts[0]);
+                const weekNum = this.getWeekNumber(date);
+                const monthKey = `${date.getFullYear()}-${date.getMonth()}`;
+                const yearKey = date.getFullYear();
+
+                // Contar dias únicos na semana
+                if (!daysByWeek[weekNum]) daysByWeek[weekNum] = new Set();
+                daysByWeek[weekNum].add(h.date);
+
+                // Contar semanas no mês
+                if (!weeksByMonth[monthKey]) weeksByMonth[monthKey] = new Set();
+                weeksByMonth[monthKey].add(weekNum);
+
+                // Contar meses no ano
+                if (!monthsByYear[yearKey]) monthsByYear[yearKey] = new Set();
+                monthsByYear[yearKey].add(date.getMonth());
+            });
+
+            // Lógica Semana Atual
+            const daysThisWeek = daysByWeek[currentWeek] ? daysByWeek[currentWeek].size : 0;
+            const wIcon = document.getElementById('medal-week');
+            const wLabel = wIcon.querySelector('.medal-icon');
+            
+            wLabel.className = 'medal-icon'; // Reset
+            if (daysThisWeek >= 3) wLabel.classList.add('bronze', 'medal-active');
+            if (daysThisWeek >= 4) { wLabel.classList.remove('bronze'); wLabel.classList.add('silver'); }
+            if (daysThisWeek >= 5) { wLabel.classList.remove('silver'); wLabel.classList.add('gold'); }
+            
+            // Lógica Mês (Semanas consistentes)
+            let weeksHit = 0;
+            const thisMonthKey = `${currentYear}-${currentMonth}`;
+            if (weeksByMonth[thisMonthKey]) weeksHit = weeksByMonth[thisMonthKey].size; // Simples contagem de semanas ativas
+            
+            const mIcon = document.getElementById('medal-month');
+            const mLabel = mIcon.querySelector('.medal-icon');
+            mLabel.className = 'medal-icon'; // Reset
+            if (weeksHit >= 2) mLabel.classList.add('bronze', 'medal-active');
+            if (weeksHit >= 3) { mLabel.classList.remove('bronze'); mLabel.classList.add('silver'); }
+            if (weeksHit >= 4) { mLabel.classList.remove('silver'); mLabel.classList.add('gold'); }
+
+            // Lógica Ano (Meses consistentes)
+            const monthsHit = monthsByYear[currentYear] ? monthsByYear[currentYear].size : 0;
+            const yIcon = document.getElementById('medal-year');
+            const yLabel = yIcon.querySelector('.medal-icon');
+            yLabel.className = 'medal-icon';
+            if (monthsHit >= 8) yLabel.classList.add('bronze', 'medal-active');
+            if (monthsHit >= 9) { yLabel.classList.remove('bronze'); yLabel.classList.add('silver'); }
+            if (monthsHit >= 10) { yLabel.classList.remove('silver'); yLabel.classList.add('gold'); }
+        },
+
+        getWeekNumber: function(d) {
+            d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+            d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+            var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+            var weekNo = Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
+            return weekNo;
         },
 
         renderMenu: function() {
@@ -376,11 +472,7 @@
                 
                 if(this.isMenuEditing) {
                     const ctrl = document.createElement('div'); ctrl.className = 'edit-controls-floating';
-                    ctrl.innerHTML = `
-                        <div class="btn-float btn-del" onclick="window.app.deleteUser(event, '${id}')">X</div>
-                        ${idx > 0 ? `<div class="btn-float btn-reorder" onclick="window.app.reorderUser('${id}', -1)">⬆️</div>` : ''}
-                        ${idx < userKeys.length - 1 ? `<div class="btn-float btn-reorder" onclick="window.app.reorderUser('${id}', 1)">⬇️</div>` : ''}
-                    `;
+                    ctrl.innerHTML = `<div class="btn-float btn-del" onclick="window.app.deleteUser(event, '${id}')">X</div>`;
                     wrap.appendChild(ctrl);
                 }
                 wrap.appendChild(btn); list.appendChild(wrap);
@@ -442,10 +534,14 @@
             if (!w) return;
 
             const hasExercises = w.exercises && w.exercises.length > 0;
-            if (!this.startTime && hasExercises) {
-                this.startTime = Date.now();
+            if (!this.isTraining && hasExercises) {
+                this.isTraining = true;
                 window.onbeforeunload = function() { return "Treino rodando."; };
             }
+
+            // RECUPERA ESTADO SALVO
+            const savedState = JSON.parse(localStorage.getItem('tempWorkoutState')) || {};
+            const myState = (savedState.u === this.currentUser && savedState.w === this.currentWorkoutIndex) ? savedState.c : [];
 
             const cont = document.getElementById('active-workout-container');
             document.getElementById('active-title').innerText = w.title;
@@ -457,7 +553,7 @@
                 w.exercises = [];
                 cont.innerHTML = '<p class="empty-msg">Este treino está vazio.<br>Toque na caneta ✏️ para adicionar.</p>';
                 btnFinish.disabled = true; btnFinish.innerText = "Adicione exercícios";
-                this.startTime = null; 
+                this.isTraining = false; 
             } else {
                 btnFinish.disabled = false; btnFinish.innerText = "🏁 Finalizar";
             }
@@ -467,6 +563,7 @@
                 const div = document.createElement('div'); div.className = `exercise-card bd-${u.themeId}`;
                 const weightVal = parseInt(ex.weight) || 0;
                 const weightText = weightVal === 0 ? '<span class="no-load">SEM CARGA</span>' : `${weightVal} KG`;
+                const isChecked = myState[i] ? 'checked' : ''; // Aplica estado
 
                 let exInfo = `<span class="ex-name">${ex.name}</span><div class="ex-meta"><span class="badge">${ex.sets}x${ex.reps}</span> <a href="${vid}" target="_blank" class="btn-video">🎥</a></div>`;
                 if(this.isActiveEditing) {
@@ -477,7 +574,7 @@
 
                 div.innerHTML = `
                     <div class="exercise-header">
-                        <div class="chk-container"><input type="checkbox" class="ex-check" data-name="${ex.name}"><span class="custom-chk"></span></div>
+                        <div class="chk-container"><input type="checkbox" class="ex-check" data-index="${i}" onchange="window.app.autoSaveState()" ${isChecked}><span class="custom-chk"></span></div>
                         <div class="ex-info">${exInfo}</div>
                         ${this.isActiveEditing ? `<div class="edit-controls-floating" style="top:-5px; right:-5px;"><div class="btn-float btn-del" onclick="window.app.deleteEx(${i})">X</div><div class="btn-float btn-reorder" onclick="window.app.reorderEx(${i}, -1)">⬆️</div><div class="btn-float btn-reorder" onclick="window.app.reorderEx(${i}, 1)">⬇️</div></div>` : ''}
                     </div>
@@ -492,6 +589,14 @@
             this.updateEditIcon('btn-edit-active', 'screen-active-workout', this.isActiveEditing);
         },
 
+        autoSaveState: function() {
+            const chks = document.querySelectorAll('.ex-check');
+            const states = [];
+            chks.forEach(c => states.push(c.checked));
+            const saveObj = { u: this.currentUser, w: this.currentWorkoutIndex, c: states };
+            localStorage.setItem('tempWorkoutState', JSON.stringify(saveObj));
+        },
+
         renderHistoryList: function() {
             const list = document.getElementById('history-list'); list.innerHTML = '';
             if(!this.historyData.length) list.innerHTML = '<p class="empty-msg">Histórico vazio.</p>';
@@ -501,9 +606,9 @@
                 div.innerHTML = `
                     <div class="hist-top">
                         <div><span class="hist-date">${h.date}</span><span class="hist-user" style="color:${uColor}">${h.user}</span><span>${h.workoutTitle}</span></div>
-                        <div style="text-align:right"><span class="hist-status">${h.cheat?'🤥':'🏆'}</span><br><button style="background:none;border:none;margin-top:5px" onclick="window.app.delHist(${h.id}, '${h.firebaseId||''}')">🗑️</button></div>
+                        <div style="text-align:right"><button style="background:none;border:none;margin-top:5px" onclick="window.app.delHist(${h.id}, '${h.firebaseId||''}')">🗑️</button></div>
                     </div>
-                    <div class="hist-loc ${h.location.includes('Fora')?'loc-bad':''}">📍 ${h.location}</div>
+                    <div class="hist-loc">📍 ${h.location}</div>
                     ${h.skipped && h.skipped.length ? `<div class="skipped-list">⚠️ Pulou: ${h.skipped.join(', ')}</div>` : ''}
                 `;
                 list.appendChild(div);
@@ -547,28 +652,39 @@
             if(p) { const msg = incompleteMessages[Math.floor(Math.random()*incompleteMessages.length)]; if(!confirm(`👀 ${msg}\n\nFinalizar incompleto?`)) return; }
             
             const btn = document.getElementById('btn-finish-main'); btn.innerText = "Salvando..."; btn.disabled = true;
+            document.getElementById('modal-msg').style.display = 'flex';
+            document.getElementById('quote-text').innerText = successMessages[Math.floor(Math.random()*successMessages.length)];
             
-            const dur = (Date.now()-this.startTime)/60000; const wName = this.data[this.currentUser].workouts[this.currentWorkoutIndex].title;
-            this.startTime = null; window.onbeforeunload = null;
+            const wName = this.data[this.currentUser].workouts[this.currentWorkoutIndex].title;
+            this.isTraining = false; 
+            window.onbeforeunload = null;
+            this.quitAttempts = 0;
+            localStorage.removeItem('tempWorkoutState'); // Limpa memória do treino atual
 
+            // GEOLOCALIZAÇÃO COM NOMINATIM (Bairro)
             if(navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(pos => {
-                    const d = this.calcDist(pos.coords.latitude, pos.coords.longitude, GYM_LAT, GYM_LON);
-                    this.saveHist(wName, (d<=GYM_RADIUS_KM)?"Na Academia":"Fora da Academia", dur<10, p?["Incompleto"]:[]);
-                }, () => this.saveHist(wName, "GPS Off", dur<10, p?["Incompleto"]:[]), {enableHighAccuracy:true, timeout:10000});
-            } else this.saveHist(wName, "Sem GPS", dur<10, p?["Incompleto"]:[]);
+                    const lat = pos.coords.latitude; const lon = pos.coords.longitude;
+                    // Chamada a API publica para pegar bairro
+                    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        let local = "Local Desconhecido";
+                        if(data.address) {
+                            local = data.address.suburb || data.address.neighbourhood || data.address.village || data.address.city_district || "Local Externo";
+                        }
+                        this.saveHist(wName, local, false, p?["Incompleto"]:[]);
+                    })
+                    .catch(() => this.saveHist(wName, "GPS Erro", false, p?["Incompleto"]:[]));
+                }, () => this.saveHist(wName, "GPS Off", false, p?["Incompleto"]:[]), {enableHighAccuracy:true, timeout:10000});
+            } else this.saveHist(wName, "Sem GPS", false, p?["Incompleto"]:[]);
         },
-        calcDist: function(lat1, lon1, lat2, lon2) { const R=6371; const dLat=(lat2-lat1)*Math.PI/180; const dLon=(lon2-lon1)*Math.PI/180; const a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2); return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)); },
         saveHist: function(t, l, c, s) {
             const reg = { id: Date.now(), date: new Date().toLocaleDateString('pt-BR'), user: this.data[this.currentUser].name, workoutTitle: t, location: l, cheat: c, skipped: s };
             if(window.dbInstance) window.dbPush(window.dbRef(window.dbInstance, 'history'), reg);
             else { this.historyData.unshift(reg); localStorage.setItem('gymHistory', JSON.stringify(this.historyData)); }
             
-            // Só mostra o modal DEPOIS de salvar
-            document.getElementById('modal-msg').style.display = 'flex';
-            document.getElementById('quote-text').innerText = successMessages[Math.floor(Math.random()*successMessages.length)];
             document.getElementById('gps-status').innerText = `📍 ${l}`;
-            
             document.getElementById('btn-finish-main').innerText = "🏁 Finalizar"; document.getElementById('btn-finish-main').disabled = false;
         },
         
