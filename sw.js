@@ -1,4 +1,4 @@
-const CACHE_NAME = 'super-treino-v44-save-fix';
+const CACHE_NAME = 'super-treino-v47-ai-spotify';
 const urlsToCache = [
   '/SuperTreino/',
   '/SuperTreino/index.html',
