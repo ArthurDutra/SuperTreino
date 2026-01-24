@@ -161,15 +161,15 @@
         .txt-theme-1 { color: var(--primary); }
     </style>
 </head>
-<body>
+<body style="background-color: #0a0a0a;">
 
-    <div id="loading-overlay">
+    <div id="loading-overlay" style="display: flex;">
         <div class="spinner"></div>
         <div style="color:#444; font-size:10px; font-weight:800; letter-spacing:2px; text-transform:uppercase;">KINE APP</div>
     </div>
 
     <div id="db-status">⚪ ...</div>
-    <div class="version-label">Versão: Camundongo</div>
+    <div class="version-label">Versão: Formiga v1.1 🐜</div>
 
     <div id="screen-menu" class="screen">
         <div class="header-bar">
@@ -217,7 +217,7 @@
             <span class="user-title">Histórico</span>
             <div class="header-actions">
                 <button class="btn-icon" onclick="window.app.openGamification()">★</button>
-            </div>
+                </div>
         </div>
         <div id="history-list"></div>
     </div>
@@ -308,7 +308,7 @@
     const quitMessages = ["O treino não acabou.", "Mantenha o foco.", "Não desista agora.", "Termine o que começou.", "Sair cancela o progresso."];
     const incompleteMessages = ["Treino incompleto.", "Faltam exercícios.", "Finalizar mesmo assim?", "Checklist pendente."];
 
-    // CHAVES FIXAS PARA NÃO PERDER DADOS
+    // CHAVES FIXAS - DADOS SEGUROS
     const KEY_DATA = 'kine_core_data';
     const KEY_HIST = 'kine_core_history';
 
@@ -403,7 +403,7 @@
                     this.checkLoadComplete();
                 });
             } else {
-                // Fallback para LocalStorage usando chaves fixas
+                // FALLBACK LOCALSTORAGE COM CHAVE FIXA
                 this.data = JSON.parse(localStorage.getItem(KEY_DATA)) || {};
                 this.historyData = JSON.parse(localStorage.getItem(KEY_HIST)) || [];
                 this.checkLoadComplete();
@@ -704,7 +704,6 @@
                     exInfo = `<input type="text" class="edit-input" value="${ex.name}" style="margin-bottom:5px" onchange="window.app.renameEx(${i}, this.value)"><div class="ex-meta"><input type="text" class="edit-input edit-input-inline" value="${ex.sets}" onchange="window.app.updateExMeta(${i}, 'sets', this.value)"> x <input type="text" class="edit-input edit-input-inline" value="${ex.reps}" onchange="window.app.updateExMeta(${i}, 'reps', this.value)"></div>`;
                 }
                 
-                // CORREÇÃO: Removido onclick da weight-display para impedir edição manual
                 div.innerHTML = `<div class="exercise-header"><div class="chk-container"><input type="checkbox" class="ex-check" data-index="${i}" onchange="window.app.autoSaveState()" ${isChecked}><span class="custom-chk"></span></div><div class="ex-info">${exInfo}</div>${this.isActiveEditing ? `<div class="edit-controls-floating" style="top:-5px; right:-5px;"><div class="btn-float btn-del" onclick="window.app.deleteEx(${i})">✕</div><div class="btn-float btn-reorder" onclick="window.app.reorderEx(${i}, -1)">↑</div><div class="btn-float btn-reorder" onclick="window.app.reorderEx(${i}, 1)">↓</div></div>` : ''}</div><div class="weight-control"><span class="weight-label">CARGA</span><button class="btn-weight" onclick="window.app.chgWeight(${i}, -1)">-</button><div class="weight-display">${weightText}</div><button class="btn-weight" onclick="window.app.chgWeight(${i}, 1)">+</button></div>`;
                 cont.appendChild(div);
             });
@@ -745,7 +744,6 @@
                 // CORREÇÃO: Lógica para exibir 'INCOMPLETO' ou lista de pulados
                 let skippedText = '';
                 if (h.skipped && h.skipped.length > 0) {
-                    // Verifica se o único item é 'Incompleto'
                     if (h.skipped.length === 1 && h.skipped[0] === 'Incompleto') {
                         skippedText = `<div class="skipped-list" style="color:var(--danger)">INCOMPLETO</div>`;
                     } else {
@@ -776,7 +774,6 @@
                     window.dbRemove(window.dbRef(window.dbInstance, `history/${fid}`))
                         .catch(() => this.toggleLoading(false));
                 } else if (!window.dbInstance) {
-                    // Fallback local
                     const newHist = this.historyData.filter(x=>x.id!==id);
                     this.historyData = newHist;
                     localStorage.setItem(KEY_HIST, JSON.stringify(newHist));
@@ -807,8 +804,6 @@
         addWorkout: function() { const u=this.data[this.currentUser]; const l="ABCDEFGHIJKLMNOPQRSTUVWXYZ"; const id=l[u.workouts?u.workouts.length:0]||'?'; const n=prompt(`Treino ${id}:`); if(n) { if(!u.workouts)u.workouts=[]; u.workouts.push({id:id, title:`${id} - ${n}`, exercises:[]}); this.save(); this.renderWorkoutSelectScreen(); } },
         addExercise: function() { const w=this.data[this.currentUser].workouts[this.currentWorkoutIndex]; const n=prompt("Exercício:"); if(n) { if(!w.exercises)w.exercises=[]; w.exercises.push({name:n, sets:"3", reps:"10", weight:0}); this.save(); this.renderActiveWorkout(); setTimeout(()=>window.scrollTo(0,document.body.scrollHeight),100); } },
         chgWeight: function(i, d) { const e=this.data[this.currentUser].workouts[this.currentWorkoutIndex].exercises[i]; let w=(parseInt(e.weight)||0)+d; if(w<0)w=0; e.weight=w; this.save(); this.renderActiveWorkout(); },
-        
-        // Função promptWeight removida pois não será mais usada
         
         finishWorkout: function() {
             const chks = document.querySelectorAll('.ex-check'); let p = false;
@@ -850,7 +845,6 @@
                         btn.disabled = false;
                     });
             } else {
-                // Fallback local
                 const allHist = JSON.parse(localStorage.getItem(KEY_HIST)) || [];
                 allHist.unshift(reg);
                 localStorage.setItem(KEY_HIST, JSON.stringify(allHist));
