@@ -1,11 +1,13 @@
-/* SERVICE WORKER - KINE BOTO-COR-DE-ROSA v1
-   Estratégia: Network First para arquivos principais (HTML/Data)
+/* SERVICE WORKER - KINE VERSÃO CAPIVARA
+   Estratégia: Stale-While-Revalidate para melhor performance
 */
 
-const CACHE_NAME = 'kine-boto-v1';
+const CACHE_NAME = 'kine-capivara-v1';
 const urlsToCache = [
-  './icon.png',
+  './',
+  './index.html',
   './manifest.json',
+  './icon.png',
   './kine.png',
   './spotify.png',
   './youtube.png'
@@ -35,17 +37,20 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  if (event.request.mode === 'navigate') {
     event.respondWith(
-      fetch(event.request)
-        .catch(() => {
-          return caches.match(event.request);
+        caches.match(event.request).then(cachedResponse => {
+            const fetchPromise = fetch(event.request).then(networkResponse => {
+                // Atualiza o cache com a versão mais nova da rede se possível
+                if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+                    const responseClone = networkResponse.clone();
+                    caches.open(CACHE_NAME).then(cache => {
+                        cache.put(event.request, responseClone);
+                    });
+                }
+                return networkResponse;
+            });
+            // Retorna o cache primeiro (rápido), ou a rede se não tiver cache
+            return cachedResponse || fetchPromise;
         })
     );
-  } else {
-    event.respondWith(
-        fetch(event.request)
-          .catch(() => caches.match(event.request))
-      );
-  }
 });
