@@ -1,8 +1,8 @@
-/* SERVICE WORKER - KINE ARIRANHA v1
+/* SERVICE WORKER - KINE BOTO-COR-DE-ROSA v1
    Estratégia: Network First para arquivos principais (HTML/Data)
 */
 
-const CACHE_NAME = 'kine-ariranha-v1';
+const CACHE_NAME = 'kine-boto-v1';
 const urlsToCache = [
   './icon.png',
   './manifest.json',
