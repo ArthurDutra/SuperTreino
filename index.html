@@ -83,7 +83,7 @@
         .btn-icon:active { transform: scale(0.92); background: #52525b; }
         .icon-active { border: 2px solid var(--secondary); background: rgba(251, 191, 36, 0.15); }
 
-        /* Gradient Text (Mantido para o Lápis) */
+        /* Gradient Text (Para o Lápis) */
         .gradient-text {
             background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
             -webkit-background-clip: text;
@@ -91,11 +91,16 @@
             font-weight: 900; 
         }
         
-        /* Red Text (Para o Histórico e Check) */
+        /* Red Text (Para Histórico, Check e Voltar) */
         .red-icon {
             color: var(--primary);
             font-weight: 900;
             font-size: 24px;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            width: 100%;
+            height: 100%;
         }
 
         /* Lists & Cards */
@@ -197,12 +202,12 @@
     </div>
 
     <div id="offline-screen" style="display:none;">
-        <div style="font-size:50px; margin-bottom:20px">🐆</div>
+        <div style="font-size:50px; margin-bottom:20px">🐊</div>
         <div style="color:#fff; font-weight:900; font-size:20px; text-transform:uppercase;">Sem Internet</div>
         <div style="color:#a1a1aa; font-size:14px; margin-top:10px; font-weight:600;">O Kine precisa voar online.</div>
     </div>
 
-    <div class="version-label">VERSÃO: MICO-LEÃO</div>
+    <div class="version-label">VERSÃO: JACARÉ</div>
 
     <div id="screen-menu" class="screen">
         <div class="header-bar">
@@ -217,7 +222,7 @@
 
     <div id="screen-workout-select" class="screen">
         <div class="header-bar">
-            <button class="btn-icon" onclick="window.app.goHome()">←</button>
+            <button class="btn-icon" onclick="window.app.goHome()"><span class="red-icon">←</span></button>
             <span class="user-title" id="select-user-title">...</span>
             <div class="header-actions">
                 <button class="btn-icon" onclick="window.app.showHistory()"><span class="red-icon">≡</span></button>
@@ -230,7 +235,7 @@
 
     <div id="screen-active-workout" class="screen">
         <div class="header-bar">
-            <button class="btn-icon" onclick="window.app.handleBack()">←</button>
+            <button class="btn-icon" onclick="window.app.handleBack()"><span class="red-icon">←</span></button>
             <span class="user-title" id="active-title">Treino</span>
             <div class="header-actions">
                 <button class="btn-icon" onclick="window.app.confirmSpotify()"><img src="spotify.png" style="width:24px; height:24px; display:block;" alt="Spotify"></button>
@@ -246,7 +251,7 @@
 
     <div id="screen-history" class="screen">
         <div class="header-bar">
-            <button class="btn-icon" onclick="window.app.navigate('screen-workout-select')">←</button>
+            <button class="btn-icon" onclick="window.app.navigate('screen-workout-select')"><span class="red-icon">←</span></button>
             <span class="user-title">Histórico</span>
             <div style="width:42px"></div>
         </div>
@@ -531,7 +536,8 @@
             userKeys.forEach((id, idx) => {
                 const u = this.data[id];
                 const wrap = document.createElement('div'); wrap.className = 'card-wrapper';
-                let content = `<span>${u.name}</span> <span style="font-size:20px; color:var(--secondary)">→</span>`;
+                // SETA DO BOTÃO USUÁRIO REMOVIDA:
+                let content = `<span>${u.name}</span>`;
                 if(this.isMenuEditing) {
                     content = `<input type="text" class="edit-input" value="${u.name}" onclick="event.stopPropagation()" onchange="window.app.renameUser('${id}', this.value)">`;
                 }
