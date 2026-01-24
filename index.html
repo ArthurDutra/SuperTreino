@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Super Treino - Onça Pintada</title>
+    <title>Super Treino - Onça Blindada</title>
     
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/jpeg" href="icon.jpg">
@@ -27,13 +27,20 @@
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
         
-        body { 
+        /* BLINDAGEM CSS: Impede 'puxar para atualizar' e scroll elástico */
+        html, body { 
             font-family: 'Poppins', sans-serif; 
             background-color: var(--bg); 
             color: var(--text); 
             margin: 0; padding: 0; padding-bottom: 50px; 
-            overscroll-behavior-y: none; 
+            
+            overscroll-behavior-y: contain;
+            overscroll-behavior: none;
             overflow-x: hidden;
+            height: 100%;
+            width: 100%;
+            position: fixed; /* Trava agressiva para mobile */
+            overflow-y: auto; /* Permite rolagem interna */
         }
         
         .screen { display: none; padding: 20px; animation: fadeIn 0.3s; min-height: 100vh; flex-direction: column; position: relative; }
@@ -202,7 +209,7 @@
     </div>
 
     <div id="db-status">⚪ Conectando...</div>
-    <div class="version-label">Versão: Onça Pintada 🐆</div>
+    <div class="version-label">Versão: Onça Pintada Blindada 🛡️</div>
 
     <div id="screen-menu" class="screen">
         <div class="header-bar">
@@ -354,6 +361,7 @@
                 history.replaceState({ screen: 'screen-menu' }, '');
             }
             
+            // --- BLINDAGEM DO VOLTAR ---
             window.onpopstate = (event) => {
                 if (this.isTraining) {
                     history.pushState({ screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex }, '');
@@ -381,6 +389,20 @@
                 else this.toggleScreen('screen-menu'); 
             };
 
+            // --- BLINDAGEM DE TECLAS (F5 / Ctrl+R) ---
+            window.addEventListener('keydown', (e) => {
+                if (this.isTraining) {
+                    // 116 = F5, 82 = R
+                    if ((e.which || e.keyCode) === 116 || ((e.ctrlKey || e.metaKey) && (e.which || e.keyCode) === 82)) {
+                        e.preventDefault();
+                        const randomMsg = quitMessages[Math.floor(Math.random() * quitMessages.length)];
+                        this.showCustomModal('danger', 'SEM REFRESH!', `🚨 O app é blindado!\n${randomMsg}`, () => {});
+                        return false;
+                    }
+                }
+            });
+
+            // --- BLINDAGEM DE FECHAMENTO (NAVEGADOR) ---
             window.addEventListener('beforeunload', (e) => {
                 if (this.isTraining) {
                     e.preventDefault();
