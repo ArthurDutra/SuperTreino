@@ -166,8 +166,6 @@
         }
         .edit-input-box:focus { border-color: var(--secondary); outline: none; }
 
-        /* --- CORREÇÃO: REMOVIDA A OPACIDADE DOS CARDS DE EXERCÍCIO --- */
-        /* Opacidade só se aplica a menus e seleção, não ao treino ativo */
         .editing .btn-large, .editing .workout-select-card { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
         
         .edit-controls-floating { 
@@ -178,13 +176,14 @@
             display: flex; 
             flex-direction: column; 
             gap: 12px;
-            z-index: 100; /* Z-Index aumentado para garantir clique */
+            z-index: 100;
             animation: popIn 0.2s; 
             pointer-events: none; 
             opacity: 0; 
         }
         .editing .edit-controls-floating { opacity: 1; pointer-events: auto; }
         
+        /* BOTÕES COLORIDOS RESTAURADOS */
         .btn-float { 
             width: 40px; 
             height: 40px; 
@@ -193,19 +192,21 @@
             align-items: center; 
             justify-content: center; 
             font-weight: 900; 
-            border: 1px solid rgba(255,255,255,0.2); 
+            border: 3px solid var(--bg); /* Borda para separar do fundo */
             cursor: pointer; 
             color: #fff; 
             font-size: 18px; 
             box-shadow: 0 4px 10px rgba(0,0,0,0.5); 
-            background-color: #3f3f46 !important;
         }
-        .btn-float:active { transform: scale(0.9); background-color: #52525b !important; }
+        
+        .btn-del { background-color: var(--danger) !important; color: #fff !important; }
+        .btn-reorder { background-color: var(--secondary) !important; color: #000 !important; }
+        
+        .btn-float:active { transform: scale(0.9); filter: brightness(0.8); }
 
         .btn-add-item { display: none; } 
         .editing .btn-add-item { display: block; width: 100%; max-width: 400px; padding: 22px; background: rgba(251, 191, 36, 0.05); border: 2px dashed #3f3f46; color: var(--secondary); border-radius: 16px; cursor: pointer; font-size: 14px; font-weight: 800; margin-top: 15px; text-align: center; letter-spacing: 1px; transition: 0.2s; }
         .editing .btn-add-item:active { background: rgba(251, 191, 36, 0.1); border-color: var(--secondary); }
-        .editing .btn-large, .editing .workout-select-card, .editing .exercise-card { /* REMOVIDO OPACITY DAQUI */ }
         
         .editing .edit-input, .editing .edit-controls-floating, .editing .weight-display, .editing .btn-video, .editing .edit-input-box { pointer-events: auto; }
 
@@ -253,7 +254,7 @@
         <div style="color:#a1a1aa; font-size:14px; margin-top:10px; font-weight:600;">O Kine precisa voar online.</div>
     </div>
 
-    <div class="version-label">VERSÃO: QUOKKA</div>
+    <div class="version-label">VERSÃO: ARARA-AZUL</div>
 
     <div id="screen-menu" class="screen">
         <div class="header-bar">
@@ -587,7 +588,7 @@
                 if(this.isMenuEditing) {
                     const ctrl = document.createElement('div'); ctrl.className = 'edit-controls-floating';
                     ctrl.style.right = '0';
-                    ctrl.innerHTML = `<div class="btn-float" onclick="window.app.deleteUser(event, '${id}')">✕</div>`;
+                    ctrl.innerHTML = `<div class="btn-float btn-del" onclick="window.app.deleteUser(event, '${id}')">✕</div>`;
                     wrap.appendChild(ctrl);
                 }
                 wrap.appendChild(btn); list.appendChild(wrap);
@@ -635,9 +636,9 @@
                 if(this.isSelectEditing) {
                     const ctrl = document.createElement('div'); ctrl.className = 'edit-controls-floating';
                     ctrl.style.right = '0';
-                    const btnUp = idx > 0 ? `<div class="btn-float" onclick="window.app.reorderWorkout(${idx}, -1)">↑</div>` : '';
-                    const btnDown = idx < u.workouts.length - 1 ? `<div class="btn-float" onclick="window.app.reorderWorkout(${idx}, 1)">↓</div>` : '';
-                    ctrl.innerHTML = `<div class="btn-float" onclick="window.app.deleteWorkout(event, ${idx})">✕</div>${btnUp}${btnDown}`;
+                    const btnUp = idx > 0 ? `<div class="btn-float btn-reorder" onclick="window.app.reorderWorkout(${idx}, -1)">↑</div>` : '';
+                    const btnDown = idx < u.workouts.length - 1 ? `<div class="btn-float btn-reorder" onclick="window.app.reorderWorkout(${idx}, 1)">↓</div>` : '';
+                    ctrl.innerHTML = `<div class="btn-float btn-del" onclick="window.app.deleteWorkout(event, ${idx})">✕</div>${btnUp}${btnDown}`;
                     wrap.appendChild(ctrl);
                 }
                 wrap.appendChild(card); list.appendChild(wrap);
@@ -718,9 +719,9 @@
                 
                 let controls = '';
                 if(this.isActiveEditing) {
-                    const btnUp = i > 0 ? `<div class="btn-float" onclick="window.app.reorderEx(${i}, -1)">↑</div>` : '';
-                    const btnDown = i < w.exercises.length - 1 ? `<div class="btn-float" onclick="window.app.reorderEx(${i}, 1)">↓</div>` : '';
-                    controls = `<div class="edit-controls-floating"><div class="btn-float" onclick="window.app.deleteEx(${i})">✕</div>${btnUp}${btnDown}</div>`;
+                    const btnUp = i > 0 ? `<div class="btn-float btn-reorder" onclick="window.app.reorderEx(${i}, -1)">↑</div>` : '';
+                    const btnDown = i < w.exercises.length - 1 ? `<div class="btn-float btn-reorder" onclick="window.app.reorderEx(${i}, 1)">↓</div>` : '';
+                    controls = `<div class="edit-controls-floating"><div class="btn-float btn-del" onclick="window.app.deleteEx(${i})">✕</div>${btnUp}${btnDown}</div>`;
                 }
 
                 if (this.isActiveEditing) {
