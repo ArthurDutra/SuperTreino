@@ -101,6 +101,10 @@
         .suggested-workout { border: 1px solid var(--secondary); background: rgba(251, 191, 36, 0.05); }
         .suggested-badge { position: absolute; right: 20px; top: 24px; background: var(--secondary); color: #000; font-size: 10px; font-weight: 900; padding: 5px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 10px rgba(251, 191, 36, 0.2); }
 
+        /* AJUSTE TATU-BOLA: Remover destaque na edição */
+        .editing .suggested-workout { border-color: transparent; background: var(--card); }
+        .editing .suggested-badge { display: none; }
+
         /* --- EXERCISE CARDS --- */
         .exercise-card { background: var(--card); border-radius: var(--border-radius); padding: 22px; margin-bottom: 14px; border: none; position: relative; box-shadow: var(--shadow-sm); }
         .exercise-card::before { content: ''; position: absolute; left: 0; top: 20px; bottom: 20px; width: 4px; border-radius: 0 4px 4px 0; background: var(--secondary); }
@@ -190,7 +194,7 @@
         <div style="color:#a1a1aa; font-size:14px; margin-top:10px; font-weight:600;">O Kine precisa voar online.</div>
     </div>
 
-    <div class="version-label">VERSÃO: TAMANDUÁ</div>
+    <div class="version-label">VERSÃO: TATU-BOLA</div>
 
     <div id="screen-menu" class="screen">
         <div class="header-bar">
@@ -297,8 +301,7 @@
             }
         }
 
-        // --- PROTOCOLO CAPIBARA v1.0 (Based on Document AJUSTE DUPLO TOQUE) ---
-        // Implementação FSM para gerenciamento de back stack
+        // --- PROTOCOLO CAPIBARA v1.1 (TATU-BOLA) ---
         const CapibaraProtocol = {
             state: { isActive: false, isMediaModalOpen: false, isFujaoModalOpen: false },
             _handler: null,
@@ -307,16 +310,10 @@
                 if (this.state.isActive) return;
                 console.log("Capibara: Iniciando blindagem.");
                 this.state.isActive = true;
-                
-                // 1. Injeção do Estado Guarda (The Shield)
                 const baseState = { context: 'kine_base', timestamp: Date.now() };
                 const guardState = { context: 'kine_workout_guard', timestamp: Date.now() };
-                
-                // Marca o ponto atual como base e empurra o guarda
                 window.history.replaceState(baseState, document.title, window.location.href);
                 window.history.pushState(guardState, document.title, window.location.href);
-
-                // 2. Bind do Listener
                 this._handler = this.handlePopState.bind(this);
                 window.addEventListener('popstate', this._handler);
             },
@@ -326,12 +323,11 @@
                 const destState = event.state;
                 console.log("Capibara: PopState ->", destState);
 
-                // CENÁRIO 1: Voltou com FUJÃO aberto (Recursividade)
+                // CENÁRIO 1: Voltou com FUJÃO aberto
+                // AJUSTE TATU-BOLA: Segundo clique SAIA para a tela série
                 if (this.state.isFujaoModalOpen) {
-                    console.log("Ação: Fechar FUJÃO, restaurar guarda.");
-                    this.closeFujaoUI();
-                    // Restaura o guarda para evitar saída no próximo clique
-                    window.history.pushState({ context: 'kine_workout_guard' }, '');
+                    console.log("Ação: Segundo Back no Fujão -> SAIR.");
+                    this.confirmExit();
                     return;
                 }
 
@@ -339,7 +335,6 @@
                 if (this.state.isMediaModalOpen) {
                     console.log("Ação: Fechar Mídia.");
                     this.closeMediaUI();
-                    // Se caiu abaixo do guarda, restaura
                     if (!destState || destState.context !== 'kine_workout_guard') {
                         window.history.replaceState({ context: 'kine_workout_guard' }, '');
                     }
@@ -349,7 +344,6 @@
                 // CENÁRIO 3: Voltou no Treino (Trigger da Armadilha)
                 console.log("Ação: Fuga detectada! Acionando armadilha.");
                 this.openFujaoUI();
-                // Empurra estado do FUJÃO (novo item no stack)
                 window.history.pushState({ context: 'kine_modal_fujao_active' }, '');
             },
 
@@ -361,20 +355,20 @@
 
             closeMediaUI: function() {
                 this.state.isMediaModalOpen = false;
-                // Integração com a UI do App existente (fecha modal genérico)
                 document.getElementById('custom-modal').style.display = 'none';
             },
 
             openFujaoUI: function() {
                 this.state.isFujaoModalOpen = true;
-                // Usa a UI do app
                 const randomMsg = getMsg('fujao');
                 window.app.showCustomModal('danger', 'FUJÃO?', randomMsg, () => {
                      // Callback do SIM (Sair)
                      this.confirmExit();
                 }, () => {
-                    // Callback do NÃO (Ficar) - Simula back para fechar modal logicamente
-                    window.history.back();
+                    // Callback do NÃO (Ficar)
+                    this.closeFujaoUI();
+                    // Restaura o guarda pois o back o consumiu
+                    window.history.replaceState({ context: 'kine_workout_guard' }, '');
                 });
             },
 
@@ -385,9 +379,15 @@
 
             confirmExit: function() {
                 console.log("Capibara: Saída confirmada.");
-                window.removeEventListener('popstate', this._handler);
+                // Força o fechamento visual imediato
+                this.closeFujaoUI();
+                
+                // Limpa o listener e sai
+                if(this._handler) window.removeEventListener('popstate', this._handler);
                 this.state.isActive = false;
-                window.app.goHome(); // Volta para o menu
+                
+                // Vai para a tela de séries
+                window.app.goHome(); 
             },
 
             destroy: function() {
@@ -403,17 +403,11 @@
             init: function() {
                 window.addEventListener('online', () => { this.toggleOffline(false); location.reload(); });
                 window.addEventListener('offline', () => this.toggleOffline(true));
-                
-                // History Management inicial simplificado
                 if (!history.state || history.state.screen !== 'screen-menu') {
                     history.replaceState({ screen: 'screen-menu' }, '');
                 }
-
-                // Handler global de navegação (fora do treino)
                 window.onpopstate = (event) => {
-                    // Se o Capibara está ativo, ele assume o controle.
                     if (CapibaraProtocol.state.isActive) return;
-
                     if (document.getElementById('input-modal').style.display === 'flex') {
                         document.getElementById('input-modal').style.display = 'none';
                         history.pushState(history.state, '');
@@ -426,7 +420,6 @@
                     }
                     if (event.state) this.restoreScreen(event.state);
                 };
-
                 this.loadData();
             },
 
@@ -463,13 +456,9 @@
 
             save: function() { if(window.dbFunctions) window.dbFunctions.set(window.dbFunctions.ref(window.dbFunctions.db, 'users'), this.data); },
 
-            // Modificado para usar history.back() que dispara o popstate do Capibara
             handleBack: function() { 
-                if (this.isTraining) {
-                    window.history.back(); 
-                } else {
-                    window.history.back();
-                }
+                if (this.isTraining) { window.history.back(); } 
+                else { window.history.back(); }
             },
 
             navigate: function(screenId, stateData = {}) {
@@ -482,7 +471,7 @@
                 this.currentUser = null;
                 this.isTraining = false;
                 window.onbeforeunload = null;
-                CapibaraProtocol.destroy(); // Garante limpeza
+                CapibaraProtocol.destroy(); 
                 this.navigate('screen-menu');
             },
 
@@ -491,11 +480,9 @@
                 this.updateEditIcon('btn-edit-menu', 'screen-menu', false);
                 this.updateEditIcon('btn-edit-select', 'screen-workout-select', false);
                 this.updateEditIcon('btn-edit-active', 'screen-active-workout', false);
-
                 document.querySelectorAll('.screen').forEach(s => s.classList.remove('visible'));
                 document.getElementById(state.screen).classList.add('visible');
                 window.scrollTo(0,0);
-
                 if (state.screen === 'screen-menu') { this.currentUser = null; this.renderMenu(); }
                 else if (state.screen === 'screen-workout-select') { this.currentUser = state.userId; this.renderWorkoutSelectScreen(); }
                 else if (state.screen === 'screen-active-workout') { this.currentUser = state.userId; this.currentWorkoutIndex = state.wIndex; this.renderActiveWorkout(); }
@@ -509,14 +496,11 @@
                 const title = document.getElementById('d-title');
                 const text = document.getElementById('d-msg');
                 const actions = document.getElementById('d-actions');
-
                 text.innerText = msgText;
                 title.innerText = titleText;
                 actions.innerHTML = ''; 
-
                 const colors = { danger: 'var(--danger)', warning: 'var(--secondary)', success: 'var(--success)' };
                 title.style.color = colors[type] || '#fff';
-
                 if (type === 'success') {
                     const btn = document.createElement('button');
                     btn.className = 'btn-dialog btn-primary'; btn.innerText = "OK";
@@ -527,12 +511,10 @@
                     const btnNo = document.createElement('button');
                     btnNo.className = 'btn-dialog btn-secondary'; btnNo.innerText = "NÃO";
                     btnNo.onclick = () => { 
-                        // Integração Capibara: NÃO fecha o modal via history se estiver ativo
                         if(confirmCallback && cancelCallback) cancelCallback();
                         else modal.style.display = 'none';
                     };
                     actions.appendChild(btnNo);
-
                     const btnYes = document.createElement('button');
                     btnYes.className = 'btn-dialog btn-primary'; btnYes.innerText = "SIM";
                     btnYes.style.background = colors[type];
@@ -625,15 +607,12 @@
                 if (!u.workouts) return;
                 const w = u.workouts[this.currentWorkoutIndex];
                 if (!w) return;
-                
                 const hasExercises = w.exercises && w.exercises.length > 0;
                 
-                // --- INICIALIZAÇÃO CAPIBARA ---
                 if (!this.isTraining) {
                     localStorage.removeItem('tempWorkoutState');
                     if(hasExercises) {
                         this.isTraining = true;
-                        // Inicializa a proteção do protocolo
                         CapibaraProtocol.init();
                     }
                 }
@@ -752,7 +731,6 @@
                         .then(() => {
                             this.toggleLoading(false);
                             this.isTraining = false; window.onbeforeunload = null; localStorage.removeItem('tempWorkoutState');
-                            // Limpa Capibara
                             CapibaraProtocol.destroy();
                             this.showCustomModal('success', 'MONSTRO!', getMsg('monstro'), () => location.replace(location.pathname));
                         })
@@ -764,10 +742,10 @@
             },
 
             confirmSpotify: function() { 
-                CapibaraProtocol.openMediaModal(); // Capibara: Adiciona estado de mídia
+                CapibaraProtocol.openMediaModal(); 
                 this.showCustomModal('danger', 'SPOTIFY', 'Musiquinha?', 
                     () => { CapibaraProtocol.closeMediaUI(); window.open('https://open.spotify.com', '_blank'); }, 
-                    () => { window.history.back(); } // Capibara: simula back para limpar estado
+                    () => { window.history.back(); } 
                 ); 
             },
             confirmYouTube: function(url) { 
