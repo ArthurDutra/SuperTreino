@@ -1,8 +1,8 @@
-/* SERVICE WORKER - KINE TATU v2
+/* SERVICE WORKER - KINE ARARA v1
    Estratégia: Network First para arquivos principais (HTML/Data)
 */
 
-const CACHE_NAME = 'kine-tatu-v2';
+const CACHE_NAME = 'kine-arara-v1';
 const urlsToCache = [
   './icon.png',
   './manifest.json'
