@@ -194,7 +194,7 @@
         <div style="color:#a1a1aa; font-size:14px; margin-top:10px; font-weight:600;">O Kine precisa voar online.</div>
     </div>
 
-    <div class="version-label">VERSÃO: GRILO</div>
+    <div class="version-label">VERSÃO: MICO-LEÃO</div>
 
     <div id="screen-menu" class="screen">
         <div class="header-bar">
@@ -301,7 +301,7 @@
             }
         }
 
-        // --- PROTOCOLO CAPIBARA v1.2 (GRILO) ---
+        // --- PROTOCOLO CAPIBARA v1.3 (MICO-LEÃO) ---
         const CapibaraProtocol = {
             state: { isActive: false, isMediaModalOpen: false, isFujaoModalOpen: false },
             _handler: null,
@@ -324,14 +324,10 @@
                 console.log("Capibara: PopState ->", destState);
 
                 // CENÁRIO 1: Voltou com FUJÃO aberto
-                // AJUSTE GRILO: Comportamento Recursivo (Loop de Segurança)
+                // AJUSTE MICO-LEÃO: Segundo Back no Fujão -> SAIR CONFIRMADA (Igual ao SIM)
                 if (this.state.isFujaoModalOpen) {
-                    console.log("Ação: Segundo Back no Fujão -> Fechar e Rearmar Guarda.");
-                    this.closeFujaoUI();
-                    
-                    // CRÍTICO: Re-empurra o estado Guarda para impedir a saída
-                    // O próximo 'Voltar' acionará novamente o Cenário 3
-                    window.history.pushState({ context: 'kine_workout_guard' }, '');
+                    console.log("Ação: Segundo Back no Fujão -> SAIR.");
+                    this.confirmExit();
                     return;
                 }
 
@@ -371,8 +367,7 @@
                      this.confirmExit();
                 }, () => {
                     // Callback do NÃO (Ficar)
-                    // Simplesmente acionamos um 'back' para que o handlerPopState
-                    // trate o fechamento e o rearmamento do guarda (recursão).
+                    // Aciona back para remover o estado do modal e voltar ao guarda
                     window.history.back();
                 });
             },
@@ -387,7 +382,7 @@
                 this.closeFujaoUI();
                 if(this._handler) window.removeEventListener('popstate', this._handler);
                 this.state.isActive = false;
-                window.app.goHome(); 
+                window.app.goHome(); // Volta para o menu mantendo o app aberto
             },
 
             destroy: function() {
