@@ -1,8 +1,8 @@
-/* SERVICE WORKER - KINE JAGUATIRICA v1
+/* SERVICE WORKER - KINE MICO-LEÃO v1
    Estratégia: Network First para arquivos principais (HTML/Data)
 */
 
-const CACHE_NAME = 'kine-jaguatirica-v1';
+const CACHE_NAME = 'kine-micoleao-v1';
 const urlsToCache = [
   './icon.png',
   './manifest.json',
