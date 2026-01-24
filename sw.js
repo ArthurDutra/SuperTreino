@@ -1,19 +1,15 @@
-/* SERVICE WORKER - KINE CAMUNDONGO
-   Versão atualizada para forçar atualização no cache do navegador.
+/* SERVICE WORKER - KINE CAPIVARA
+   Estratégia: Network First para arquivos principais (HTML/Data)
 */
 
-const CACHE_NAME = 'kine-camundongo-v1';
-
-// Arquivos da interface gráfica para cache
+const CACHE_NAME = 'kine-capivara-v1';
 const urlsToCache = [
-  './',
-  './index.html',
-  './manifest.json',
-  './icon.jpg'
+  './icon.png',
+  './manifest.json'
 ];
 
 self.addEventListener('install', event => {
-  self.skipWaiting(); 
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(urlsToCache))
@@ -26,7 +22,7 @@ self.addEventListener('activate', event => {
       return Promise.all(
         cacheNames.map(cacheName => {
           if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName); 
+            return caches.delete(cacheName);
           }
         })
       );
@@ -36,8 +32,20 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => response || fetch(event.request))
-  );
+  // Estratégia Network First: Tenta rede, se falhar, vai pro cache
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .catch(() => {
+          return caches.match(event.request);
+        })
+    );
+  } else {
+    // Para outros recursos, Cache First (opcional, ou mantemos Network First para garantir)
+    // Mantendo Network First geral para garantir update
+    event.respondWith(
+        fetch(event.request)
+          .catch(() => caches.match(event.request))
+      );
+  }
 });
