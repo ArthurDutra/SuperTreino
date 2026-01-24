@@ -73,7 +73,6 @@
         }
         .app-title { font-size: 26px; font-weight: 900; color: var(--text); letter-spacing: -1px; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
         
-        /* KINE LOGO IMAGE */
         .app-logo-img { height: 32px; width: auto; display: block; filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.4)); }
 
         .user-title { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 60%; color: var(--secondary); }
@@ -84,12 +83,19 @@
         .btn-icon:active { transform: scale(0.92); background: #52525b; }
         .icon-active { border: 2px solid var(--secondary); background: rgba(251, 191, 36, 0.15); }
 
-        /* Gradient Text for Icons (Lápis, Disquete, Prancheta) */
+        /* Gradient Text (Mantido para o Lápis) */
         .gradient-text {
             background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-weight: 900; 
+        }
+        
+        /* Red Text (Para o Histórico e Check) */
+        .red-icon {
+            color: var(--primary);
+            font-weight: 900;
+            font-size: 24px;
         }
 
         /* Lists & Cards */
@@ -124,7 +130,6 @@
         .ex-meta { display: flex; gap: 10px; align-items: center; font-size: 13px; color: #d4d4d8; font-weight: 600; }
         .badge { background: #3f3f46; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 12px; color: var(--secondary); font-family: monospace; }
         
-        /* YouTube Button Image Style */
         .btn-video { color: #fff; border: none; background: transparent; padding: 0; width: 32px; height: 24px; border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
         .btn-video:active { transform: scale(0.9); }
         .btn-video img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
@@ -197,7 +202,7 @@
         <div style="color:#a1a1aa; font-size:14px; margin-top:10px; font-weight:600;">O Kine precisa voar online.</div>
     </div>
 
-    <div class="version-label">VERSÃO: JAGUATIRICA</div>
+    <div class="version-label">VERSÃO: MICO-LEÃO</div>
 
     <div id="screen-menu" class="screen">
         <div class="header-bar">
@@ -215,7 +220,7 @@
             <button class="btn-icon" onclick="window.app.goHome()">←</button>
             <span class="user-title" id="select-user-title">...</span>
             <div class="header-actions">
-                <button class="btn-icon" onclick="window.app.showHistory()"><span class="gradient-text">📋</span></button>
+                <button class="btn-icon" onclick="window.app.showHistory()"><span class="red-icon">≡</span></button>
                 <button class="btn-icon" id="btn-edit-select" onclick="window.app.toggleSelectEditMode()"><span class="gradient-text">✎</span></button>
             </div>
         </div>
@@ -802,8 +807,8 @@
         
         toggleScreen: function(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('visible')); document.getElementById(id).classList.add('visible'); },
         
-        // SAVE ICON: DISQUETE COLORIDO
-        updateEditIcon: function(bid, sid, isE) { const b=document.getElementById(bid); const s=document.getElementById(sid); if(isE) { b.innerHTML='<span class="gradient-text">💾</span>'; b.classList.add('icon-active'); s.classList.add('editing'); } else { b.innerHTML='<span class="gradient-text">✎</span>'; b.classList.remove('icon-active'); s.classList.remove('editing'); } }
+        // CHECK ICON (Save Mode): Ícone de CHECK Vermelho
+        updateEditIcon: function(bid, sid, isE) { const b=document.getElementById(bid); const s=document.getElementById(sid); if(isE) { b.innerHTML='<span class="red-icon">✓</span>'; b.classList.add('icon-active'); s.classList.add('editing'); } else { b.innerHTML='<span class="gradient-text">✎</span>'; b.classList.remove('icon-active'); s.classList.remove('editing'); } }
     };
     window.onload = function() { if(window.app && window.app.init) window.app.init(); };
     </script>
