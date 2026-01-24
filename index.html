@@ -166,6 +166,7 @@
         }
         .edit-input-box:focus { border-color: var(--secondary); outline: none; }
 
+        /* CORREÇÃO VISUAL: Removido o filtro de opacidade para o modo edição de exercícios */
         .editing .btn-large, .editing .workout-select-card { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
         
         .edit-controls-floating { 
@@ -183,7 +184,7 @@
         }
         .editing .edit-controls-floating { opacity: 1; pointer-events: auto; }
         
-        /* BOTÕES COLORIDOS RESTAURADOS */
+        /* BOTÕES COLORIDOS RESTAURADOS E SÓLIDOS */
         .btn-float { 
             width: 40px; 
             height: 40px; 
@@ -192,7 +193,7 @@
             align-items: center; 
             justify-content: center; 
             font-weight: 900; 
-            border: 3px solid var(--bg); /* Borda para separar do fundo */
+            border: 3px solid var(--bg);
             cursor: pointer; 
             color: #fff; 
             font-size: 18px; 
@@ -254,7 +255,7 @@
         <div style="color:#a1a1aa; font-size:14px; margin-top:10px; font-weight:600;">O Kine precisa voar online.</div>
     </div>
 
-    <div class="version-label">VERSÃO: ARARA-AZUL</div>
+    <div class="version-label">VERSÃO: JABUTI</div>
 
     <div id="screen-menu" class="screen">
         <div class="header-bar">
@@ -376,32 +377,30 @@
             window.addEventListener('online', () => { this.toggleOffline(false); location.reload(); });
             window.addEventListener('offline', () => this.toggleOffline(true));
 
+            // Permite manipulação manual do histórico
+            if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
             if (!history.state || history.state.screen !== 'screen-menu') {
                 history.replaceState({ screen: 'screen-menu' }, '');
             }
             
+            // --- GESTÃO DE VOLTAR SIMPLIFICADA (SEM FUJÃO NO VOLTAR) ---
             window.onpopstate = (event) => {
                 if (document.getElementById('input-modal').style.display === 'flex') {
                     document.getElementById('input-modal').style.display = 'none';
-                    history.pushState(history.state, '');
+                    history.pushState(history.state, ''); // Recoloca o estado se fechou modal
                     return;
                 }
 
                 if (this.isTraining) {
-                    history.pushState({ screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex }, '');
-
-                    if (document.getElementById('custom-modal').style.display === 'flex') {
-                        document.getElementById('custom-modal').style.display = 'none';
-                        return; 
-                    }
-
-                    const randomMsg = fujaoMessages[Math.floor(Math.random() * fujaoMessages.length)];
-                    this.showCustomModal('danger', 'FUJÃO?', `${randomMsg}`, () => {
-                        this.isTraining = false;
-                        window.onbeforeunload = null; 
-                        localStorage.removeItem('tempWorkoutState'); 
-                        this.goHome();
-                    });
+                    // SE O USUÁRIO APERTAR VOLTAR (MESMO 2X):
+                    // Encerra o treino silenciosamente e vai para a tela de seleção
+                    this.isTraining = false;
+                    window.onbeforeunload = null; 
+                    localStorage.removeItem('tempWorkoutState');
+                    
+                    // Redireciona para a tela de Séries (Workout Select)
+                    this.navigate('screen-workout-select', { userId: this.currentUser });
                     return;
                 }
 
@@ -658,13 +657,8 @@
                 localStorage.removeItem('tempWorkoutState');
                 if(hasExercises) {
                     this.isTraining = true;
-                    window.onbeforeunload = function(e) {
-                        e.preventDefault();
-                        e.returnValue = ''; 
-                        return '';
-                    };
+                    // Ao iniciar, cria um novo estado para que o "Voltar" funcione como saída
                     const state = { screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex };
-                    history.pushState(state, '');
                     history.pushState(state, '');
                 }
             }
