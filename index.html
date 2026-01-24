@@ -47,7 +47,6 @@
             background: var(--bg); z-index: 9999;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        /* Importante: Inline style no HTML garante display:flex antes do CSS carregar para evitar flicker, mas mantemos aqui por segurança */
         
         .spinner {
             width: 40px; height: 40px; border: 4px solid #333;
@@ -245,11 +244,26 @@
         <div class="game-header">
             <div class="total-days-badge"><span id="total-days-count">0</span> DIAS</div>
         </div>
+        
         <h3 style="margin-left:10px; color:#444; font-size:10px; letter-spacing:1px; text-transform:uppercase;">Semana Atual</h3>
         <div class="medal-shelf">
-            <div class="medal-box" id="medal-week-3"><span class="medal-icon">✦</span><span class="medal-title">Bronze</span><span class="medal-progress" id="prog-week-3">0/3</span></div>
-            <div class="medal-box" id="medal-week-4"><span class="medal-icon">✦</span><span class="medal-title">Prata</span><span class="medal-progress" id="prog-week-4">0/4</span></div>
-            <div class="medal-box" id="medal-week-5"><span class="medal-icon">✦</span><span class="medal-title">Ouro</span><span class="medal-progress" id="prog-week-5">0/5</span></div>
+            <div class="medal-box" id="medal-week-3"><span class="medal-icon">✦</span><span class="medal-title">Bronze</span><span class="medal-desc">3 dias</span><span class="medal-progress" id="prog-week-3">0/3</span></div>
+            <div class="medal-box" id="medal-week-4"><span class="medal-icon">✦</span><span class="medal-title">Prata</span><span class="medal-desc">4 dias</span><span class="medal-progress" id="prog-week-4">0/4</span></div>
+            <div class="medal-box" id="medal-week-5"><span class="medal-icon">✦</span><span class="medal-title">Ouro</span><span class="medal-desc">5 dias</span><span class="medal-progress" id="prog-week-5">0/5</span></div>
+        </div>
+
+        <h3 style="margin-left:10px; color:#444; font-size:10px; letter-spacing:1px; text-transform:uppercase;">Mês Atual</h3>
+        <div class="medal-shelf">
+            <div class="medal-box" id="medal-month-2"><span class="medal-icon">✦</span><span class="medal-title">Bronze</span><span class="medal-desc">2 sem.</span><span class="medal-progress" id="prog-month-2">0/2</span></div>
+            <div class="medal-box" id="medal-month-3"><span class="medal-icon">✦</span><span class="medal-title">Prata</span><span class="medal-desc">3 sem.</span><span class="medal-progress" id="prog-month-3">0/3</span></div>
+            <div class="medal-box" id="medal-month-4"><span class="medal-icon">✦</span><span class="medal-title">Ouro</span><span class="medal-desc">4 sem.</span><span class="medal-progress" id="prog-month-4">0/4</span></div>
+        </div>
+
+        <h3 style="margin-left:10px; color:#444; font-size:10px; letter-spacing:1px; text-transform:uppercase;">Ano Atual</h3>
+        <div class="medal-shelf">
+            <div class="medal-box" id="medal-year-8"><span class="medal-icon">✦</span><span class="medal-title">Bronze</span><span class="medal-desc">8 meses</span><span class="medal-progress" id="prog-year-8">0/8</span></div>
+            <div class="medal-box" id="medal-year-9"><span class="medal-icon">✦</span><span class="medal-title">Prata</span><span class="medal-desc">9 meses</span><span class="medal-progress" id="prog-year-9">0/9</span></div>
+            <div class="medal-box" id="medal-year-10"><span class="medal-icon">✦</span><span class="medal-title">Ouro</span><span class="medal-desc">10 meses</span><span class="medal-progress" id="prog-year-10">0/10</span></div>
         </div>
     </div>
 
@@ -364,22 +378,17 @@
         },
 
         loadData: function() {
-            // Se não tiver DB (ainda carregando ou offline), espera
             if (!window.dbInstance) return;
-
             window.dbOnValue(window.dbRef(window.dbInstance, 'users'), (snap) => {
                 this.data = snap.val() || {}; 
                 this.checkLoadComplete();
             });
-            
             window.dbOnValue(window.dbRef(window.dbInstance, 'history'), (snap) => {
                 const val = snap.val();
                 this.historyData = val ? Object.keys(val).map(k => ({...val[k], firebaseId: k})).sort((a,b) => b.id - a.id) : [];
-                
                 const currentScreen = document.querySelector('.screen.visible')?.id;
                 if(currentScreen === 'screen-history') this.renderHistoryList();
                 if(currentScreen === 'screen-gamification') this.updateMedalsUI();
-                
                 this.checkLoadComplete();
             });
         },
@@ -391,7 +400,6 @@
                     this.toggleScreen('screen-menu');
                     this.renderMenu();
                 } else {
-                    // Re-render current screen to update data
                     const current = document.querySelector('.screen.visible').id;
                     if (current === 'screen-menu') this.renderMenu();
                     if (current === 'screen-workout-select') this.renderWorkoutSelectScreen();
@@ -427,7 +435,6 @@
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('visible'));
             document.getElementById(state.screen).classList.add('visible');
             window.scrollTo(0,0);
-
             if (state.screen === 'screen-menu') { this.currentUser = null; this.renderMenu(); }
             else if (state.screen === 'screen-workout-select') { this.currentUser = state.userId; this.renderWorkoutSelectScreen(); }
             else if (state.screen === 'screen-active-workout') { this.currentUser = state.userId; this.currentWorkoutIndex = state.wIndex; this.renderActiveWorkout(); }
@@ -435,7 +442,6 @@
             else if (state.screen === 'screen-gamification') { this.updateMedalsUI(); }
         },
 
-        /* ---- Custom Modals Logic ---- */
         showCustomModal: function(type, titleText, msgText, confirmCallback, cancelCallback) {
             const modal = document.getElementById('custom-modal');
             const title = document.getElementById('d-title');
@@ -450,10 +456,11 @@
             if(type === 'danger') color = 'var(--danger)';
             if(type === 'warning') color = 'var(--secondary)';
             if(type === 'success') color = 'var(--success)';
-
+            
             title.style.color = color;
 
-            if (type === 'success' || type === 'info') {
+            // SUCCESS entra apenas com OK, todo o resto (incluindo info/question) entra com SIM/NÃO
+            if (type === 'success') {
                 const btn = document.createElement('button');
                 btn.className = 'btn-dialog btn-primary';
                 btn.innerText = "OK";
@@ -484,30 +491,25 @@
                 const inputEl = document.getElementById('i-input');
                 const btnConfirm = document.getElementById('i-confirm');
                 const btnCancel = document.getElementById('i-cancel');
-
                 titleEl.innerText = title;
                 inputEl.value = '';
                 inputEl.placeholder = placeholder || '';
                 modal.style.display = 'flex';
                 inputEl.focus();
-
                 const close = (val) => {
                     modal.style.display = 'none';
                     resolve(val);
                     btnConfirm.onclick = null;
                     btnCancel.onclick = null;
                 };
-
                 btnConfirm.onclick = () => close(inputEl.value);
                 btnCancel.onclick = () => close(null);
-                
                 inputEl.onkeydown = (e) => {
                     if(e.key === 'Enter') close(inputEl.value);
                 };
             });
         },
 
-        /* ---- Core App Logic ---- */
         renderMenu: function() {
             const list = document.getElementById('user-list'); 
             list.innerHTML = '';
@@ -530,6 +532,7 @@
                 btn.onclick = () => this.navigate('screen-workout-select', { userId: id });
                 if(this.isMenuEditing) {
                     const ctrl = document.createElement('div'); ctrl.className = 'edit-controls-floating';
+                    // LÓGICA DE SETAS: Só aparece ↑ se idx > 0. Só aparece ↓ se idx < length - 1
                     ctrl.innerHTML = `<div class="btn-float btn-del" onclick="window.app.deleteUser(event, '${id}')">✕</div>`;
                     wrap.appendChild(ctrl);
                 }
@@ -577,7 +580,10 @@
                 
                 if(this.isSelectEditing) {
                     const ctrl = document.createElement('div'); ctrl.className = 'edit-controls-floating';
-                    ctrl.innerHTML = `<div class="btn-float btn-del" onclick="window.app.deleteWorkout(event, ${idx})">✕</div><div class="btn-float btn-reorder" onclick="window.app.reorderWorkout(${idx}, -1)">↑</div><div class="btn-float btn-reorder" onclick="window.app.reorderWorkout(${idx}, 1)">↓</div>`;
+                    // LÓGICA DE SETAS
+                    const btnUp = idx > 0 ? `<div class="btn-float btn-reorder" onclick="window.app.reorderWorkout(${idx}, -1)">↑</div>` : '';
+                    const btnDown = idx < u.workouts.length - 1 ? `<div class="btn-float btn-reorder" onclick="window.app.reorderWorkout(${idx}, 1)">↓</div>` : '';
+                    ctrl.innerHTML = `<div class="btn-float btn-del" onclick="window.app.deleteWorkout(event, ${idx})">✕</div>${btnUp}${btnDown}`;
                     wrap.appendChild(ctrl);
                 }
                 wrap.appendChild(card); list.appendChild(wrap);
@@ -601,10 +607,8 @@
                 }
             }
             
-            // Transient state only (checkmarks)
             const savedState = JSON.parse(localStorage.getItem('tempWorkoutState')) || {};
             const myState = (savedState.u === this.currentUser && savedState.w === this.currentWorkoutIndex) ? savedState.c : [];
-            
             const cont = document.getElementById('active-workout-container');
             document.getElementById('active-title').innerText = w.title;
             document.getElementById('active-title').className = `user-title txt-${u.themeId}`;
@@ -636,7 +640,14 @@
                     exInfo = `<input type="text" class="edit-input" value="${ex.name}" style="margin-bottom:5px" onchange="window.app.renameEx(${i}, this.value)"><div class="ex-meta"><input type="text" class="edit-input edit-input-inline" value="${ex.sets}" onchange="window.app.updateExMeta(${i}, 'sets', this.value)"> x <input type="text" class="edit-input edit-input-inline" value="${ex.reps}" onchange="window.app.updateExMeta(${i}, 'reps', this.value)"></div>`;
                 }
                 
-                div.innerHTML = `<div class="exercise-header"><div class="chk-container"><input type="checkbox" class="ex-check" data-index="${i}" onchange="window.app.autoSaveState()" ${isChecked}><span class="custom-chk"></span></div><div class="ex-info">${exInfo}</div>${this.isActiveEditing ? `<div class="edit-controls-floating" style="top:-5px; right:-5px;"><div class="btn-float btn-del" onclick="window.app.deleteEx(${i})">✕</div><div class="btn-float btn-reorder" onclick="window.app.reorderEx(${i}, -1)">↑</div><div class="btn-float btn-reorder" onclick="window.app.reorderEx(${i}, 1)">↓</div></div>` : ''}</div><div class="weight-control"><span class="weight-label">CARGA</span><button class="btn-weight" onclick="window.app.chgWeight(${i}, -1)">-</button><div class="weight-display">${weightText}</div><button class="btn-weight" onclick="window.app.chgWeight(${i}, 1)">+</button></div>`;
+                let controls = '';
+                if(this.isActiveEditing) {
+                    const btnUp = i > 0 ? `<div class="btn-float btn-reorder" onclick="window.app.reorderEx(${i}, -1)">↑</div>` : '';
+                    const btnDown = i < w.exercises.length - 1 ? `<div class="btn-float btn-reorder" onclick="window.app.reorderEx(${i}, 1)">↓</div>` : '';
+                    controls = `<div class="edit-controls-floating" style="top:-5px; right:-5px;"><div class="btn-float btn-del" onclick="window.app.deleteEx(${i})">✕</div>${btnUp}${btnDown}</div>`;
+                }
+
+                div.innerHTML = `<div class="exercise-header"><div class="chk-container"><input type="checkbox" class="ex-check" data-index="${i}" onchange="window.app.autoSaveState()" ${isChecked}><span class="custom-chk"></span></div><div class="ex-info">${exInfo}</div>${controls}</div><div class="weight-control"><span class="weight-label">CARGA</span><button class="btn-weight" onclick="window.app.chgWeight(${i}, -1)">-</button><div class="weight-display">${weightText}</div><button class="btn-weight" onclick="window.app.chgWeight(${i}, 1)">+</button></div>`;
                 cont.appendChild(div);
             });
             this.updateEditIcon('btn-edit-active', 'screen-active-workout', this.isActiveEditing);
@@ -660,9 +671,7 @@
             if(this.currentUser && this.data[this.currentUser]) {
                  myHist = myHist.filter(h => h.user === this.data[this.currentUser].name);
             }
-
             if(!myHist.length) list.innerHTML = '<p class="empty-msg">Nenhum registro.</p>';
-            
             myHist.forEach(h => {
                 const div = document.createElement('div'); div.className = 'history-item';
                 let skippedText = '';
@@ -717,7 +726,6 @@
         },
         reorderEx: function(i, d) { const e = this.data[this.currentUser].workouts[this.currentWorkoutIndex].exercises; if((d===-1&&i===0)||(d===1&&i===e.length-1)) return; [e[i], e[i+d]] = [e[i+d], e[i]]; this.save(); this.renderActiveWorkout(); },
         
-        /* New Async Modal Functions */
         addUser: async function() { 
             const n = await this.showInputModal('NOVA PESSOA', 'Nome'); 
             if(n) { this.data['u_'+Date.now()]={name:n, themeId:`theme-${Math.floor(Math.random()*6)+1}`, workouts:[]}; this.save(); this.renderMenu(); } 
@@ -761,7 +769,6 @@
         saveHist: function(t, l, c, s) {
             this.toggleLoading(true); 
             const reg = { id: Date.now(), date: new Date().toLocaleDateString('pt-BR'), user: this.data[this.currentUser].name, workoutTitle: t, location: null, cheat: c, skipped: s };
-            
             if(window.dbInstance) {
                 window.dbPush(window.dbRef(window.dbInstance, 'history'), reg)
                     .then(() => {
@@ -784,24 +791,76 @@
             }
         },
 
+        // Usando 'question' para forçar o botão Sim/Não
+        confirmSpotify: function() { this.showCustomModal('question', 'SPOTIFY', 'Abrir Spotify?', () => window.open('https://open.spotify.com', '_blank')); },
+        confirmYouTube: function(url) { this.showCustomModal('question', 'YOUTUBE', 'Ver vídeo?', () => window.open(url, '_blank')); },
+        
+        openGamification: function() { this.navigate('screen-gamification'); },
+        
         updateMedalsUI: function() {
-            // Lógica de medalhas mantida, apenas verificando se historyData existe
             if(!this.historyData) return;
-            // ... (restante da lógica de gamificação igual ao original, omitido para brevidade mas presente funcionalmente)
-             let myHist = this.historyData;
+            let myHist = this.historyData;
             if(this.currentUser && this.data[this.currentUser]) {
                  myHist = this.historyData.filter(h => h.user === this.data[this.currentUser].name);
             }
             const uniqueDates = new Set();
-            myHist.forEach(h => { const parts = h.date.split('/'); uniqueDates.add(`${parts[2]}-${parts[1]}-${parts[0]}`); });
+            myHist.forEach(h => {
+                const parts = h.date.split('/'); 
+                uniqueDates.add(`${parts[2]}-${parts[1]}-${parts[0]}`); 
+            });
             const sortedDates = Array.from(uniqueDates).sort();
             document.getElementById('total-days-count').innerText = sortedDates.length;
-            // ... (implementação simplificada para UI)
+            
+            const now = new Date();
+            const currentWeekNum = this.getWeekNumber(now);
+            const currentMonthKey = `${now.getFullYear()}-${now.getMonth()}`;
+            const currentYearKey = now.getFullYear();
+            let daysInThisWeek = 0;
+            const weeksInMonth = {};
+            const monthsInYear = {};
+
+            sortedDates.forEach(dateStr => {
+                const [y, m, d] = dateStr.split('-').map(Number);
+                const dateObj = new Date(y, m-1, d);
+                const weekNum = this.getWeekNumber(dateObj);
+                const monthKey = `${y}-${m-1}`;
+                const yearKey = y;
+                if (y === now.getFullYear() && weekNum === currentWeekNum) daysInThisWeek++;
+                if (!weeksInMonth[monthKey]) weeksInMonth[monthKey] = new Set();
+                weeksInMonth[monthKey].add(weekNum);
+                if (!monthsInYear[yearKey]) monthsInYear[yearKey] = new Set();
+                monthsInYear[yearKey].add(m-1);
+            });
+            
+            this.setMedalState('week-3', daysInThisWeek, 3);
+            this.setMedalState('week-4', daysInThisWeek, 4);
+            this.setMedalState('week-5', daysInThisWeek, 5);
+            const weeksDoneThisMonth = weeksInMonth[currentMonthKey] ? weeksInMonth[currentMonthKey].size : 0;
+            this.setMedalState('month-2', weeksDoneThisMonth, 2);
+            this.setMedalState('month-3', weeksDoneThisMonth, 3);
+            this.setMedalState('month-4', weeksDoneThisMonth, 4);
+            const monthsDoneThisYear = monthsInYear[currentYearKey] ? monthsInYear[currentYearKey].size : 0;
+            this.setMedalState('year-8', monthsDoneThisYear, 8);
+            this.setMedalState('year-9', monthsDoneThisYear, 9);
+            this.setMedalState('year-10', monthsDoneThisYear, 10);
         },
-        
-        confirmSpotify: function() { this.showCustomModal('info', 'SPOTIFY', 'Abrir Spotify?', () => window.open('https://open.spotify.com', '_blank')); },
-        confirmYouTube: function(url) { this.showCustomModal('info', 'YOUTUBE', 'Ver vídeo?', () => window.open(url, '_blank')); },
-        openGamification: function() { this.navigate('screen-gamification'); },
+
+        setMedalState: function(id, current, target) {
+            const el = document.getElementById(`medal-${id}`);
+            const prog = document.getElementById(`prog-${id}`);
+            const isUnlocked = current >= target;
+            prog.innerText = `${Math.min(current, target)}/${target}`;
+            if (isUnlocked) { el.classList.add('medal-unlocked'); prog.style.color = '#fff'; } 
+            else { el.classList.remove('medal-unlocked'); prog.style.color = 'var(--primary)'; }
+        },
+
+        getWeekNumber: function(d) {
+            d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+            d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+            var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+            return Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
+        },
+
         toggleScreen: function(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('visible')); document.getElementById(id).classList.add('visible'); },
         updateEditIcon: function(bid, sid, isE) { const b=document.getElementById(bid); const s=document.getElementById(sid); if(isE) { b.innerText='💾'; b.classList.add('icon-active'); s.classList.add('editing'); } else { b.innerText='✎'; b.classList.remove('icon-active'); s.classList.remove('editing'); } }
     };
