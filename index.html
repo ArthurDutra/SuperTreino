@@ -166,8 +166,8 @@
         }
         .edit-input-box:focus { border-color: var(--secondary); outline: none; }
 
-        /* CORREÇÃO VISUAL: Removido o filtro de opacidade para o modo edição de exercícios */
-        .editing .btn-large, .editing .workout-select-card { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
+        /* REMOVIDA A REGRA QUE DIMINUIA A OPACIDADE NA EDIÇÃO */
+        /* Itens ficam 100% visíveis sempre */
         
         .edit-controls-floating { 
             position: absolute; 
@@ -184,7 +184,6 @@
         }
         .editing .edit-controls-floating { opacity: 1; pointer-events: auto; }
         
-        /* BOTÕES COLORIDOS RESTAURADOS E SÓLIDOS */
         .btn-float { 
             width: 40px; 
             height: 40px; 
@@ -200,6 +199,7 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.5); 
         }
         
+        /* CORES RESTAURADAS */
         .btn-del { background-color: var(--danger) !important; color: #fff !important; }
         .btn-reorder { background-color: var(--secondary) !important; color: #000 !important; }
         
@@ -255,7 +255,7 @@
         <div style="color:#a1a1aa; font-size:14px; margin-top:10px; font-weight:600;">O Kine precisa voar online.</div>
     </div>
 
-    <div class="version-label">VERSÃO: JABUTI</div>
+    <div class="version-label">VERSÃO: TAMANDUÁ-MIRIM</div>
 
     <div id="screen-menu" class="screen">
         <div class="header-bar">
@@ -377,30 +377,39 @@
             window.addEventListener('online', () => { this.toggleOffline(false); location.reload(); });
             window.addEventListener('offline', () => this.toggleOffline(true));
 
-            // Permite manipulação manual do histórico
-            if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-
             if (!history.state || history.state.screen !== 'screen-menu') {
                 history.replaceState({ screen: 'screen-menu' }, '');
             }
             
-            // --- GESTÃO DE VOLTAR SIMPLIFICADA (SEM FUJÃO NO VOLTAR) ---
+            // --- PROTEÇÃO TRINCHEIRA (ARARA-AZUL) ---
             window.onpopstate = (event) => {
                 if (document.getElementById('input-modal').style.display === 'flex') {
                     document.getElementById('input-modal').style.display = 'none';
-                    history.pushState(history.state, ''); // Recoloca o estado se fechou modal
+                    history.pushState(history.state, '');
                     return;
                 }
 
                 if (this.isTraining) {
-                    // SE O USUÁRIO APERTAR VOLTAR (MESMO 2X):
-                    // Encerra o treino silenciosamente e vai para a tela de seleção
-                    this.isTraining = false;
-                    window.onbeforeunload = null; 
-                    localStorage.removeItem('tempWorkoutState');
-                    
-                    // Redireciona para a tela de Séries (Workout Select)
-                    this.navigate('screen-workout-select', { userId: this.currentUser });
+                    // SE O USUÁRIO TENTAR SAIR:
+                    // 1. Empurra imediatamente de volta para a trincheira segura
+                    history.pushState({ screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex }, '', '#active');
+
+                    // 2. Se já tinha modal, fecha (usuário cancelou a saída)
+                    if (document.getElementById('custom-modal').style.display === 'flex') {
+                        document.getElementById('custom-modal').style.display = 'none';
+                        return; 
+                    }
+
+                    // 3. Se não tinha modal, mostra o Fujão
+                    const randomMsg = fujaoMessages[Math.floor(Math.random() * fujaoMessages.length)];
+                    this.showCustomModal('danger', 'FUJÃO?', `${randomMsg}`, () => {
+                        this.isTraining = false;
+                        window.onbeforeunload = null; 
+                        localStorage.removeItem('tempWorkoutState'); 
+                        // Limpa a URL e reseta para o menu
+                        location.replace(location.pathname);
+                        setTimeout(() => location.reload(), 100);
+                    });
                     return;
                 }
 
@@ -657,9 +666,12 @@
                 localStorage.removeItem('tempWorkoutState');
                 if(hasExercises) {
                     this.isTraining = true;
-                    // Ao iniciar, cria um novo estado para que o "Voltar" funcione como saída
+                    // --- PROTEÇÃO TRINCHEIRA: HASHES NA URL ---
+                    // Criamos um histórico "falso" mas robusto
                     const state = { screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex };
-                    history.pushState(state, '');
+                    history.pushState(state, '', '#guard1');
+                    history.pushState(state, '', '#guard2');
+                    history.pushState(state, '', '#active');
                 }
             }
             
@@ -810,11 +822,11 @@
             const u = this.data[this.currentUser]; 
             const l = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; 
             const id = l[u.workouts?u.workouts.length:0]||'?'; 
-            const n = await this.showInputModal('NOVO TREINO', `Nome do Treino ${id}`); 
+            const n = await this.showInputModal('NOVO TREINO', 'Nome'); 
             if(n) { if(!u.workouts)u.workouts=[]; u.workouts.push({id:id, title:`${id} - ${n}`, exercises:[]}); this.save(); this.renderWorkoutSelectScreen(); } 
         },
         addExercise: async function() { 
-            const n = await this.showInputModal('NOVO EXERCÍCIO', 'Nome do exercício'); 
+            const n = await this.showInputModal('NOVO EXERCÍCIO', 'Nome'); 
             if(n) { 
                 const w = this.data[this.currentUser].workouts[this.currentWorkoutIndex];
                 if(!w.exercises)w.exercises=[]; 
@@ -854,7 +866,10 @@
                         window.onbeforeunload = null; 
                         localStorage.removeItem('tempWorkoutState');
                         const randomMsg = monstroMessages[Math.floor(Math.random() * monstroMessages.length)];
-                        this.showCustomModal('success', 'MONSTRO!', randomMsg, () => this.goHome());
+                        this.showCustomModal('success', 'MONSTRO!', randomMsg, () => {
+                            // Limpa a URL e reseta para o menu
+                            location.replace(location.pathname);
+                        });
                     })
                     .catch((err) => {
                         this.toggleLoading(false);
