@@ -2,7 +2,7 @@
    Estratégia: Stale-While-Revalidate
 */
 
-const CACHE_NAME = 'kine-mosca-v1';
+const CACHE_NAME = 'kine-mosca-v2';
 const urlsToCache = [
   './',
   './index.html',
