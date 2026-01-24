@@ -209,7 +209,7 @@
         <div style="color:#a1a1aa; font-size:14px; margin-top:10px; font-weight:600;">O Kine precisa voar online.</div>
     </div>
 
-    <div class="version-label">VERSÃO: BOTO-COR-DE-ROSA</div>
+    <div class="version-label">VERSÃO: TAMANDUÁ-BANDEIRA</div>
 
     <div id="screen-menu" class="screen">
         <div class="header-bar">
@@ -357,10 +357,23 @@
             }
             
             window.onpopstate = (event) => {
+                // 1. INPUT MODAL (Prioridade)
                 if (document.getElementById('input-modal').style.display === 'flex') {
                     document.getElementById('input-modal').style.display = 'none';
+                    history.pushState(history.state, ''); // Mantém estado
                     return;
                 }
+
+                // 2. CUSTOM MODAL (Fujão, YouTube, Spotify) - Fecha e fica na tela
+                if (document.getElementById('custom-modal').style.display === 'flex') {
+                    document.getElementById('custom-modal').style.display = 'none';
+                    // Re-empurra o estado atual para "anular" a ação de voltar do navegador
+                    // assim o usuário permanece na tela de exercícios sem o modal.
+                    history.pushState({ screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex }, '');
+                    return;
+                }
+
+                // 3. TREINO ATIVO - Chama o Fujão
                 if (this.isTraining) {
                     history.pushState({ screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex }, '');
                     const randomMsg = fujaoMessages[Math.floor(Math.random() * fujaoMessages.length)];
@@ -372,6 +385,7 @@
                     });
                     return;
                 }
+
                 const currentScreen = document.querySelector('.screen.visible')?.id;
                 if (currentScreen === 'screen-menu' || !event.state) {
                     history.pushState({ screen: 'screen-menu' }, '');
