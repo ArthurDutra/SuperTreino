@@ -1,8 +1,8 @@
-/* SERVICE WORKER - KINE VERSÃO CAPIVARA
+/* SERVICE WORKER - KINE VERSÃO TAMANDUÁ
    Estratégia: Stale-While-Revalidate para melhor performance
 */
 
-const CACHE_NAME = 'kine-capivara-v1';
+const CACHE_NAME = 'kine-tamandua-v1';
 const urlsToCache = [
   './',
   './index.html',
@@ -40,7 +40,6 @@ self.addEventListener('fetch', event => {
     event.respondWith(
         caches.match(event.request).then(cachedResponse => {
             const fetchPromise = fetch(event.request).then(networkResponse => {
-                // Atualiza o cache com a versão mais nova da rede se possível
                 if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
                     const responseClone = networkResponse.clone();
                     caches.open(CACHE_NAME).then(cache => {
@@ -49,7 +48,6 @@ self.addEventListener('fetch', event => {
                 }
                 return networkResponse;
             });
-            // Retorna o cache primeiro (rápido), ou a rede se não tiver cache
             return cachedResponse || fetchPromise;
         })
     );
