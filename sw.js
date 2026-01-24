@@ -1,8 +1,8 @@
-/* SERVICE WORKER - LOBO GUARA
-   Atualização crítica de renderização.
+/* SERVICE WORKER - ONÇA PINTADA
+   Atualização para cache.
 */
 
-const CACHE_NAME = 'super-treino-lobo-guara';
+const CACHE_NAME = 'super-treino-onca-pintada';
 
 // Arquivos da interface gráfica para cache
 const urlsToCache = [
