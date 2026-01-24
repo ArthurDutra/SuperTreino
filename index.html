@@ -24,10 +24,10 @@
             --text: #f4f4f5; 
             --text-muted: #a1a1aa;
             
-            --primary: #ef4444; /* Vermelho */
-            --secondary: #fbbf24; /* Amarelo */
+            --primary: #ef4444; 
+            --secondary: #fbbf24; 
             
-            --success: #fbbf24; /* Sucesso Amarelo */
+            --success: #fbbf24;
             --danger: #ef4444; 
             
             --border-radius: 20px;
@@ -133,8 +133,6 @@
         .ex-info { flex-grow: 1; min-width: 0; }
         .ex-name { font-size: 18px; font-weight: 800; display: block; margin-bottom: 6px; color: #fff; letter-spacing: -0.3px; line-height: 1.2; }
         .ex-meta { display: flex; gap: 10px; align-items: center; font-size: 13px; color: #d4d4d8; font-weight: 600; }
-        
-        /* AUMENTADO: Badge de Séries/Reps */
         .badge { background: #3f3f46; padding: 6px 12px; border-radius: 8px; font-weight: 800; font-size: 15px; color: var(--secondary); font-family: monospace; display: inline-block; }
         
         .btn-video { color: #fff; border: none; background: transparent; padding: 0; width: 32px; height: 24px; border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
@@ -147,14 +145,11 @@
         .btn-weight:active { background: var(--secondary); color: #000; }
         .weight-display { flex-grow: 1; text-align: center; font-size: 20px; font-weight: 800; color: #fff; font-family: var(--font-main); cursor: default; }
         
-        /* Oculta controle de peso ao editar */
         .editing .weight-control { display: none !important; }
 
-        /* Editing & Inputs */
         .edit-input { background: #18181b; border: 1px solid #3f3f46; color: #fff; padding: 14px; border-radius: 12px; font-family: inherit; font-size: 16px; width: 100%; box-sizing: border-box; font-weight: 600; margin-bottom: 5px; }
         .edit-input:focus { border-color: var(--secondary); outline: none; }
         
-        /* NOVO ESTILO DE INPUT INLINE (Refeito) */
         .edit-row-meta { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
         .edit-label-small { font-size: 10px; color: var(--text-muted); font-weight: 800; text-transform: uppercase; margin-bottom: 4px; display: block; letter-spacing: 1px; }
         .edit-input-box {
@@ -171,7 +166,7 @@
         }
         .edit-input-box:focus { border-color: var(--secondary); outline: none; }
 
-        /* BOTÕES FLUTUANTES: Centralizados à direita */
+        /* NOVA CLASSE PADRÃO PARA BOTÕES FLUTUANTES (Excluir/Mover) */
         .edit-controls-floating { 
             position: absolute; 
             right: 0px; 
@@ -179,7 +174,7 @@
             transform: translateY(-50%); 
             display: flex; 
             flex-direction: column; 
-            gap: 8px; 
+            gap: 12px; /* Mais espaçamento entre botões */
             z-index: 10; 
             animation: popIn 0.2s; 
             pointer-events: none; 
@@ -187,11 +182,24 @@
         }
         .editing .edit-controls-floating { opacity: 1; pointer-events: auto; }
         
-        /* Floating Buttons - CORES FORÇADAS PARA EXCLUIR/REORDENAR */
-        .btn-float { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 3px solid var(--bg); cursor: pointer; color: #fff; font-size: 14px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); }
-        .btn-del { background-color: var(--danger) !important; color: #fff !important; border: none; }
-        .btn-reorder { background-color: var(--secondary) !important; color: #000 !important; border: none; }
-        
+        /* ESTILO UNIFICADO - CINZA/BRANCO (Minimalista) */
+        .btn-float { 
+            width: 40px; 
+            height: 40px; 
+            border-radius: 12px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-weight: 900; 
+            border: 1px solid rgba(255,255,255,0.2); 
+            cursor: pointer; 
+            color: #fff; 
+            font-size: 18px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5); 
+            background-color: #3f3f46 !important; /* Cor Cinza Padrão */
+        }
+        .btn-float:active { transform: scale(0.9); background-color: #52525b !important; }
+
         .btn-add-item { display: none; } 
         .editing .btn-add-item { display: block; width: 100%; max-width: 400px; padding: 22px; background: rgba(251, 191, 36, 0.05); border: 2px dashed #3f3f46; color: var(--secondary); border-radius: 16px; cursor: pointer; font-size: 14px; font-weight: 800; margin-top: 15px; text-align: center; letter-spacing: 1px; transition: 0.2s; }
         .editing .btn-add-item:active { background: rgba(251, 191, 36, 0.1); border-color: var(--secondary); }
@@ -242,7 +250,7 @@
         <div style="color:#a1a1aa; font-size:14px; margin-top:10px; font-weight:600;">O Kine precisa voar online.</div>
     </div>
 
-    <div class="version-label">VERSÃO: MICO-LEÃO-DOURADO</div>
+    <div class="version-label">VERSÃO: QUATI</div>
 
     <div id="screen-menu" class="screen">
         <div class="header-bar">
@@ -384,7 +392,6 @@
                     }
 
                     const randomMsg = fujaoMessages[Math.floor(Math.random() * fujaoMessages.length)];
-                    // AJUSTE: Título alterado para "FUJÃO?"
                     this.showCustomModal('danger', 'FUJÃO?', `${randomMsg}`, () => {
                         this.isTraining = false;
                         window.onbeforeunload = null; 
@@ -468,11 +475,15 @@
         },
 
         restoreScreen: function(state) {
-            // AJUSTE: RESET DE EDIÇÃO
-            // Sempre que navegar (voltar/avançar), limpa qualquer modo de edição ativo
+            // CORREÇÃO: CANCELA EDIÇÃO AO NAVEGAR/VOLTAR
             this.isMenuEditing = false;
             this.isSelectEditing = false;
             this.isActiveEditing = false;
+            
+            // Reseta visual dos botões de edição também, caso estejam ativos
+            const btns = ['btn-edit-menu', 'btn-edit-select', 'btn-edit-active'];
+            const screens = ['screen-menu', 'screen-workout-select', 'screen-active-workout'];
+            btns.forEach((b, i) => this.updateEditIcon(b, screens[i], false));
 
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('visible'));
             document.getElementById(state.screen).classList.add('visible');
@@ -575,7 +586,8 @@
                 if(this.isMenuEditing) {
                     const ctrl = document.createElement('div'); ctrl.className = 'edit-controls-floating';
                     ctrl.style.right = '0';
-                    ctrl.innerHTML = `<div class="btn-float btn-del" onclick="window.app.deleteUser(event, '${id}')">✕</div>`;
+                    // BOTÃO FLUTUANTE PADRÃO
+                    ctrl.innerHTML = `<div class="btn-float" onclick="window.app.deleteUser(event, '${id}')">✕</div>`;
                     wrap.appendChild(ctrl);
                 }
                 wrap.appendChild(btn); list.appendChild(wrap);
@@ -623,9 +635,10 @@
                 if(this.isSelectEditing) {
                     const ctrl = document.createElement('div'); ctrl.className = 'edit-controls-floating';
                     ctrl.style.right = '0';
-                    const btnUp = idx > 0 ? `<div class="btn-float btn-reorder" onclick="window.app.reorderWorkout(${idx}, -1)">↑</div>` : '';
-                    const btnDown = idx < u.workouts.length - 1 ? `<div class="btn-float btn-reorder" onclick="window.app.reorderWorkout(${idx}, 1)">↓</div>` : '';
-                    ctrl.innerHTML = `<div class="btn-float btn-del" onclick="window.app.deleteWorkout(event, ${idx})">✕</div>${btnUp}${btnDown}`;
+                    // BOTÕES FLUTUANTES PADRÃO
+                    const btnUp = idx > 0 ? `<div class="btn-float" onclick="window.app.reorderWorkout(${idx}, -1)">↑</div>` : '';
+                    const btnDown = idx < u.workouts.length - 1 ? `<div class="btn-float" onclick="window.app.reorderWorkout(${idx}, 1)">↓</div>` : '';
+                    ctrl.innerHTML = `<div class="btn-float" onclick="window.app.deleteWorkout(event, ${idx})">✕</div>${btnUp}${btnDown}`;
                     wrap.appendChild(ctrl);
                 }
                 wrap.appendChild(card); list.appendChild(wrap);
@@ -708,9 +721,10 @@
                 
                 let controls = '';
                 if(this.isActiveEditing) {
-                    const btnUp = i > 0 ? `<div class="btn-float btn-reorder" onclick="window.app.reorderEx(${i}, -1)">↑</div>` : '';
-                    const btnDown = i < w.exercises.length - 1 ? `<div class="btn-float btn-reorder" onclick="window.app.reorderEx(${i}, 1)">↓</div>` : '';
-                    controls = `<div class="edit-controls-floating"><div class="btn-float btn-del" onclick="window.app.deleteEx(${i})">✕</div>${btnUp}${btnDown}</div>`;
+                    // BOTÕES FLUTUANTES PADRÃO
+                    const btnUp = i > 0 ? `<div class="btn-float" onclick="window.app.reorderEx(${i}, -1)">↑</div>` : '';
+                    const btnDown = i < w.exercises.length - 1 ? `<div class="btn-float" onclick="window.app.reorderEx(${i}, 1)">↓</div>` : '';
+                    controls = `<div class="edit-controls-floating"><div class="btn-float" onclick="window.app.deleteEx(${i})">✕</div>${btnUp}${btnDown}</div>`;
                 }
 
                 if (this.isActiveEditing) {
@@ -827,7 +841,6 @@
             for(let c of chks) if(!c.checked) p = true;
             if(p) {
                 const randomMsg = preguicosoMessages[Math.floor(Math.random() * preguicosoMessages.length)];
-                // AJUSTE: Título alterado para "PREGUIÇA?"
                 this.showCustomModal('warning', 'PREGUIÇA?', randomMsg, () => this.processFinish(true));
             } else { this.processFinish(false); }
         },
