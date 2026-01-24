@@ -1,8 +1,8 @@
-/* SERVICE WORKER - ONÇA PINTADA
-   Atualização para cache.
+/* SERVICE WORKER - KINE FORMIGA
+   Atualização visual.
 */
 
-const CACHE_NAME = 'super-treino-onca-pintada';
+const CACHE_NAME = 'kine-formiga-v1';
 
 // Arquivos da interface gráfica para cache
 const urlsToCache = [
