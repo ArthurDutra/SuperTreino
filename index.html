@@ -35,14 +35,14 @@
         }
         
         .screen { display: none; padding: 24px; animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); min-height: 100vh; flex-direction: column; position: relative; }
-        .visible { display: flex; } 
+        .visible { display: flex !important; } /* Important para sobrescrever o inline style */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .empty-msg { text-align: center; color: var(--text-muted); margin-top: 40px; font-weight: 500; font-size: 14px; width: 100%; display: block; letter-spacing: 0.5px; }
 
         #loading-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg); z-index: 9999;
+            background: #0a0a0a; z-index: 99999;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             transition: opacity 0.3s;
         }
@@ -163,15 +163,15 @@
 </head>
 <body style="background-color: #0a0a0a;">
 
-    <div id="loading-overlay" style="display: flex;">
+    <div id="loading-overlay" style="display: flex; background-color: #0a0a0a; z-index: 99999;">
         <div class="spinner"></div>
         <div style="color:#444; font-size:10px; font-weight:800; letter-spacing:2px; text-transform:uppercase;">KINE APP</div>
     </div>
 
     <div id="db-status">⚪ ...</div>
-    <div class="version-label">Versão: Formiga v1.1 🐜</div>
+    <div class="version-label">Versão: HIPOPÓTAMO 🦛</div>
 
-    <div id="screen-menu" class="screen">
+    <div id="screen-menu" class="screen" style="display: none;">
         <div class="header-bar">
             <div class="app-title"><span class="app-logo">✦</span> KINE</div>
             <div class="header-actions">
@@ -182,7 +182,7 @@
         <button id="btn-add-user" class="btn-add-item" onclick="window.app.addUser()">+ NOVA PESSOA</button>
     </div>
 
-    <div id="screen-workout-select" class="screen">
+    <div id="screen-workout-select" class="screen" style="display: none;">
         <div class="header-bar">
             <button class="btn-icon" onclick="window.app.goHome()">←</button>
             <span class="user-title" id="select-user-title">...</span>
@@ -195,7 +195,7 @@
         <button id="btn-add-workout" class="btn-add-item" onclick="window.app.addWorkout()">+ NOVO TREINO</button>
     </div>
 
-    <div id="screen-active-workout" class="screen">
+    <div id="screen-active-workout" class="screen" style="display: none;">
         <div class="header-bar">
             <button class="btn-icon" onclick="window.app.handleBack()">←</button>
             <span class="user-title" id="active-title">Treino</span>
@@ -211,18 +211,18 @@
         </div>
     </div>
 
-    <div id="screen-history" class="screen">
+    <div id="screen-history" class="screen" style="display: none;">
         <div class="header-bar">
             <button class="btn-icon" onclick="window.app.navigate('screen-workout-select')">←</button>
             <span class="user-title">Histórico</span>
             <div class="header-actions">
                 <button class="btn-icon" onclick="window.app.openGamification()">★</button>
-                </div>
+            </div>
         </div>
         <div id="history-list"></div>
     </div>
 
-    <div id="screen-gamification" class="screen">
+    <div id="screen-gamification" class="screen" style="display: none;">
         <div class="header-bar">
             <button class="btn-icon" onclick="window.app.navigate('screen-history')">←</button>
             <span class="user-title" style="color:var(--secondary)">Conquistas</span>
@@ -308,7 +308,6 @@
     const quitMessages = ["O treino não acabou.", "Mantenha o foco.", "Não desista agora.", "Termine o que começou.", "Sair cancela o progresso."];
     const incompleteMessages = ["Treino incompleto.", "Faltam exercícios.", "Finalizar mesmo assim?", "Checklist pendente."];
 
-    // CHAVES FIXAS - DADOS SEGUROS
     const KEY_DATA = 'kine_core_data';
     const KEY_HIST = 'kine_core_history';
 
@@ -375,10 +374,13 @@
         },
 
         loadData: function() {
+            // Garante que o loading está visível
             this.toggleLoading(true);
+            
             setTimeout(() => {
                 if(document.getElementById('loading-overlay').style.display !== 'none') {
                     this.toggleLoading(false);
+                    // Se nenhuma tela estiver visível (primeiro load), vai pro menu
                     if (!document.querySelector('.screen.visible')) this.toggleScreen('screen-menu');
                 }
             }, 8000);
@@ -403,7 +405,7 @@
                     this.checkLoadComplete();
                 });
             } else {
-                // FALLBACK LOCALSTORAGE COM CHAVE FIXA
+                // Fallback Local
                 this.data = JSON.parse(localStorage.getItem(KEY_DATA)) || {};
                 this.historyData = JSON.parse(localStorage.getItem(KEY_HIST)) || [];
                 this.checkLoadComplete();
@@ -411,6 +413,7 @@
         },
 
         checkLoadComplete: function() {
+            // Só libera o loading se data estiver carregado
             if (this.data !== undefined) {
                 this.toggleLoading(false);
                 if (!document.querySelector('.screen.visible')) {
@@ -741,7 +744,6 @@
             myHist.forEach(h => {
                 const div = document.createElement('div'); div.className = 'history-item';
                 
-                // CORREÇÃO: Lógica para exibir 'INCOMPLETO' ou lista de pulados
                 let skippedText = '';
                 if (h.skipped && h.skipped.length > 0) {
                     if (h.skipped.length === 1 && h.skipped[0] === 'Incompleto') {
