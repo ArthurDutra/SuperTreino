@@ -1,51 +1,20 @@
-/* SERVICE WORKER - KINE BOTO-COR-DE-ROSA v1
-   Estratégia: Network First para arquivos principais (HTML/Data)
-*/
-
-const CACHE_NAME = 'kine-boto-v1';
+const CACHE_NAME = 'kine-cache-v2';
 const urlsToCache = [
-  './icon.png',
+  './',
+  './index.html',
   './manifest.json',
+  './icon.png',
   './kine.png',
   './spotify.png',
   './youtube.png'
 ];
 
 self.addEventListener('install', event => {
-  self.skipWaiting();
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(urlsToCache))
-  );
-});
-
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
-  );
-  return self.clients.claim();
+  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache)));
 });
 
 self.addEventListener('fetch', event => {
-  if (event.request.mode === 'navigate') {
-    event.respondWith(
-      fetch(event.request)
-        .catch(() => {
-          return caches.match(event.request);
-        })
-    );
-  } else {
-    event.respondWith(
-        fetch(event.request)
-          .catch(() => caches.match(event.request))
-      );
-  }
+  event.respondWith(
+    fetch(event.request).catch(() => caches.match(event.request))
+  );
 });
