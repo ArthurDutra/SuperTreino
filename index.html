@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Super Treino - Onça Blindada</title>
+    <title>Super Treino - Ornitorrinco</title>
     
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/jpeg" href="icon.jpg">
@@ -209,7 +209,7 @@
     </div>
 
     <div id="db-status">⚪ Conectando...</div>
-    <div class="version-label">Versão: Onça Pintada Blindada 🛡️</div>
+    <div class="version-label">Versão: Ornitorrinco</div>
 
     <div id="screen-menu" class="screen">
         <div class="header-bar">
@@ -257,8 +257,7 @@
             <span class="user-title">Histórico</span>
             <div class="header-actions">
                 <button class="btn-icon" onclick="window.app.openGamification()" title="Conquistas">🏆</button>
-                <button class="btn-icon" onclick="window.app.clearAllHistory()">🗑️</button>
-            </div>
+                </div>
         </div>
         <div id="history-list"></div>
     </div>
@@ -815,6 +814,7 @@
             }); 
         },
         
+        // Função mantida mas sem botão na interface, como solicitado.
         clearAllHistory: function() { 
             this.showCustomModal('danger', 'LIMPAR TUDO', 'Apagar TODO o histórico?', () => { 
                 if(window.dbInstance) {
