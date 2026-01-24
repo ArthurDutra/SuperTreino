@@ -2,7 +2,7 @@
    Versão atualizada para forçar atualização no cache do navegador.
 */
 
-const CACHE_NAME = 'kine-camundongo-v1';
+const CACHE_NAME = 'kine-camundongo-v2-fix';
 
 // Arquivos da interface gráfica para cache
 const urlsToCache = [
