@@ -133,7 +133,9 @@
         .ex-info { flex-grow: 1; min-width: 0; }
         .ex-name { font-size: 18px; font-weight: 800; display: block; margin-bottom: 6px; color: #fff; letter-spacing: -0.3px; line-height: 1.2; }
         .ex-meta { display: flex; gap: 10px; align-items: center; font-size: 13px; color: #d4d4d8; font-weight: 600; }
-        .badge { background: #3f3f46; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 12px; color: var(--secondary); font-family: monospace; }
+        
+        /* AUMENTADO: Badge de Séries/Reps */
+        .badge { background: #3f3f46; padding: 6px 12px; border-radius: 8px; font-weight: 800; font-size: 15px; color: var(--secondary); font-family: monospace; display: inline-block; }
         
         .btn-video { color: #fff; border: none; background: transparent; padding: 0; width: 32px; height: 24px; border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
         .btn-video:active { transform: scale(0.9); }
@@ -144,14 +146,29 @@
         .btn-weight { width: 36px; height: 36px; background: #3f3f46; border: none; border-radius: 10px; color: #fff; font-size: 20px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         .btn-weight:active { background: var(--secondary); color: #000; }
         .weight-display { flex-grow: 1; text-align: center; font-size: 20px; font-weight: 800; color: #fff; font-family: var(--font-main); cursor: default; }
-        .no-load { color: #52525b; font-size: 11px; letter-spacing: 1px; font-weight: 700; }
+        
+        /* Oculta controle de peso ao editar */
+        .editing .weight-control { display: none !important; }
 
         /* Editing & Inputs */
         .edit-input { background: #18181b; border: 1px solid #3f3f46; color: #fff; padding: 14px; border-radius: 12px; font-family: inherit; font-size: 16px; width: 100%; box-sizing: border-box; font-weight: 600; margin-bottom: 5px; }
         .edit-input:focus { border-color: var(--secondary); outline: none; }
         .edit-input-inline { width: 50px; text-align: center; margin: 0 4px; background: #27272a; border: none; display: inline-block; }
 
-        .edit-controls-floating { position: absolute; right: -8px; top: -8px; display: flex; flex-direction: column; gap: 8px; z-index: 10; animation: popIn 0.2s; pointer-events: none; opacity: 0; }
+        /* BOTÕES FLUTUANTES: Centralizados à direita */
+        .edit-controls-floating { 
+            position: absolute; 
+            right: 0px; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            display: flex; 
+            flex-direction: column; 
+            gap: 8px; 
+            z-index: 10; 
+            animation: popIn 0.2s; 
+            pointer-events: none; 
+            opacity: 0; 
+        }
         .editing .edit-controls-floating { opacity: 1; pointer-events: auto; }
         
         /* Floating Buttons - CORES FORÇADAS PARA EXCLUIR/REORDENAR */
@@ -209,7 +226,7 @@
         <div style="color:#a1a1aa; font-size:14px; margin-top:10px; font-weight:600;">O Kine precisa voar online.</div>
     </div>
 
-    <div class="version-label">VERSÃO: GUAXINIM</div>
+    <div class="version-label">VERSÃO: JAGUARUNDI</div>
 
     <div id="screen-menu" class="screen">
         <div class="header-bar">
@@ -338,38 +355,30 @@
             
             // --- BLINDAGEM DE VOLTAR (HISTORY TRAP) ---
             window.onpopstate = (event) => {
-                // 1. INPUT MODAL (Prioridade) - Se estiver digitando, fecha o modal e mantém a tela
                 if (document.getElementById('input-modal').style.display === 'flex') {
                     document.getElementById('input-modal').style.display = 'none';
-                    history.pushState(history.state, ''); // Recoloca o estado para não sair
+                    history.pushState(history.state, '');
                     return;
                 }
 
-                // 2. SE ESTIVER TREINANDO (Blindagem Total)
                 if (this.isTraining) {
-                    // **TRAP IMEDIATA**: Empurra o estado DE VOLTA para a pilha.
-                    // Isso anula o clique "voltar" do navegador instantaneamente.
-                    // O usuário clica em voltar, mas o JS o joga para frente de novo.
                     history.pushState({ screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex }, '');
 
-                    // Se já tiver modal aberto (YouTube, Spotify, Fujão), FECHA ele.
                     if (document.getElementById('custom-modal').style.display === 'flex') {
                         document.getElementById('custom-modal').style.display = 'none';
-                        return; // Só fecha o modal e fica na tela de treino
+                        return; 
                     }
 
-                    // Se não tiver modal nenhum, ABRE O FUJÃO
                     const randomMsg = fujaoMessages[Math.floor(Math.random() * fujaoMessages.length)];
                     this.showCustomModal('danger', 'FUJÃO!', `${randomMsg}`, () => {
                         this.isTraining = false;
                         window.onbeforeunload = null; 
                         localStorage.removeItem('tempWorkoutState'); 
-                        this.goHome(); // O goHome reseta a navegação limpa
+                        this.goHome();
                     });
                     return;
                 }
 
-                // 3. Navegação normal (Menu -> Seleção -> Menu)
                 const currentScreen = document.querySelector('.screen.visible')?.id;
                 if (currentScreen === 'screen-menu' || !event.state) {
                     history.pushState({ screen: 'screen-menu' }, '');
@@ -426,7 +435,6 @@
         },
 
         handleBack: function() { 
-            // Botão voltar da UI chama o voltar do navegador, que cai no onpopstate blindado
             if (this.isTraining) history.back();
             else window.history.back(); 
         },
@@ -483,8 +491,6 @@
                 const btnNo = document.createElement('button');
                 btnNo.className = 'btn-dialog btn-secondary';
                 btnNo.innerText = "NÃO";
-                // Quando clica em NÃO, apenas fecha o modal. 
-                // IMPORTANTE: Como estamos no modo treino, o History Trap já recolocou o estado.
                 btnNo.onclick = () => { modal.style.display = 'none'; if(cancelCallback) cancelCallback(); };
                 actions.appendChild(btnNo);
 
@@ -547,7 +553,7 @@
                 btn.onclick = () => this.navigate('screen-workout-select', { userId: id });
                 if(this.isMenuEditing) {
                     const ctrl = document.createElement('div'); ctrl.className = 'edit-controls-floating';
-                    // BOTÃO EXCLUIR - VERMELHO (class btn-del)
+                    ctrl.style.right = '0';
                     ctrl.innerHTML = `<div class="btn-float btn-del" onclick="window.app.deleteUser(event, '${id}')">✕</div>`;
                     wrap.appendChild(ctrl);
                 }
@@ -595,7 +601,7 @@
                 
                 if(this.isSelectEditing) {
                     const ctrl = document.createElement('div'); ctrl.className = 'edit-controls-floating';
-                    // BOTÃO REORDENAR - AMARELO (class btn-reorder) | EXCLUIR - VERMELHO (class btn-del)
+                    ctrl.style.right = '0';
                     const btnUp = idx > 0 ? `<div class="btn-float btn-reorder" onclick="window.app.reorderWorkout(${idx}, -1)">↑</div>` : '';
                     const btnDown = idx < u.workouts.length - 1 ? `<div class="btn-float btn-reorder" onclick="window.app.reorderWorkout(${idx}, 1)">↓</div>` : '';
                     ctrl.innerHTML = `<div class="btn-float btn-del" onclick="window.app.deleteWorkout(event, ${idx})">✕</div>${btnUp}${btnDown}`;
@@ -619,10 +625,6 @@
                 if(hasExercises) {
                     this.isTraining = true;
                     window.onbeforeunload = function() { return "Treino rodando."; };
-                    // --- BUFFER DE HISTÓRICO ---
-                    // Adicionamos estados EXTRAS no histórico. 
-                    // Se o usuário clicar voltar 2x rápido, ele só volta nos estados buffer
-                    // e a "armadilha" (onpopstate) tem tempo de reagir.
                     const state = { screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex };
                     history.pushState(state, '');
                     history.pushState(state, '');
@@ -654,7 +656,8 @@
                 const vid = `https://www.youtube.com/results?search_query=execução+${encodeURIComponent(ex.name)}`;
                 const div = document.createElement('div'); div.className = `exercise-card bd-${u.themeId}`;
                 const weightVal = parseInt(ex.weight) || 0;
-                const weightText = weightVal === 0 ? '<span class="no-load">CARGA</span>' : `${weightVal} KG`;
+                // AJUSTE: Carga zero vira "SEM CARGA" com destaque
+                const weightText = weightVal === 0 ? 'SEM CARGA' : `${weightVal} KG`;
                 const isChecked = myState[i] ? 'checked' : ''; 
                 
                 let exInfo = `<span class="ex-name">${ex.name}</span><div class="ex-meta"><span class="badge">${ex.sets}x${ex.reps}</span> <button class="btn-video" onclick="window.app.confirmYouTube('${vid}')"><img src="youtube.png" alt="Ver"></button></div>`;
@@ -665,13 +668,14 @@
                 
                 let controls = '';
                 if(this.isActiveEditing) {
-                    // BOTÃO REORDENAR - AMARELO (class btn-reorder) | EXCLUIR - VERMELHO (class btn-del)
                     const btnUp = i > 0 ? `<div class="btn-float btn-reorder" onclick="window.app.reorderEx(${i}, -1)">↑</div>` : '';
                     const btnDown = i < w.exercises.length - 1 ? `<div class="btn-float btn-reorder" onclick="window.app.reorderEx(${i}, 1)">↓</div>` : '';
-                    controls = `<div class="edit-controls-floating" style="top:-5px; right:-5px;"><div class="btn-float btn-del" onclick="window.app.deleteEx(${i})">✕</div>${btnUp}${btnDown}</div>`;
+                    // AJUSTE: Botões na direita, meio, sem style inline de topo
+                    controls = `<div class="edit-controls-floating"><div class="btn-float btn-del" onclick="window.app.deleteEx(${i})">✕</div>${btnUp}${btnDown}</div>`;
                 }
 
-                div.innerHTML = `<div class="exercise-header"><div class="chk-container"><input type="checkbox" class="ex-check" data-index="${i}" onchange="window.app.autoSaveState()" ${isChecked}><span class="custom-chk"></span></div><div class="ex-info">${exInfo}</div>${controls}</div><div class="weight-control"><span class="weight-label">CARGA</span><button class="btn-weight" onclick="window.app.chgWeight(${i}, -1)">-</button><div class="weight-display">${weightText}</div><button class="btn-weight" onclick="window.app.chgWeight(${i}, 1)">+</button></div>`;
+                // CONTROLS movido para fora do exercise-header para melhor posicionamento relativo ao card
+                div.innerHTML = `<div class="exercise-header"><div class="chk-container"><input type="checkbox" class="ex-check" data-index="${i}" onchange="window.app.autoSaveState()" ${isChecked}><span class="custom-chk"></span></div><div class="ex-info">${exInfo}</div></div>${controls}<div class="weight-control"><span class="weight-label">CARGA</span><button class="btn-weight" onclick="window.app.chgWeight(${i}, -1)">-</button><div class="weight-display">${weightText}</div><button class="btn-weight" onclick="window.app.chgWeight(${i}, 1)">+</button></div>`;
                 cont.appendChild(div);
             });
             this.updateEditIcon('btn-edit-active', 'screen-active-workout', this.isActiveEditing);
@@ -817,7 +821,8 @@
         },
 
         confirmSpotify: function() { this.showCustomModal('danger', 'SPOTIFY', 'Abrir Spotify?', () => window.open('https://open.spotify.com', '_blank')); },
-        confirmYouTube: function(url) { this.showCustomModal('danger', 'YOUTUBE', 'Ver vídeo?', () => window.open(url, '_blank')); },
+        // AJUSTE: Texto alterado para 'Ver execução?'
+        confirmYouTube: function(url) { this.showCustomModal('danger', 'YOUTUBE', 'Ver execução?', () => window.open(url, '_blank')); },
         
         toggleScreen: function(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('visible')); document.getElementById(id).classList.add('visible'); },
         
