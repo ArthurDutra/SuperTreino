@@ -11,7 +11,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#0a0a0a">
+    <meta name="theme-color" content="#18181b">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,16 +19,28 @@
 
     <style>
         :root { 
-            --bg: #0a0a0a; --card: #161616; --text: #ffffff; --text-muted: #888888;
-            --primary: #ef4444; --secondary: #fbbf24; 
-            --success: #10b981; --danger: #ef4444; --edit-mode: #fbbf24;
-            --border-radius: 16px;
+            /* Paleta baseada no Icon.png (Vermelho/Amarelo) mas suavizada */
+            --bg: #18181b; /* Zinco escuro (não preto) */
+            --card: #27272a; /* Cinza chumbo */
+            --text: #f4f4f5; /* Quase branco */
+            --text-muted: #a1a1aa;
+            
+            --primary: #ef4444; /* Vermelho do Icon */
+            --primary-hover: #dc2626;
+            --secondary: #fbbf24; /* Amarelo do Icon */
+            --accent: #f59e0b;
+            
+            --success: #10b981; 
+            --danger: #ef4444; 
+            
+            --border-radius: 20px; /* Mais arredondado e amigável */
+            --font-main: 'Inter', sans-serif;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; outline: none; }
         
         html, body { 
-            font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); 
+            font-family: var(--font-main); background-color: var(--bg); color: var(--text); 
             margin: 0; padding: 0; padding-bottom: 50px; 
             overscroll-behavior-y: contain; overflow-x: hidden;
             height: 100%; width: 100%; position: fixed; overflow-y: auto; 
@@ -39,7 +51,7 @@
         .visible { display: flex; } 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .empty-msg { text-align: center; color: var(--text-muted); margin-top: 40px; font-weight: 500; font-size: 14px; width: 100%; display: block; letter-spacing: 0.5px; }
+        .empty-msg { text-align: center; color: var(--text-muted); margin-top: 40px; font-weight: 500; font-size: 14px; width: 100%; display: block; letter-spacing: 0.5px; opacity: 0.7; }
 
         /* Overlays (Loading & Offline) */
         #loading-overlay, #offline-screen {
@@ -49,134 +61,137 @@
         }
         
         .spinner {
-            width: 40px; height: 40px; border: 4px solid #333;
-            border-top: 4px solid var(--primary); border-radius: 50%;
+            width: 50px; height: 50px; border: 5px solid #3f3f46;
+            border-top: 5px solid var(--secondary); border-radius: 50%;
             animation: spin 0.8s cubic-bezier(0.5, 0, 0.5, 1) infinite; margin-bottom: 20px;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Headers */
+        /* Headers - Mais limpo e moderno */
         .header-bar { 
             display: flex; align-items: center; justify-content: space-between; 
-            margin-bottom: 30px; position: sticky; top: 0; 
-            background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(15px);
-            z-index: 50; padding: 20px 0; border-bottom: 1px solid #222; 
+            margin-bottom: 25px; position: sticky; top: 0; 
+            background: rgba(24, 24, 27, 0.85); backdrop-filter: blur(20px);
+            z-index: 50; padding: 20px 0; border-bottom: 1px solid #3f3f46; 
         }
-        .app-title { font-size: 24px; font-weight: 900; color: var(--text); letter-spacing: -1px; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
-        .app-logo { color: var(--primary); font-size: 24px; }
-        .user-title { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 60%; }
+        .app-title { font-size: 26px; font-weight: 900; color: var(--text); letter-spacing: -1px; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+        .app-logo { color: var(--primary); font-size: 26px; text-shadow: 0 0 10px rgba(239,68,68,0.3); }
+        .user-title { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 60%; color: var(--secondary); }
         .header-actions { display: flex; gap: 12px; }
-        .btn-icon { background: #1a1a1a; border: 1px solid #333; font-size: 18px; cursor: pointer; color: #fff; padding: 0; width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
-        .btn-icon:active { transform: scale(0.95); background: #222; }
-        .icon-active { border-color: var(--edit-mode); color: var(--edit-mode); background: rgba(251, 191, 36, 0.1); }
+        
+        /* Botões de Ícone Renovados */
+        .btn-icon { background: #3f3f46; border: none; font-size: 18px; cursor: pointer; color: #fff; padding: 0; width: 42px; height: 42px; border-radius: 14px; display: flex; align-items: center; justify-content: center; transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn-icon:active { transform: scale(0.92); background: #52525b; }
+        .icon-active { border: 2px solid var(--secondary); color: var(--secondary); background: rgba(251, 191, 36, 0.15); }
 
-        /* Lists & Cards */
-        #user-list, #workout-select-list { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 10px; min-height: 100px; }
+        /* Lists & Cards - Estética "Arara" */
+        #user-list, #workout-select-list { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 14px; margin-top: 10px; min-height: 100px; }
         .card-wrapper { position: relative; width: 100%; max-width: 400px; }
 
-        .btn-large { width: 100%; padding: 24px 24px; border: none; border-radius: var(--border-radius); font-size: 18px; font-weight: 700; cursor: pointer; color: #fff; background: var(--card); border: 1px solid #333; text-transform: uppercase; letter-spacing: -0.5px; text-align: left; display: flex; justify-content: space-between; align-items: center; font-family: 'Inter', sans-serif; transition: all 0.2s; }
-        .btn-large:active { transform: scale(0.98); background: #222; }
+        .btn-large { width: 100%; padding: 24px 24px; border: none; border-radius: var(--border-radius); font-size: 18px; font-weight: 800; cursor: pointer; color: #fff; background: var(--card); box-shadow: 0 4px 15px rgba(0,0,0,0.2); text-transform: uppercase; letter-spacing: -0.5px; text-align: left; display: flex; justify-content: space-between; align-items: center; font-family: var(--font-main); transition: all 0.2s; position: relative; overflow: hidden; }
+        .btn-large::after { content:''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--primary); }
+        .btn-large:active { transform: scale(0.98); background: #3f3f46; }
         
-        .workout-select-card { background: var(--card); border: 1px solid #222; color: #fff; padding: 24px; border-radius: var(--border-radius); cursor: pointer; width: 100%; text-align: left; position: relative; transition: 0.2s; }
-        .workout-select-card h3 { margin: 0 0 6px 0; font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
-        .workout-select-card p { margin: 0; color: var(--text-muted); font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
-        .workout-select-card:active { transform: scale(0.98); background: #222; }
-        .suggested-workout { border: 1px solid var(--primary); background: rgba(239, 68, 68, 0.05); }
-        .suggested-badge { position: absolute; right: 20px; top: 24px; background: var(--primary); color: #fff; font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .workout-select-card { background: var(--card); box-shadow: 0 4px 15px rgba(0,0,0,0.2); color: #fff; padding: 26px; border-radius: var(--border-radius); cursor: pointer; width: 100%; text-align: left; position: relative; transition: 0.2s; border: 1px solid transparent; }
+        .workout-select-card h3 { margin: 0 0 6px 0; font-size: 20px; font-weight: 800; letter-spacing: -0.5px; color: #fff; }
+        .workout-select-card p { margin: 0; color: var(--text-muted); font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        .workout-select-card:active { transform: scale(0.98); background: #3f3f46; }
+        .suggested-workout { border: 1px solid var(--secondary); background: rgba(251, 191, 36, 0.05); }
+        .suggested-badge { position: absolute; right: 20px; top: 24px; background: var(--secondary); color: #000; font-size: 10px; font-weight: 900; padding: 5px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 10px rgba(251, 191, 36, 0.2); }
 
-        /* Active Workout */
+        /* Active Workout - Mais vibrante */
         .workout-container { padding-bottom: 120px; }
-        .exercise-card { background: var(--card); border-radius: var(--border-radius); padding: 20px; margin-bottom: 12px; border: 1px solid #222; position: relative; }
-        .exercise-card::before { content: ''; position: absolute; left: 0; top: 20px; bottom: 20px; width: 4px; border-radius: 0 4px 4px 0; background: #333; }
-        .bd-theme-1 .exercise-card::before { background: var(--primary); }
+        .exercise-card { background: var(--card); border-radius: var(--border-radius); padding: 22px; margin-bottom: 14px; border: none; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .exercise-card::before { content: ''; position: absolute; left: 0; top: 20px; bottom: 20px; width: 4px; border-radius: 0 4px 4px 0; background: var(--secondary); }
         
         .exercise-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 16px; padding-left: 10px; }
-        .chk-container { position: relative; display: flex; align-items: center; min-width: 28px; }
-        input[type="checkbox"] { width: 28px; height: 28px; cursor: pointer; opacity: 0; position: absolute; z-index: 2; }
-        .custom-chk { width: 28px; height: 28px; background: #111; border-radius: 8px; display: inline-block; position: relative; pointer-events: none; transition: 0.2s; border: 2px solid #333; }
-        input:checked + .custom-chk { background: var(--success); border-color: var(--success); }
-        input:checked + .custom-chk::after { content: '✓'; color: #000; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-weight: 900; font-size: 16px; }
+        .chk-container { position: relative; display: flex; align-items: center; min-width: 32px; }
+        input[type="checkbox"] { width: 32px; height: 32px; cursor: pointer; opacity: 0; position: absolute; z-index: 2; }
+        .custom-chk { width: 32px; height: 32px; background: #3f3f46; border-radius: 10px; display: inline-block; position: relative; pointer-events: none; transition: 0.2s; border: 2px solid #52525b; }
+        input:checked + .custom-chk { background: var(--success); border-color: var(--success); transform: scale(1.1); }
+        input:checked + .custom-chk::after { content: '✓'; color: #000; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-weight: 900; font-size: 18px; }
         
         .ex-info { flex-grow: 1; min-width: 0; }
-        .ex-name { font-size: 17px; font-weight: 700; display: block; margin-bottom: 6px; color: #fff; letter-spacing: -0.3px; line-height: 1.2; }
-        .ex-meta { display: flex; gap: 10px; align-items: center; font-size: 13px; color: #bbb; font-weight: 500; }
-        .badge { background: #333; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 12px; color: #eee; font-family: monospace; }
+        .ex-name { font-size: 18px; font-weight: 800; display: block; margin-bottom: 6px; color: #fff; letter-spacing: -0.3px; line-height: 1.2; }
+        .ex-meta { display: flex; gap: 10px; align-items: center; font-size: 13px; color: #d4d4d8; font-weight: 600; }
+        .badge { background: #3f3f46; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 12px; color: var(--secondary); font-family: monospace; }
         
-        .btn-video { color: var(--text); border: 1px solid #444; background: #222; padding: 0; width: 24px; height: 24px; border-radius: 50%; font-size: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
-        .btn-video:active { background: var(--primary); border-color: var(--primary); color: #fff; }
+        .btn-video { color: #fff; border: none; background: #ef4444; padding: 0; width: 28px; height: 28px; border-radius: 50%; font-size: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 5px rgba(239, 68, 68, 0.4); }
+        .btn-video:active { transform: scale(0.9); background: #fff; color: #ef4444; }
         
-        .weight-control { margin-top: 15px; background: #111; padding: 8px 12px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; border: 1px solid #222; margin-left: 10px; }
-        .weight-label { color: #555; font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
-        .btn-weight { width: 36px; height: 36px; background: #222; border: none; border-radius: 10px; color: #fff; font-size: 20px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .btn-weight:active { background: var(--primary); }
-        .weight-display { flex-grow: 1; text-align: center; font-size: 18px; font-weight: 700; color: #fff; font-family: 'Inter', sans-serif; cursor: default; }
-        .no-load { color: #444; font-size: 11px; letter-spacing: 1px; font-weight: 600; }
+        .weight-control { margin-top: 15px; background: #1f1f22; padding: 8px 12px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; border: 1px solid #3f3f46; margin-left: 10px; }
+        .weight-label { color: var(--text-muted); font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+        .btn-weight { width: 36px; height: 36px; background: #3f3f46; border: none; border-radius: 10px; color: #fff; font-size: 20px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .btn-weight:active { background: var(--secondary); color: #000; }
+        .weight-display { flex-grow: 1; text-align: center; font-size: 20px; font-weight: 800; color: #fff; font-family: var(--font-main); cursor: default; }
+        .no-load { color: #52525b; font-size: 11px; letter-spacing: 1px; font-weight: 700; }
 
         /* Editing & Inputs */
-        .edit-input { background: #111; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 10px; font-family: inherit; font-size: inherit; width: 100%; box-sizing: border-box; font-weight: 600; margin-bottom: 5px; }
-        .edit-input:focus { border-color: var(--primary); outline: none; }
-        .edit-input-inline { width: 50px; text-align: center; margin: 0 4px; background: #222; border: none; display: inline-block; }
+        .edit-input { background: #18181b; border: 1px solid #3f3f46; color: #fff; padding: 14px; border-radius: 12px; font-family: inherit; font-size: 16px; width: 100%; box-sizing: border-box; font-weight: 600; margin-bottom: 5px; }
+        .edit-input:focus { border-color: var(--secondary); outline: none; }
+        .edit-input-inline { width: 50px; text-align: center; margin: 0 4px; background: #27272a; border: none; display: inline-block; }
 
-        .edit-controls-floating { position: absolute; right: -5px; top: -5px; display: flex; flex-direction: column; gap: 6px; z-index: 10; animation: popIn 0.2s; pointer-events: none; opacity: 0; }
+        .edit-controls-floating { position: absolute; right: -8px; top: -8px; display: flex; flex-direction: column; gap: 8px; z-index: 10; animation: popIn 0.2s; pointer-events: none; opacity: 0; }
         .editing .edit-controls-floating { opacity: 1; pointer-events: auto; }
-        .btn-float { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid var(--bg); cursor: pointer; color: #fff; font-size: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+        .btn-float { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 3px solid var(--bg); cursor: pointer; color: #fff; font-size: 14px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); }
         .btn-del { background: var(--danger); }
         .btn-reorder { background: var(--secondary); color: #000; }
         
         .btn-add-item { display: none; } 
-        .editing .btn-add-item { display: block; width: 100%; max-width: 400px; padding: 20px; background: rgba(255,255,255,0.03); border: 1px dashed #444; color: #888; border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: 700; margin-top: 15px; text-align: center; }
-        .editing .btn-large, .editing .workout-select-card, .editing .exercise-card { opacity: 0.6; pointer-events: none; }
+        .editing .btn-add-item { display: block; width: 100%; max-width: 400px; padding: 22px; background: rgba(251, 191, 36, 0.05); border: 2px dashed #3f3f46; color: var(--secondary); border-radius: 16px; cursor: pointer; font-size: 14px; font-weight: 800; margin-top: 15px; text-align: center; letter-spacing: 1px; transition: 0.2s; }
+        .editing .btn-add-item:active { background: rgba(251, 191, 36, 0.1); border-color: var(--secondary); }
+        .editing .btn-large, .editing .workout-select-card, .editing .exercise-card { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
         .editing .edit-input, .editing .edit-controls-floating, .editing .weight-display, .editing .btn-video { pointer-events: auto; }
 
-        .footer-fixed { position: fixed; bottom: 0; left: 0; width: 100%; padding: 20px 20px 30px 20px; background: linear-gradient(to top, var(--bg) 90%, transparent); display: flex; justify-content: center; z-index: 90; pointer-events: none; }
-        .btn-finish { width: 100%; max-width: 400px; padding: 22px; background: var(--primary); color: #fff; font-weight: 800; border: none; border-radius: 16px; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 10px 30px rgba(239, 68, 68, 0.3); cursor: pointer; pointer-events: auto; transition: transform 0.2s; }
-        .btn-finish:active { transform: scale(0.97); }
-        .btn-finish:disabled { background: #222; color: #555; box-shadow: none; cursor: default; }
+        /* Footer & Finish Button - ARARA VIBE */
+        .footer-fixed { position: fixed; bottom: 0; left: 0; width: 100%; padding: 20px 20px 30px 20px; background: linear-gradient(to top, var(--bg) 80%, transparent); display: flex; justify-content: center; z-index: 90; pointer-events: none; }
+        .btn-finish { width: 100%; max-width: 400px; padding: 22px; background: linear-gradient(135deg, var(--secondary) 0%, #f59e0b 100%); color: #000; font-weight: 900; border: none; border-radius: 20px; font-size: 18px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 10px 40px rgba(251, 191, 36, 0.3); cursor: pointer; pointer-events: auto; transition: transform 0.2s; position: relative; overflow: hidden; }
+        .btn-finish::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transition: 0.5s; }
+        .btn-finish:active { transform: scale(0.96); }
+        .btn-finish:disabled { background: #3f3f46; color: #71717a; box-shadow: none; cursor: default; }
 
         /* Modals & Dialogs */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; text-align: center; backdrop-filter: blur(8px); animation: fadeIn 0.2s ease-out; }
-        .msg-content { background: #161616; padding: 30px; border-radius: 24px; border: 1px solid #333; max-width: 350px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.5); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .msg-title { font-weight: 900; font-size: 24px; color: #fff; margin-bottom: 12px; letter-spacing: -0.5px; text-transform: uppercase; }
-        .msg-text { color: #aaa; margin-bottom: 30px; font-size: 15px; line-height: 1.6; }
-        .msg-actions { display: flex; gap: 10px; justify-content: center; }
-        .btn-dialog { padding: 14px 24px; border-radius: 12px; font-weight: 700; border: none; cursor: pointer; flex-grow: 1; text-transform: uppercase; font-size: 14px; }
-        .btn-primary { background: var(--primary); color: #fff; }
-        .btn-secondary { background: #2a2a2a; color: #fff; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; text-align: center; backdrop-filter: blur(12px); animation: fadeIn 0.2s ease-out; }
+        .msg-content { background: #27272a; padding: 32px; border-radius: 28px; border: 1px solid #3f3f46; max-width: 350px; width: 100%; box-shadow: 0 25px 60px rgba(0,0,0,0.6); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .msg-title { font-weight: 900; font-size: 26px; color: #fff; margin-bottom: 12px; letter-spacing: -1px; text-transform: uppercase; }
+        .msg-text { color: #d4d4d8; margin-bottom: 30px; font-size: 16px; line-height: 1.5; font-weight: 500; }
+        .msg-actions { display: flex; gap: 12px; justify-content: center; }
+        .btn-dialog { padding: 16px 24px; border-radius: 14px; font-weight: 800; border: none; cursor: pointer; flex-grow: 1; text-transform: uppercase; font-size: 14px; transition: 0.2s; }
+        .btn-primary { background: var(--secondary); color: #000; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.2); }
+        .btn-secondary { background: #3f3f46; color: #fff; }
+        .btn-secondary:active { background: #52525b; }
 
         /* History */
-        .history-item { background: var(--card); padding: 20px; border-radius: 16px; margin-bottom: 12px; display: flex; flex-direction: column; border: 1px solid #222; position: relative; }
+        .history-item { background: var(--card); padding: 24px; border-radius: 20px; margin-bottom: 14px; display: flex; flex-direction: column; border: none; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .hist-top { display: flex; justify-content: space-between; width: 100%; align-items: center; }
-        .hist-date { font-weight: 700; color: #fff; font-size: 15px; }
-        .hist-workout { font-size: 13px; color: #666; font-weight: 500; margin-top: 2px; text-transform: uppercase; }
-        .skipped-list { color: var(--secondary); font-size: 11px; margin-top: 10px; border-top: 1px solid #222; padding-top: 8px; font-weight: 600; }
+        .hist-date { font-weight: 800; color: #fff; font-size: 16px; }
+        .hist-workout { font-size: 14px; color: var(--secondary); font-weight: 600; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .skipped-list { color: var(--danger); font-size: 12px; margin-top: 12px; border-top: 1px solid #3f3f46; padding-top: 10px; font-weight: 700; }
 
-        .version-label { position: fixed; bottom: 8px; left: 0; width: 100%; text-align: center; font-size: 9px; color: #333; pointer-events: none; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .version-label { position: fixed; bottom: 10px; left: 0; width: 100%; text-align: center; font-size: 10px; color: #52525b; pointer-events: none; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; }
 
-        /* Themes */
-        .theme-1, .theme-2, .theme-3, .theme-4, .theme-5, .theme-6 { background: #161616; border-left: 4px solid #333; }
-        .bd-theme-1 { border-left-color: var(--primary); }
-        .bd-theme-2 { border-left-color: var(--secondary); }
-        .txt-theme-1 { color: var(--primary); }
+        /* Themes - Subtle accents */
+        .bd-theme-1 { border-left: none; } /* Removida borda lateral antiga para visual mais clean */
     </style>
 </head>
 <body>
 
     <div id="loading-overlay" style="display: flex;">
         <div class="spinner"></div>
-        <div style="color:#444; font-size:10px; font-weight:800; letter-spacing:2px; text-transform:uppercase;">KINE APP</div>
+        <div style="color:#71717a; font-size:12px; font-weight:900; letter-spacing:3px; text-transform:uppercase;">KINE APP</div>
     </div>
 
     <div id="offline-screen" style="display:none;">
-        <div style="font-size:40px; margin-bottom:20px">☁️⚡</div>
-        <div style="color:#fff; font-weight:900; font-size:18px; text-transform:uppercase;">Sem Conexão</div>
-        <div style="color:#666; font-size:12px; margin-top:10px; font-weight:500;">O Kine precisa de internet.</div>
+        <div style="font-size:50px; margin-bottom:20px">🦜</div>
+        <div style="color:#fff; font-weight:900; font-size:20px; text-transform:uppercase;">Sem Internet</div>
+        <div style="color:#a1a1aa; font-size:14px; margin-top:10px; font-weight:600;">O Kine precisa voar online.</div>
     </div>
 
-    <div class="version-label">VERSÃO: TATU</div>
+    <div class="version-label">VERSÃO: ARARA</div>
 
     <div id="screen-menu" class="screen">
         <div class="header-bar">
-            <div class="app-title"><span class="app-logo">✦</span> KINE</div>
+            <div class="app-title"><span class="app-logo">●</span> KINE</div>
             <div class="header-actions">
                 <button class="btn-icon" id="btn-edit-menu" onclick="window.app.toggleMenuEdit()">✎</button>
             </div>
@@ -210,7 +225,7 @@
         <div id="active-workout-container" class="workout-container"></div>
         <button id="btn-add-exercise" class="btn-add-item" onclick="window.app.addExercise()" style="margin-bottom: 80px;">+ NOVO EXERCÍCIO</button>
         <div class="footer-fixed">
-            <button id="btn-finish-main" class="btn-finish" disabled onclick="window.app.finishWorkout()">Finalizar</button>
+            <button id="btn-finish-main" class="btn-finish" disabled onclick="window.app.finishWorkout()">TÁ PAGO!</button>
         </div>
     </div>
 
@@ -218,7 +233,7 @@
         <div class="header-bar">
             <button class="btn-icon" onclick="window.app.navigate('screen-workout-select')">←</button>
             <span class="user-title">Histórico</span>
-            <div style="width:40px"></div>
+            <div style="width:42px"></div>
         </div>
         <div id="history-list"></div>
     </div>
@@ -234,7 +249,7 @@
     <div id="input-modal" class="modal-overlay">
         <div class="msg-content">
             <div class="msg-title" id="i-title">ENTRADA</div>
-            <input type="text" id="i-input" class="edit-input" style="background:#0a0a0a; border-color:#333; margin: 15px 0;" placeholder="...">
+            <input type="text" id="i-input" class="edit-input" style="background:#18181b; border-color:#3f3f46; margin: 20px 0;" placeholder="...">
             <div class="msg-actions">
                 <button class="btn-dialog btn-secondary" id="i-cancel">CANCELAR</button>
                 <button class="btn-dialog btn-primary" id="i-confirm">SALVAR</button>
@@ -282,8 +297,30 @@
     </script>
 
     <script>
-    const successMessages = ["Treino concluído.", "Bom trabalho.", "Meta atingida.", "Sessão finalizada."];
-    const quitMessages = ["O treino não acabou.", "Mantenha o foco.", "Não desista agora."];
+    // --- FRASES DIVERTIDAS (MONSTRO, FUJÃO, PREGUIÇOSO) ---
+    const monstroMessages = [
+        "A lenda viva!", "Monstro sagrado!", "Hoje você humilhou!", "Tá pago e bem pago!", "Shape tá vindo!", "A fibra estalou!", "Orgulho da nutri!", "O Olimpo te espera!", "Hércules tá com inveja!", "Máquina de vencer!",
+        "Rasgou tudo!", "Isso é que é treino!", "Lendário!", "Brutalidade pura!", "Zero defeitos!", "Amanhã tem mais?", "Você é uma besta enjaulada!", "Destruiu!", "Missão cumprida, soldado!", "Agora pode comer!",
+        "O suor é sua glória!", "Nada te para!", "Focado no objetivo!", "Você é imparável!", "Digno de aplausos!", "O espelho vai agradecer!", "Evolução constante!", "Sem dor, sem ganho!", "Você venceu a preguiça!", "Exemplo a ser seguido!",
+        "Sangue no olho!", "Treino de gente grande!", "Gigante pela própria natureza!", "Sua melhor versão!", "Tá saindo da jaula o monstro!", "Booooora!", "Resultado vem!", "Disciplina inabalável!", "Fez o que tinha que ser feito!", "Guerreiro(a)!",
+        "Não foi fácil, mas foi feito!", "Superou os limites!", "Cada gota valeu a pena!", "Construindo um legado!", "Você é aço puro!", "Nada de mimimi aqui!", "Treino insano!", "Botou pra quebrar!", "Respeita o treino!", "Campeão(a)!"
+    ];
+
+    const fujaoMessages = [
+        "Já vai?", "Volta aqui covarde!", "Sofá te chamou?", "Vai comer pizza né?", "Deu medinho?", "Desistiu fácil assim?", "Tá fugindo de quê?", "Acha que engana quem?", "Hoje não tem shape...", "Vergonha da profissão!",
+        "Vai chorar?", "Tá doendo é?", "Não aguenta, bebe leite!", "Fujão detectado!", "Correu da raia!", "Vai inventar que desculpa?", "Sua mãe sabe disso?", "Frango não voa, mas corre!", "Tsc tsc tsc...", "Que decepção!",
+        "O verão tá chegando hein...", "Vai desistir agora?", "Cadê a coragem?", "Faltou ódio!", "Assim não cresce!", "Perdeu pro cansaço?", "Covardia tem nome!", "Vai pra casa dormir?", "Treino de turista?", "Desiste não, poxa!",
+        "Tá com pressa pra quê?", "O corpo esfriou?", "Mente fraca!", "Vai se arrepender!", "A saída é pros fracos!", "Volta e termina!", "Não me faça passar vergonha!", "Quem desiste não conquista!", "Isso não é atitude!", "Fraquejou!",
+        "Sério isso?", "Não acredito...", "Que feio!", "Sabia que não ia aguentar!", "O sofá venceu?", "Netflix tá chamando?", "Vai lá, perdedor!", "Sem foco, sem resultado!", "Tchau, mão de alface!", "Fujão!"
+    ];
+
+    const preguicosoMessages = [
+        "Só isso?", "Faltou gás?", "Vai deixar pela metade?", "O frango tá cantando!", "Desistiu no meio?", "Metade do caminho?", "Preguiça bateu?", "Treino de meia tigela!", "Fez corpo mole!", "Tá economizando energia?",
+        "Podia ser melhor...", "Quase lá, mas parou!", "Faltou vontade!", "Meia boca!", "Treino incompleto, shape incompleto!", "Assim não dá!", "Melhore!", "Tá cansado(a)?", "Faltou ódio no coração!", "Não completou por quê?",
+        "Vai ficar devendo!", "Inacabado!", "Serviço de porco!", "Preguiça reina!", "Cadê a disciplina?", "Não fez tudo!", "Pulou exercício né?", "Tô de olho!", "Enganando a si mesmo!", "Shape não aceita desaforo!",
+        "Fez o básico do básico!", "Podia ter ido além!", "Faltou garra!", "Treino fofo!", "Não suou o suficiente!", "Vai embora devendo!", "Conta pela metade!", "Não minta pra si mesmo!", "Preguiça é pecado!", "Vai pagar amanhã!",
+        "Deixou a desejar!", "Incompleto!", "Faltou pouco!", "Não desiste, poxa!", "Era pra ser completo!", "Tá com dó de si mesmo?", "Sem desculpas!", "Podia mais!", "Nota 5!", "Meio treino, zero resultado!"
+    ];
 
     window.app = {
         data: {}, historyData: [], currentUser: null, currentWorkoutIndex: null, isTraining: false,
@@ -304,8 +341,8 @@
                 }
                 if (this.isTraining) {
                     history.pushState({ screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex }, '');
-                    const randomMsg = quitMessages[Math.floor(Math.random() * quitMessages.length)];
-                    this.showCustomModal('danger', 'SAIR?', `🚨 ${randomMsg}`, () => {
+                    const randomMsg = fujaoMessages[Math.floor(Math.random() * fujaoMessages.length)];
+                    this.showCustomModal('danger', 'FUJÃO!', `${randomMsg}`, () => {
                         this.isTraining = false;
                         window.onbeforeunload = null; 
                         localStorage.removeItem('tempWorkoutState'); 
@@ -407,10 +444,10 @@
             actions.innerHTML = ''; 
 
             let color = '#fff';
-            if(type === 'danger') color = 'var(--danger)';
-            if(type === 'warning') color = 'var(--secondary)';
-            if(type === 'success') color = 'var(--success)';
-            if(type === 'info') color = '#38bdf8';
+            if(type === 'danger') color = 'var(--danger)'; // Vermelho
+            if(type === 'warning') color = 'var(--secondary)'; // Amarelo
+            if(type === 'success') color = 'var(--success)'; // Verde
+            if(type === 'info') color = '#38bdf8'; // Azul
             
             title.style.color = color;
 
@@ -418,7 +455,9 @@
                 const btn = document.createElement('button');
                 btn.className = 'btn-dialog btn-primary';
                 btn.innerText = "OK";
-                btn.style.backgroundColor = color;
+                // Botão OK deve ter a cor do contexto
+                btn.style.background = color;
+                btn.style.color = (type === 'warning') ? '#000' : '#fff'; 
                 btn.onclick = () => { modal.style.display = 'none'; if(confirmCallback) confirmCallback(); };
                 actions.appendChild(btn);
             } else {
@@ -431,7 +470,8 @@
                 const btnYes = document.createElement('button');
                 btnYes.className = 'btn-dialog btn-primary';
                 btnYes.innerText = "SIM";
-                btnYes.style.backgroundColor = color;
+                btnYes.style.background = color;
+                btnYes.style.color = (type === 'warning') ? '#000' : '#fff';
                 btnYes.onclick = () => { modal.style.display = 'none'; if(confirmCallback) confirmCallback(); };
                 actions.appendChild(btnYes);
             }
@@ -477,7 +517,7 @@
             userKeys.forEach((id, idx) => {
                 const u = this.data[id];
                 const wrap = document.createElement('div'); wrap.className = 'card-wrapper';
-                let content = `<span>${u.name}</span> <span style="font-size:18px">→</span>`;
+                let content = `<span>${u.name}</span> <span style="font-size:20px; color:var(--secondary)">→</span>`;
                 if(this.isMenuEditing) {
                     content = `<input type="text" class="edit-input" value="${u.name}" onclick="event.stopPropagation()" onchange="window.app.renameUser('${id}', this.value)">`;
                 }
@@ -576,7 +616,7 @@
             } else {
                 const anyChecked = myState.some(Boolean);
                 btnFinish.disabled = !anyChecked;
-                btnFinish.innerText = "FINALIZAR";
+                btnFinish.innerText = "TÁ PAGO!";
             }
             
             w.exercises.forEach((ex, i) => {
@@ -707,7 +747,9 @@
             const chks = document.querySelectorAll('.ex-check'); let p = false;
             for(let c of chks) if(!c.checked) p = true;
             if(p) {
-                this.showCustomModal('warning', 'PENDENTE', `👀 Exercícios faltando.\n\nFinalizar assim?`, () => this.processFinish(true));
+                // Aqui selecionamos uma mensagem PREGUIÇOSA
+                const randomMsg = preguicosoMessages[Math.floor(Math.random() * preguicosoMessages.length)];
+                this.showCustomModal('warning', 'PREGUIÇOSO!', `${randomMsg}\n\nFinalizar assim?`, () => this.processFinish(true));
             } else { this.processFinish(false); }
         },
 
@@ -728,14 +770,15 @@
                         this.isTraining = false; 
                         window.onbeforeunload = null; 
                         localStorage.removeItem('tempWorkoutState');
-                        const randomMsg = successMessages[Math.floor(Math.random()*successMessages.length)];
-                        this.showCustomModal('success', 'BOA!', randomMsg, () => this.goHome());
+                        // Aqui selecionamos uma mensagem MONSTRO
+                        const randomMsg = monstroMessages[Math.floor(Math.random() * monstroMessages.length)];
+                        this.showCustomModal('success', 'MONSTRO!', randomMsg, () => this.goHome());
                     })
                     .catch((err) => {
                         this.toggleLoading(false);
                         alert("Erro ao salvar no Firebase.");
                         const btn = document.getElementById('btn-finish-main'); 
-                        btn.innerText = "FINALIZAR"; btn.disabled = false;
+                        btn.innerText = "TÁ PAGO!"; btn.disabled = false;
                     });
             } else {
                 this.toggleLoading(false);
@@ -743,7 +786,6 @@
             }
         },
 
-        // Usando 'info' para manter estilo limpo, mas a lógica showCustomModal garante Sim/Não para 'info' também
         confirmSpotify: function() { this.showCustomModal('info', 'SPOTIFY', 'Abrir Spotify?', () => window.open('https://open.spotify.com', '_blank')); },
         confirmYouTube: function(url) { this.showCustomModal('info', 'YOUTUBE', 'Ver vídeo?', () => window.open(url, '_blank')); },
         
