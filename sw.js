@@ -1,8 +1,8 @@
-/* SERVICE WORKER - KINE VERSÃO CAPIVARA
+/* SERVICE WORKER - KINE VERSÃO MOSCA
    Estratégia: Stale-While-Revalidate
 */
 
-const CACHE_NAME = 'kine-capivara-v1';
+const CACHE_NAME = 'kine-mosca-v2';
 const urlsToCache = [
   './',
   './index.html',
