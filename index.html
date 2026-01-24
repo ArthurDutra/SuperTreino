@@ -143,22 +143,12 @@
         .btn-primary { background: var(--primary); color: #fff; }
         .btn-secondary { background: #2a2a2a; color: #fff; }
 
-        /* Gamification & History */
+        /* History */
         .history-item { background: var(--card); padding: 20px; border-radius: 16px; margin-bottom: 12px; display: flex; flex-direction: column; border: 1px solid #222; position: relative; }
         .hist-top { display: flex; justify-content: space-between; width: 100%; align-items: center; }
         .hist-date { font-weight: 700; color: #fff; font-size: 15px; }
         .hist-workout { font-size: 13px; color: #666; font-weight: 500; margin-top: 2px; text-transform: uppercase; }
         .skipped-list { color: var(--secondary); font-size: 11px; margin-top: 10px; border-top: 1px solid #222; padding-top: 8px; font-weight: 600; }
-
-        .game-header { text-align: center; margin-bottom: 30px; }
-        .total-days-badge { background: #1a1a1a; border: 1px solid #333; padding: 15px 30px; border-radius: 100px; font-weight: 800; font-size: 24px; color: var(--primary); letter-spacing: -1px; display: inline-block; }
-        .medal-shelf { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 30px; }
-        .medal-box { background: var(--card); border: 1px solid #222; border-radius: 12px; padding: 15px 10px; text-align: center; position: relative; opacity: 0.4; filter: grayscale(1); transition: 0.3s; }
-        .medal-unlocked { opacity: 1; filter: grayscale(0); border-color: #333; background: #1a1a1a; }
-        .medal-icon { font-size: 32px; margin-bottom: 8px; display: block; }
-        .medal-title { font-size: 11px; font-weight: 700; color: #fff; text-transform: uppercase; display: block; letter-spacing: 0.5px; }
-        .medal-desc { font-size: 10px; color: #666; display: block; margin-top: 4px; }
-        .medal-progress { font-size: 10px; color: var(--primary); font-weight: bold; margin-top: 6px; display: block; }
 
         .version-label { position: fixed; bottom: 8px; left: 0; width: 100%; text-align: center; font-size: 9px; color: #333; pointer-events: none; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
 
@@ -182,7 +172,7 @@
         <div style="color:#666; font-size:12px; margin-top:10px; font-weight:500;">O Kine precisa de internet.</div>
     </div>
 
-    <div class="version-label">VERSÃO: CAPIVARA</div>
+    <div class="version-label">VERSÃO: TATU</div>
 
     <div id="screen-menu" class="screen">
         <div class="header-bar">
@@ -228,43 +218,9 @@
         <div class="header-bar">
             <button class="btn-icon" onclick="window.app.navigate('screen-workout-select')">←</button>
             <span class="user-title">Histórico</span>
-            <div class="header-actions">
-                <button class="btn-icon" onclick="window.app.openGamification()">★</button>
-            </div>
-        </div>
-        <div id="history-list"></div>
-    </div>
-
-    <div id="screen-gamification" class="screen">
-        <div class="header-bar">
-            <button class="btn-icon" onclick="window.app.navigate('screen-history')">←</button>
-            <span class="user-title" style="color:var(--secondary)">Conquistas</span>
             <div style="width:40px"></div>
         </div>
-        <div class="game-header">
-            <div class="total-days-badge"><span id="total-days-count">0</span> DIAS</div>
-        </div>
-        
-        <h3 style="margin-left:10px; color:#444; font-size:10px; letter-spacing:1px; text-transform:uppercase;">Semana Atual</h3>
-        <div class="medal-shelf">
-            <div class="medal-box" id="medal-week-3"><span class="medal-icon">✦</span><span class="medal-title">Bronze</span><span class="medal-desc">3 dias</span><span class="medal-progress" id="prog-week-3">0/3</span></div>
-            <div class="medal-box" id="medal-week-4"><span class="medal-icon">✦</span><span class="medal-title">Prata</span><span class="medal-desc">4 dias</span><span class="medal-progress" id="prog-week-4">0/4</span></div>
-            <div class="medal-box" id="medal-week-5"><span class="medal-icon">✦</span><span class="medal-title">Ouro</span><span class="medal-desc">5 dias</span><span class="medal-progress" id="prog-week-5">0/5</span></div>
-        </div>
-
-        <h3 style="margin-left:10px; color:#444; font-size:10px; letter-spacing:1px; text-transform:uppercase;">Mês Atual</h3>
-        <div class="medal-shelf">
-            <div class="medal-box" id="medal-month-2"><span class="medal-icon">✦</span><span class="medal-title">Bronze</span><span class="medal-desc">2 sem.</span><span class="medal-progress" id="prog-month-2">0/2</span></div>
-            <div class="medal-box" id="medal-month-3"><span class="medal-icon">✦</span><span class="medal-title">Prata</span><span class="medal-desc">3 sem.</span><span class="medal-progress" id="prog-month-3">0/3</span></div>
-            <div class="medal-box" id="medal-month-4"><span class="medal-icon">✦</span><span class="medal-title">Ouro</span><span class="medal-desc">4 sem.</span><span class="medal-progress" id="prog-month-4">0/4</span></div>
-        </div>
-
-        <h3 style="margin-left:10px; color:#444; font-size:10px; letter-spacing:1px; text-transform:uppercase;">Ano Atual</h3>
-        <div class="medal-shelf">
-            <div class="medal-box" id="medal-year-8"><span class="medal-icon">✦</span><span class="medal-title">Bronze</span><span class="medal-desc">8 meses</span><span class="medal-progress" id="prog-year-8">0/8</span></div>
-            <div class="medal-box" id="medal-year-9"><span class="medal-icon">✦</span><span class="medal-title">Prata</span><span class="medal-desc">9 meses</span><span class="medal-progress" id="prog-year-9">0/9</span></div>
-            <div class="medal-box" id="medal-year-10"><span class="medal-icon">✦</span><span class="medal-title">Ouro</span><span class="medal-desc">10 meses</span><span class="medal-progress" id="prog-year-10">0/10</span></div>
-        </div>
+        <div id="history-list"></div>
     </div>
 
     <div id="custom-modal" class="modal-overlay">
@@ -388,7 +344,6 @@
                 this.historyData = val ? Object.keys(val).map(k => ({...val[k], firebaseId: k})).sort((a,b) => b.id - a.id) : [];
                 const currentScreen = document.querySelector('.screen.visible')?.id;
                 if(currentScreen === 'screen-history') this.renderHistoryList();
-                if(currentScreen === 'screen-gamification') this.updateMedalsUI();
                 this.checkLoadComplete();
             });
         },
@@ -439,7 +394,6 @@
             else if (state.screen === 'screen-workout-select') { this.currentUser = state.userId; this.renderWorkoutSelectScreen(); }
             else if (state.screen === 'screen-active-workout') { this.currentUser = state.userId; this.currentWorkoutIndex = state.wIndex; this.renderActiveWorkout(); }
             else if (state.screen === 'screen-history') { this.renderHistoryList(); }
-            else if (state.screen === 'screen-gamification') { this.updateMedalsUI(); }
         },
 
         showCustomModal: function(type, titleText, msgText, confirmCallback, cancelCallback) {
@@ -456,10 +410,10 @@
             if(type === 'danger') color = 'var(--danger)';
             if(type === 'warning') color = 'var(--secondary)';
             if(type === 'success') color = 'var(--success)';
+            if(type === 'info') color = '#38bdf8';
             
             title.style.color = color;
 
-            // SUCCESS entra apenas com OK, todo o resto (incluindo info/question) entra com SIM/NÃO
             if (type === 'success') {
                 const btn = document.createElement('button');
                 btn.className = 'btn-dialog btn-primary';
@@ -532,7 +486,6 @@
                 btn.onclick = () => this.navigate('screen-workout-select', { userId: id });
                 if(this.isMenuEditing) {
                     const ctrl = document.createElement('div'); ctrl.className = 'edit-controls-floating';
-                    // LÓGICA DE SETAS: Só aparece ↑ se idx > 0. Só aparece ↓ se idx < length - 1
                     ctrl.innerHTML = `<div class="btn-float btn-del" onclick="window.app.deleteUser(event, '${id}')">✕</div>`;
                     wrap.appendChild(ctrl);
                 }
@@ -580,7 +533,6 @@
                 
                 if(this.isSelectEditing) {
                     const ctrl = document.createElement('div'); ctrl.className = 'edit-controls-floating';
-                    // LÓGICA DE SETAS
                     const btnUp = idx > 0 ? `<div class="btn-float btn-reorder" onclick="window.app.reorderWorkout(${idx}, -1)">↑</div>` : '';
                     const btnDown = idx < u.workouts.length - 1 ? `<div class="btn-float btn-reorder" onclick="window.app.reorderWorkout(${idx}, 1)">↓</div>` : '';
                     ctrl.innerHTML = `<div class="btn-float btn-del" onclick="window.app.deleteWorkout(event, ${idx})">✕</div>${btnUp}${btnDown}`;
@@ -791,76 +743,10 @@
             }
         },
 
-        // Usando 'question' para forçar o botão Sim/Não
-        confirmSpotify: function() { this.showCustomModal('question', 'SPOTIFY', 'Abrir Spotify?', () => window.open('https://open.spotify.com', '_blank')); },
-        confirmYouTube: function(url) { this.showCustomModal('question', 'YOUTUBE', 'Ver vídeo?', () => window.open(url, '_blank')); },
+        // Usando 'info' para manter estilo limpo, mas a lógica showCustomModal garante Sim/Não para 'info' também
+        confirmSpotify: function() { this.showCustomModal('info', 'SPOTIFY', 'Abrir Spotify?', () => window.open('https://open.spotify.com', '_blank')); },
+        confirmYouTube: function(url) { this.showCustomModal('info', 'YOUTUBE', 'Ver vídeo?', () => window.open(url, '_blank')); },
         
-        openGamification: function() { this.navigate('screen-gamification'); },
-        
-        updateMedalsUI: function() {
-            if(!this.historyData) return;
-            let myHist = this.historyData;
-            if(this.currentUser && this.data[this.currentUser]) {
-                 myHist = this.historyData.filter(h => h.user === this.data[this.currentUser].name);
-            }
-            const uniqueDates = new Set();
-            myHist.forEach(h => {
-                const parts = h.date.split('/'); 
-                uniqueDates.add(`${parts[2]}-${parts[1]}-${parts[0]}`); 
-            });
-            const sortedDates = Array.from(uniqueDates).sort();
-            document.getElementById('total-days-count').innerText = sortedDates.length;
-            
-            const now = new Date();
-            const currentWeekNum = this.getWeekNumber(now);
-            const currentMonthKey = `${now.getFullYear()}-${now.getMonth()}`;
-            const currentYearKey = now.getFullYear();
-            let daysInThisWeek = 0;
-            const weeksInMonth = {};
-            const monthsInYear = {};
-
-            sortedDates.forEach(dateStr => {
-                const [y, m, d] = dateStr.split('-').map(Number);
-                const dateObj = new Date(y, m-1, d);
-                const weekNum = this.getWeekNumber(dateObj);
-                const monthKey = `${y}-${m-1}`;
-                const yearKey = y;
-                if (y === now.getFullYear() && weekNum === currentWeekNum) daysInThisWeek++;
-                if (!weeksInMonth[monthKey]) weeksInMonth[monthKey] = new Set();
-                weeksInMonth[monthKey].add(weekNum);
-                if (!monthsInYear[yearKey]) monthsInYear[yearKey] = new Set();
-                monthsInYear[yearKey].add(m-1);
-            });
-            
-            this.setMedalState('week-3', daysInThisWeek, 3);
-            this.setMedalState('week-4', daysInThisWeek, 4);
-            this.setMedalState('week-5', daysInThisWeek, 5);
-            const weeksDoneThisMonth = weeksInMonth[currentMonthKey] ? weeksInMonth[currentMonthKey].size : 0;
-            this.setMedalState('month-2', weeksDoneThisMonth, 2);
-            this.setMedalState('month-3', weeksDoneThisMonth, 3);
-            this.setMedalState('month-4', weeksDoneThisMonth, 4);
-            const monthsDoneThisYear = monthsInYear[currentYearKey] ? monthsInYear[currentYearKey].size : 0;
-            this.setMedalState('year-8', monthsDoneThisYear, 8);
-            this.setMedalState('year-9', monthsDoneThisYear, 9);
-            this.setMedalState('year-10', monthsDoneThisYear, 10);
-        },
-
-        setMedalState: function(id, current, target) {
-            const el = document.getElementById(`medal-${id}`);
-            const prog = document.getElementById(`prog-${id}`);
-            const isUnlocked = current >= target;
-            prog.innerText = `${Math.min(current, target)}/${target}`;
-            if (isUnlocked) { el.classList.add('medal-unlocked'); prog.style.color = '#fff'; } 
-            else { el.classList.remove('medal-unlocked'); prog.style.color = 'var(--primary)'; }
-        },
-
-        getWeekNumber: function(d) {
-            d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-            d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
-            var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
-            return Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
-        },
-
         toggleScreen: function(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('visible')); document.getElementById(id).classList.add('visible'); },
         updateEditIcon: function(bid, sid, isE) { const b=document.getElementById(bid); const s=document.getElementById(sid); if(isE) { b.innerText='💾'; b.classList.add('icon-active'); s.classList.add('editing'); } else { b.innerText='✎'; b.classList.remove('icon-active'); s.classList.remove('editing'); } }
     };
