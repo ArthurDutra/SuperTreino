@@ -1,15 +1,15 @@
-/* SERVICE WORKER - KINE FORMIGA (FIX)
-   Versão corrigida para instalação PWA.
+/* SERVICE WORKER - KINE CAMUNDONGO
+   Versão atualizada para forçar atualização no cache do navegador.
 */
 
-const CACHE_NAME = 'kine-formiga-fix-v2';
+const CACHE_NAME = 'kine-camundongo-v1';
 
-// CORREÇÃO: Caminhos com /Kine/
+// Arquivos da interface gráfica para cache
 const urlsToCache = [
-  '/Kine/',
-  '/Kine/index.html',
-  '/Kine/manifest.json',
-  '/Kine/icon.png'
+  './',
+  './index.html',
+  './manifest.json',
+  './icon.jpg'
 ];
 
 self.addEventListener('install', event => {
