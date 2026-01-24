@@ -183,7 +183,7 @@
         }
         .editing .edit-controls-floating { opacity: 1; pointer-events: auto; }
         
-        /* BOTÕES COLORIDOS RESTAURADOS */
+        /* BOTÕES COLORIDOS E SÓLIDOS (Sem transparência) */
         .btn-float { 
             width: 40px; 
             height: 40px; 
@@ -192,13 +192,14 @@
             align-items: center; 
             justify-content: center; 
             font-weight: 900; 
-            border: 3px solid var(--bg); /* Borda para separar do fundo */
+            border: 3px solid var(--bg); /* Borda da cor do fundo para destacar */
             cursor: pointer; 
             color: #fff; 
             font-size: 18px; 
             box-shadow: 0 4px 10px rgba(0,0,0,0.5); 
         }
         
+        /* Cores Específicas e IMPORTANTE para sobrepor */
         .btn-del { background-color: var(--danger) !important; color: #fff !important; }
         .btn-reorder { background-color: var(--secondary) !important; color: #000 !important; }
         
@@ -254,7 +255,7 @@
         <div style="color:#a1a1aa; font-size:14px; margin-top:10px; font-weight:600;">O Kine precisa voar online.</div>
     </div>
 
-    <div class="version-label">VERSÃO: ARARA-AZUL</div>
+    <div class="version-label">VERSÃO: ONÇA-PINTADA</div>
 
     <div id="screen-menu" class="screen">
         <div class="header-bar">
@@ -380,27 +381,34 @@
                 history.replaceState({ screen: 'screen-menu' }, '');
             }
             
+            // --- TRINCHEIRA DE HISTÓRICO: PROTEÇÃO CONTRA DUPLO CLIQUE ---
             window.onpopstate = (event) => {
                 if (document.getElementById('input-modal').style.display === 'flex') {
                     document.getElementById('input-modal').style.display = 'none';
-                    history.pushState(history.state, '');
+                    history.pushState(history.state, ''); // Recoloca o estado se fechou modal
                     return;
                 }
 
                 if (this.isTraining) {
-                    history.pushState({ screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex }, '');
+                    // SE O USUÁRIO TENTAR SAIR:
+                    // 1. Empurra imediatamente de volta para a trincheira segura
+                    history.pushState({ screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex }, '', '#active');
 
+                    // 2. Se já tinha modal, fecha (usuário cancelou a saída)
                     if (document.getElementById('custom-modal').style.display === 'flex') {
                         document.getElementById('custom-modal').style.display = 'none';
                         return; 
                     }
 
+                    // 3. Se não tinha modal, mostra o Fujão
                     const randomMsg = fujaoMessages[Math.floor(Math.random() * fujaoMessages.length)];
                     this.showCustomModal('danger', 'FUJÃO?', `${randomMsg}`, () => {
                         this.isTraining = false;
                         window.onbeforeunload = null; 
                         localStorage.removeItem('tempWorkoutState'); 
-                        this.goHome();
+                        // Limpa a URL e reseta para o menu
+                        location.replace(location.pathname);
+                        setTimeout(() => location.reload(), 100);
                     });
                     return;
                 }
@@ -658,14 +666,12 @@
                 localStorage.removeItem('tempWorkoutState');
                 if(hasExercises) {
                     this.isTraining = true;
-                    window.onbeforeunload = function(e) {
-                        e.preventDefault();
-                        e.returnValue = ''; 
-                        return '';
-                    };
+                    // --- PROTEÇÃO TRINCHEIRA: HASHES NA URL ---
+                    // Criamos um histórico "falso" mas robusto
                     const state = { screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex };
-                    history.pushState(state, '');
-                    history.pushState(state, '');
+                    history.pushState(state, '', '#guard1');
+                    history.pushState(state, '', '#guard2');
+                    history.pushState(state, '', '#active');
                 }
             }
             
