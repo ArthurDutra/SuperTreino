@@ -242,7 +242,7 @@
         <div style="color:#a1a1aa; font-size:14px; margin-top:10px; font-weight:600;">O Kine precisa voar online.</div>
     </div>
 
-    <div class="version-label">VERSÃO: JACARÉ</div>
+    <div class="version-label">VERSÃO: MICO-LEÃO-DOURADO</div>
 
     <div id="screen-menu" class="screen">
         <div class="header-bar">
@@ -384,7 +384,8 @@
                     }
 
                     const randomMsg = fujaoMessages[Math.floor(Math.random() * fujaoMessages.length)];
-                    this.showCustomModal('danger', 'FUJÃO!', `${randomMsg}`, () => {
+                    // AJUSTE: Título alterado para "FUJÃO?"
+                    this.showCustomModal('danger', 'FUJÃO?', `${randomMsg}`, () => {
                         this.isTraining = false;
                         window.onbeforeunload = null; 
                         localStorage.removeItem('tempWorkoutState'); 
@@ -467,6 +468,12 @@
         },
 
         restoreScreen: function(state) {
+            // AJUSTE: RESET DE EDIÇÃO
+            // Sempre que navegar (voltar/avançar), limpa qualquer modo de edição ativo
+            this.isMenuEditing = false;
+            this.isSelectEditing = false;
+            this.isActiveEditing = false;
+
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('visible'));
             document.getElementById(state.screen).classList.add('visible');
             window.scrollTo(0,0);
@@ -802,7 +809,6 @@
             if(n) { if(!u.workouts)u.workouts=[]; u.workouts.push({id:id, title:`${id} - ${n}`, exercises:[]}); this.save(); this.renderWorkoutSelectScreen(); } 
         },
         addExercise: async function() { 
-            // AJUSTE: MUDANÇA DO TÍTULO DA MODAL
             const n = await this.showInputModal('NOVO EXERCÍCIO', 'Nome do exercício'); 
             if(n) { 
                 const w = this.data[this.currentUser].workouts[this.currentWorkoutIndex];
@@ -821,8 +827,8 @@
             for(let c of chks) if(!c.checked) p = true;
             if(p) {
                 const randomMsg = preguicosoMessages[Math.floor(Math.random() * preguicosoMessages.length)];
-                // AJUSTE: REMOVIDA A PERGUNTA "FINALIZAR ASSIM?"
-                this.showCustomModal('warning', 'PREGUIÇOSO!', randomMsg, () => this.processFinish(true));
+                // AJUSTE: Título alterado para "PREGUIÇA?"
+                this.showCustomModal('warning', 'PREGUIÇA?', randomMsg, () => this.processFinish(true));
             } else { this.processFinish(false); }
         },
 
@@ -858,7 +864,6 @@
             }
         },
 
-        // AJUSTE: TEXTO SPOTIFY ALTERADO
         confirmSpotify: function() { this.showCustomModal('danger', 'SPOTIFY', 'Musiquinha?', () => window.open('https://open.spotify.com', '_blank')); },
         confirmYouTube: function(url) { this.showCustomModal('danger', 'YOUTUBE', 'Ver execução?', () => window.open(url, '_blank')); },
         
