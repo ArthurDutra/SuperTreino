@@ -183,7 +183,7 @@
         }
         .editing .edit-controls-floating { opacity: 1; pointer-events: auto; }
         
-        /* BOTÕES COLORIDOS E SÓLIDOS (Sem transparência) */
+        /* BOTÕES COLORIDOS RESTAURADOS */
         .btn-float { 
             width: 40px; 
             height: 40px; 
@@ -192,14 +192,13 @@
             align-items: center; 
             justify-content: center; 
             font-weight: 900; 
-            border: 3px solid var(--bg); /* Borda da cor do fundo para destacar */
+            border: 3px solid var(--bg); /* Borda para separar do fundo */
             cursor: pointer; 
             color: #fff; 
             font-size: 18px; 
             box-shadow: 0 4px 10px rgba(0,0,0,0.5); 
         }
         
-        /* Cores Específicas e IMPORTANTE para sobrepor */
         .btn-del { background-color: var(--danger) !important; color: #fff !important; }
         .btn-reorder { background-color: var(--secondary) !important; color: #000 !important; }
         
@@ -255,7 +254,7 @@
         <div style="color:#a1a1aa; font-size:14px; margin-top:10px; font-weight:600;">O Kine precisa voar online.</div>
     </div>
 
-    <div class="version-label">VERSÃO: TATU-CANASTRA</div>
+    <div class="version-label">VERSÃO: ARARA-AZUL</div>
 
     <div id="screen-menu" class="screen">
         <div class="header-bar">
@@ -377,14 +376,10 @@
             window.addEventListener('online', () => { this.toggleOffline(false); location.reload(); });
             window.addEventListener('offline', () => this.toggleOffline(true));
 
-            // Permite manipulação manual do histórico
-            if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-
             if (!history.state || history.state.screen !== 'screen-menu') {
                 history.replaceState({ screen: 'screen-menu' }, '');
             }
             
-            // --- BUFFER DE FORÇA BRUTA (TATU-CANASTRA) ---
             window.onpopstate = (event) => {
                 if (document.getElementById('input-modal').style.display === 'flex') {
                     document.getElementById('input-modal').style.display = 'none';
@@ -393,27 +388,19 @@
                 }
 
                 if (this.isTraining) {
-                    // Se o usuário clicar "voltar", ele cai nesta armadilha
-                    
-                    // 1. Imediatamente empurra mais estados para recuperar o "buffer"
-                    for(let i=0; i<5; i++) {
-                       history.pushState({ screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex }, '');
-                    }
+                    history.pushState({ screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex }, '');
 
-                    // 2. Se já tinha modal, fecha (significa que ele apertou voltar com o modal aberto)
                     if (document.getElementById('custom-modal').style.display === 'flex') {
                         document.getElementById('custom-modal').style.display = 'none';
                         return; 
                     }
 
-                    // 3. Mostra o FUJÃO
                     const randomMsg = fujaoMessages[Math.floor(Math.random() * fujaoMessages.length)];
                     this.showCustomModal('danger', 'FUJÃO?', `${randomMsg}`, () => {
                         this.isTraining = false;
                         window.onbeforeunload = null; 
                         localStorage.removeItem('tempWorkoutState'); 
-                        // Limpa o histórico brutalmente e recarrega
-                        location.replace(location.pathname);
+                        this.goHome();
                     });
                     return;
                 }
@@ -671,11 +658,14 @@
                 localStorage.removeItem('tempWorkoutState');
                 if(hasExercises) {
                     this.isTraining = true;
-                    // --- ATIVAÇÃO DO BUFFER (FORÇA BRUTA) ---
-                    // Empurra 10 estados para garantir que cliques rápidos não matem o app
-                    for(let i=0; i<10; i++) {
-                       history.pushState({ screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex }, '');
-                    }
+                    window.onbeforeunload = function(e) {
+                        e.preventDefault();
+                        e.returnValue = ''; 
+                        return '';
+                    };
+                    const state = { screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex };
+                    history.pushState(state, '');
+                    history.pushState(state, '');
                 }
             }
             
@@ -870,10 +860,7 @@
                         window.onbeforeunload = null; 
                         localStorage.removeItem('tempWorkoutState');
                         const randomMsg = monstroMessages[Math.floor(Math.random() * monstroMessages.length)];
-                        this.showCustomModal('success', 'MONSTRO!', randomMsg, () => {
-                            // Limpa histórico ao terminar
-                            location.replace(location.pathname);
-                        });
+                        this.showCustomModal('success', 'MONSTRO!', randomMsg, () => this.goHome());
                     })
                     .catch((err) => {
                         this.toggleLoading(false);
