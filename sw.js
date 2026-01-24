@@ -1,8 +1,8 @@
-/* SERVICE WORKER - KINE VERSÃO TATU-BOLA
+/* SERVICE WORKER - KINE VERSÃO GAMBÁ
    Estratégia: Stale-While-Revalidate
 */
 
-const CACHE_NAME = 'kine-tatu-bola-v1';
+const CACHE_NAME = 'kine-gamba-v1';
 const urlsToCache = [
   './',
   './index.html',
