@@ -242,7 +242,7 @@
         <div style="color:#a1a1aa; font-size:14px; margin-top:10px; font-weight:600;">O Kine precisa voar online.</div>
     </div>
 
-    <div class="version-label">VERSÃO: ZEBRA</div>
+    <div class="version-label">VERSÃO: JACARÉ</div>
 
     <div id="screen-menu" class="screen">
         <div class="header-bar">
@@ -679,7 +679,7 @@
                 // --- MODO NORMAL ---
                 let exInfo = `<span class="ex-name">${ex.name}</span><div class="ex-meta"><span class="badge">${ex.sets}x${ex.reps}</span> <button class="btn-video" onclick="window.app.confirmYouTube('${vid}')"><img src="youtube.png" alt="Ver"></button></div>`;
                 
-                // --- MODO EDIÇÃO (REFEITO - ZEBRA) ---
+                // --- MODO EDIÇÃO ---
                 if(this.isActiveEditing) {
                     exInfo = `
                         <div>
@@ -707,7 +707,6 @@
                 }
 
                 if (this.isActiveEditing) {
-                    // Sem checkbox no modo edição para limpar a visualização
                      div.innerHTML = `<div class="exercise-header"><div class="ex-info">${exInfo}</div></div>${controls}`;
                 } else {
                      div.innerHTML = `<div class="exercise-header"><div class="chk-container"><input type="checkbox" class="ex-check" data-index="${i}" onchange="window.app.autoSaveState()" ${isChecked}><span class="custom-chk"></span></div><div class="ex-info">${exInfo}</div></div>${controls}<div class="weight-control"><span class="weight-label">CARGA</span><button class="btn-weight" onclick="window.app.chgWeight(${i}, -1)">-</button><div class="weight-display">${weightText}</div><button class="btn-weight" onclick="window.app.chgWeight(${i}, 1)">+</button></div>`;
@@ -803,7 +802,8 @@
             if(n) { if(!u.workouts)u.workouts=[]; u.workouts.push({id:id, title:`${id} - ${n}`, exercises:[]}); this.save(); this.renderWorkoutSelectScreen(); } 
         },
         addExercise: async function() { 
-            const n = await this.showInputModal('EXERCÍCIO', 'Nome do exercício'); 
+            // AJUSTE: MUDANÇA DO TÍTULO DA MODAL
+            const n = await this.showInputModal('NOVO EXERCÍCIO', 'Nome do exercício'); 
             if(n) { 
                 const w = this.data[this.currentUser].workouts[this.currentWorkoutIndex];
                 if(!w.exercises)w.exercises=[]; 
@@ -821,7 +821,8 @@
             for(let c of chks) if(!c.checked) p = true;
             if(p) {
                 const randomMsg = preguicosoMessages[Math.floor(Math.random() * preguicosoMessages.length)];
-                this.showCustomModal('warning', 'PREGUIÇOSO!', `${randomMsg}\n\nFinalizar assim?`, () => this.processFinish(true));
+                // AJUSTE: REMOVIDA A PERGUNTA "FINALIZAR ASSIM?"
+                this.showCustomModal('warning', 'PREGUIÇOSO!', randomMsg, () => this.processFinish(true));
             } else { this.processFinish(false); }
         },
 
@@ -857,7 +858,8 @@
             }
         },
 
-        confirmSpotify: function() { this.showCustomModal('danger', 'SPOTIFY', 'Abrir Spotify?', () => window.open('https://open.spotify.com', '_blank')); },
+        // AJUSTE: TEXTO SPOTIFY ALTERADO
+        confirmSpotify: function() { this.showCustomModal('danger', 'SPOTIFY', 'Musiquinha?', () => window.open('https://open.spotify.com', '_blank')); },
         confirmYouTube: function(url) { this.showCustomModal('danger', 'YOUTUBE', 'Ver execução?', () => window.open(url, '_blank')); },
         
         toggleScreen: function(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('visible')); document.getElementById(id).classList.add('visible'); },
