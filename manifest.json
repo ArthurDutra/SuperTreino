@@ -1,12 +1,12 @@
 {
-  "name": "Super Treino",
-  "short_name": "SuperTreino",
-  "id": "/SuperTreino/",
+  "name": "Kine",
+  "short_name": "Kine",
+  "id": "/Kine/",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#121212",
-  "theme_color": "#121212",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
   "orientation": "portrait",
   "icons": [
     {
