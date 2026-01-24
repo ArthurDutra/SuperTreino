@@ -1,8 +1,8 @@
-/* SERVICE WORKER - KINE VERSÃO GRILO
+/* SERVICE WORKER - KINE VERSÃO MICO-LEÃO
    Estratégia: Stale-While-Revalidate
 */
 
-const CACHE_NAME = 'kine-grilo-v1';
+const CACHE_NAME = 'kine-mico-leao-v1';
 const urlsToCache = [
   './',
   './index.html',
