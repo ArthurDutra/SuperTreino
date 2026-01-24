@@ -1,8 +1,8 @@
-/* SERVICE WORKER - KINE CAMUNDONGO
+/* SERVICE WORKER - HIPOPOTAMO
    Versão atualizada para forçar atualização no cache do navegador.
 */
 
-const CACHE_NAME = 'kine-camundongo-v2-fix';
+const CACHE_NAME = 'kine-hipopotamo-v1';
 
 // Arquivos da interface gráfica para cache
 const urlsToCache = [
