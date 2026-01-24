@@ -1,8 +1,8 @@
-/* SERVICE WORKER - KINE VERSÃO MICO-LEÃO
+/* SERVICE WORKER - KINE VERSÃO TATU-BOLA
    Estratégia: Stale-While-Revalidate
 */
 
-const CACHE_NAME = 'kine-mico-leao-v1';
+const CACHE_NAME = 'kine-tatu-bola-v1';
 const urlsToCache = [
   './',
   './index.html',
