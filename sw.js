@@ -1,11 +1,14 @@
-/* SERVICE WORKER - KINE ARARA v1
+/* SERVICE WORKER - KINE JAGUATIRICA v1
    Estratégia: Network First para arquivos principais (HTML/Data)
 */
 
-const CACHE_NAME = 'kine-arara-v1';
+const CACHE_NAME = 'kine-jaguatirica-v1';
 const urlsToCache = [
   './icon.png',
-  './manifest.json'
+  './manifest.json',
+  './kine.png',
+  './spotify.png',
+  './youtube.png'
 ];
 
 self.addEventListener('install', event => {
