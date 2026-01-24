@@ -194,7 +194,7 @@
         <div style="color:#a1a1aa; font-size:14px; margin-top:10px; font-weight:600;">O Kine precisa voar online.</div>
     </div>
 
-    <div class="version-label">VERSÃO: CAPIVARA</div>
+    <div class="version-label">VERSÃO: MOSCA</div>
 
     <div id="screen-menu" class="screen">
         <div class="header-bar">
@@ -301,7 +301,7 @@
             }
         }
 
-        // --- PROTOCOLO CAPIVARA v2.0 (PushState Trap) ---
+        // --- PROTOCOLO CAPIBARA v1.1 (MOSCA) ---
         const CapibaraProtocol = {
             state: { isActive: false, isMediaModalOpen: false, isFujaoModalOpen: false },
             _handler: null,
@@ -310,43 +310,40 @@
                 if (this.state.isActive) return;
                 console.log("Capibara: Iniciando blindagem.");
                 this.state.isActive = true;
-                this.state.isFujaoModalOpen = false;
-                
-                // 1. Assegurar que temos um estado no histórico para manipular (PDF Seção 5.1)
-                window.history.pushState({ context: 'kine_exercise_guard' }, document.title, window.location.href);
-                
+                const baseState = { context: 'kine_base', timestamp: Date.now() };
+                const guardState = { context: 'kine_workout_guard', timestamp: Date.now() };
+                window.history.replaceState(baseState, document.title, window.location.href);
+                window.history.pushState(guardState, document.title, window.location.href);
                 this._handler = this.handlePopState.bind(this);
                 window.addEventListener('popstate', this._handler);
             },
 
             handlePopState: function(event) {
                 if (!this.state.isActive) return;
+                const destState = event.state;
+                console.log("Capibara: PopState ->", destState);
 
-                // CENÁRIO EXCEÇÃO: Mídia (Spotify/YouTube) aberta
-                if (this.state.isMediaModalOpen) {
-                    this.closeMediaUI();
-                    // Restaurar o guard para não ficar desprotegido
-                    window.history.pushState({ context: 'kine_exercise_guard' }, '', window.location.href);
+                // CENÁRIO 1: Voltou com FUJÃO aberto
+                if (this.state.isFujaoModalOpen) {
+                    console.log("Ação: Segundo Back no Fujão -> SAIR.");
+                    this.confirmExit();
                     return;
                 }
 
-                // CENÁRIO 1: O modal NÃO está aberto. (Primeiro clique em Voltar)
-                // Ação: Abrir modal e armar a "Armadilha"
-                if (!this.state.isFujaoModalOpen) {
-                    this.openFujaoUI();
-                    
-                    // A "Armadilha" (The Trap) - PDF Seção 5.1
-                    // O navegador acabou de dar um 'pop'. Precisamos dar um 'push' imediato
-                    // para restaurar a pilha e permitir que o botão voltar seja clicado novamente
-                    window.history.pushState({ context: 'kine_trap' }, document.title, window.location.href);
-                    console.log("Capibara: Trap ativada (PushState).");
-                } 
-                // CENÁRIO 2: O modal JÁ ESTÁ aberto. (Segundo clique em Voltar)
-                // Ação: O usuário confirmou a saída.
-                else {
-                    console.log("Capibara: Saída confirmada.");
-                    this.confirmExit();
+                // CENÁRIO 2: Voltou com Mídia aberta
+                if (this.state.isMediaModalOpen) {
+                    console.log("Ação: Fechar Mídia.");
+                    this.closeMediaUI();
+                    if (!destState || destState.context !== 'kine_workout_guard') {
+                        window.history.replaceState({ context: 'kine_workout_guard' }, '');
+                    }
+                    return;
                 }
+
+                // CENÁRIO 3: Voltou no Treino (Trigger da Armadilha)
+                console.log("Ação: Fuga detectada! Acionando armadilha.");
+                this.openFujaoUI();
+                window.history.pushState({ context: 'kine_modal_fujao_active' }, '');
             },
 
             openMediaModal: function() {
@@ -368,9 +365,9 @@
                      this.confirmExit();
                 }, () => {
                     // Callback do NÃO (Ficar)
-                    // Ao ficar, precisamos limpar a flag. O histórico já está com o Trap (criado no handlePopState).
-                    this.state.isFujaoModalOpen = false;
-                    document.getElementById('custom-modal').style.display = 'none';
+                    this.closeFujaoUI();
+                    // Restaura o guarda pois o back o consumiu
+                    window.history.replaceState({ context: 'kine_workout_guard' }, '');
                 });
             },
 
@@ -380,15 +377,15 @@
             },
 
             confirmExit: function() {
+                console.log("Capibara: Saída confirmada.");
+                // Força o fechamento visual imediato
+                this.closeFujaoUI();
+                
                 // Limpa o listener e sai
                 if(this._handler) window.removeEventListener('popstate', this._handler);
                 this.state.isActive = false;
-                this.state.isFujaoModalOpen = false;
                 
-                // Força o fechamento visual
-                document.getElementById('custom-modal').style.display = 'none';
-                
-                // Vai para a tela inicial
+                // Vai para a tela de séries
                 window.app.goHome(); 
             },
 
@@ -514,7 +511,7 @@
                     btnNo.className = 'btn-dialog btn-secondary'; btnNo.innerText = "NÃO";
                     btnNo.onclick = () => { 
                         // FIX: Always close modal first
-                        // modal.style.display = 'none'; // Commented out to let caller handle if needed
+                        modal.style.display = 'none';
                         if(cancelCallback) cancelCallback();
                     };
                     actions.appendChild(btnNo);
@@ -524,7 +521,7 @@
                     btnYes.style.color = (type === 'warning' || type === 'success') ? '#000' : '#fff';
                     btnYes.onclick = () => { 
                         // FIX: Always close modal first
-                        // modal.style.display = 'none'; // Commented out to let caller handle
+                        modal.style.display = 'none';
                         if(confirmCallback) confirmCallback();
                     };
                     actions.appendChild(btnYes);
