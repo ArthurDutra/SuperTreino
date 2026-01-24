@@ -154,6 +154,7 @@
         .edit-controls-floating { position: absolute; right: -8px; top: -8px; display: flex; flex-direction: column; gap: 8px; z-index: 10; animation: popIn 0.2s; pointer-events: none; opacity: 0; }
         .editing .edit-controls-floating { opacity: 1; pointer-events: auto; }
         
+        /* Floating Buttons Updated Colors - FORCED */
         .btn-float { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 3px solid var(--bg); cursor: pointer; color: #fff; font-size: 14px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); }
         .btn-del { background-color: var(--danger) !important; color: #fff !important; border: none; }
         .btn-reorder { background-color: var(--secondary) !important; color: #000 !important; border: none; }
@@ -203,12 +204,12 @@
     </div>
 
     <div id="offline-screen" style="display:none;">
-        <div style="font-size:50px; margin-bottom:20px">🐜</div>
+        <div style="font-size:50px; margin-bottom:20px">🐬</div>
         <div style="color:#fff; font-weight:900; font-size:20px; text-transform:uppercase;">Sem Internet</div>
         <div style="color:#a1a1aa; font-size:14px; margin-top:10px; font-weight:600;">O Kine precisa voar online.</div>
     </div>
 
-    <div class="version-label">VERSÃO: TAMANDUÁ-BANDEIRA</div>
+    <div class="version-label">VERSÃO: BOTO-COR-DE-ROSA</div>
 
     <div id="screen-menu" class="screen">
         <div class="header-bar">
@@ -794,7 +795,6 @@
                         localStorage.removeItem('tempWorkoutState');
                         // Aqui selecionamos uma mensagem MONSTRO
                         const randomMsg = monstroMessages[Math.floor(Math.random() * monstroMessages.length)];
-                        // Sucesso agora é 'success', que mapeia para AMARELO na paleta nova
                         this.showCustomModal('success', 'MONSTRO!', randomMsg, () => this.goHome());
                     })
                     .catch((err) => {
