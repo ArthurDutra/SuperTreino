@@ -1,9 +1,9 @@
 {
   "name": "Kine",
   "short_name": "Kine",
-  "id": "/Kine/",
-  "start_url": "/Kine/index.html",
-  "scope": "/Kine/",
+  "id": "/",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#0a0a0a",
   "theme_color": "#0a0a0a",
