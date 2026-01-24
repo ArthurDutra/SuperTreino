@@ -201,102 +201,101 @@
         
         /* CORES RESTAURADAS */
         .btn-del { background-color: var(--danger) !important; color: #fff !important; }
-        .btn-reorder { background-color: var(--secondary) !important; color: #000 !important; }
-        
-        .btn-float:active { transform: scale(0.9); filter: brightness(0.8); }
-
-        .btn-add-item { display: none; } 
-        .editing .btn-add-item { display: block; width: 100%; max-width: 400px; padding: 22px; background: rgba(251, 191, 36, 0.05); border: 2px dashed #3f3f46; color: var(--secondary); border-radius: 16px; cursor: pointer; font-size: 14px; font-weight: 800; margin-top: 15px; text-align: center; letter-spacing: 1px; transition: 0.2s; }
-        .editing .btn-add-item:active { background: rgba(251, 191, 36, 0.1); border-color: var(--secondary); }
-        
-        .editing .edit-input, .editing .edit-controls-floating, .editing .weight-display, .editing .btn-video, .editing .edit-input-box { pointer-events: auto; }
+        .btn-reorder { background-color: #3f3f46 !important; color: #fff !important; }
 
         /* Footer */
-        .footer-fixed { position: fixed; bottom: 0; left: 0; width: 100%; padding: 20px 20px 30px 20px; background: linear-gradient(to top, var(--bg) 80%, transparent); display: flex; justify-content: center; z-index: 90; pointer-events: none; }
-        .btn-finish { width: 100%; max-width: 400px; padding: 22px; background: linear-gradient(135deg, var(--secondary) 0%, #f59e0b 100%); color: #000; font-weight: 900; border: none; border-radius: 20px; font-size: 18px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 10px 40px rgba(251, 191, 36, 0.3); cursor: pointer; pointer-events: auto; transition: transform 0.2s; position: relative; overflow: hidden; }
-        .btn-finish::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transition: 0.5s; }
-        .btn-finish:active { transform: scale(0.96); }
-        .btn-finish:disabled { background: #3f3f46; color: #71717a; box-shadow: none; cursor: default; }
-
-        /* Modals & Dialogs */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; text-align: center; backdrop-filter: blur(12px); animation: fadeIn 0.2s ease-out; }
-        .msg-content { background: #27272a; padding: 32px; border-radius: 28px; border: 1px solid #3f3f46; max-width: 350px; width: 100%; box-shadow: 0 25px 60px rgba(0,0,0,0.6); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .msg-title { font-weight: 900; font-size: 26px; color: #fff; margin-bottom: 12px; letter-spacing: -1px; text-transform: uppercase; }
-        .msg-text { color: #d4d4d8; margin-bottom: 30px; font-size: 16px; line-height: 1.5; font-weight: 500; }
-        .msg-actions { display: flex; gap: 12px; justify-content: center; }
-        .btn-dialog { padding: 16px 24px; border-radius: 14px; font-weight: 800; border: none; cursor: pointer; flex-grow: 1; text-transform: uppercase; font-size: 14px; transition: 0.2s; }
-        .btn-primary { background: var(--secondary); color: #000; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.2); }
-        .btn-secondary { background: #3f3f46; color: #fff; }
-        .btn-secondary:active { background: #52525b; }
+        .footer-action { position: fixed; bottom: 0; left: 0; width: 100%; padding: 20px; background: linear-gradient(0deg, var(--bg) 60%, transparent); z-index: 100; display: flex; gap: 12px; }
+        .btn-main { flex-grow: 1; padding: 20px; border-radius: 18px; border: none; font-size: 16px; font-weight: 900; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s; box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+        .btn-primary { background: var(--secondary); color: #000; }
+        .btn-primary:active { transform: scale(0.96); filter: brightness(0.9); }
+        .btn-primary:disabled { background: #3f3f46; color: #71717a; cursor: not-allowed; box-shadow: none; }
+        .btn-add { width: 64px; height: 64px; border-radius: 20px; background: #3f3f46; color: #fff; font-size: 30px; font-weight: 400; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+        .btn-add:active { transform: scale(0.9); }
 
         /* History */
-        .history-item { background: var(--card); padding: 24px; border-radius: 20px; margin-bottom: 14px; display: flex; flex-direction: column; border: none; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .hist-top { display: flex; justify-content: space-between; width: 100%; align-items: center; }
-        .hist-date { font-weight: 800; color: #fff; font-size: 16px; }
-        .hist-workout { font-size: 14px; color: var(--secondary); font-weight: 600; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .skipped-list { color: var(--danger); font-size: 12px; margin-top: 12px; border-top: 1px solid #3f3f46; padding-top: 10px; font-weight: 700; }
+        .history-item { background: var(--card); border-radius: var(--border-radius); padding: 20px; margin-bottom: 12px; border-left: 4px solid var(--secondary); }
+        .hist-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+        .hist-date { font-size: 12px; color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        .hist-workout { font-size: 18px; font-weight: 800; color: #fff; margin-top: 2px; }
+        .skipped-list { font-size: 12px; color: #f87171; font-weight: 600; margin-top: 8px; padding-top: 8px; border-top: 1px solid #3f3f46; }
 
-        .version-label { position: fixed; bottom: 10px; left: 0; width: 100%; text-align: center; font-size: 10px; color: #52525b; pointer-events: none; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; }
+        /* Modals */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 24px; }
+        .msg-content { background: var(--card); padding: 32px; border-radius: 28px; width: 100%; max-width: 340px; text-align: center; animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid #3f3f46; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        .msg-title { font-size: 24px; font-weight: 900; margin-bottom: 12px; letter-spacing: -0.5px; text-transform: uppercase; }
+        .msg-text { font-size: 16px; color: var(--text-muted); line-height: 1.5; margin-bottom: 28px; font-weight: 500; }
+        .msg-actions { display: flex; gap: 12px; flex-direction: column; }
+        .btn-dialog { padding: 16px; border-radius: 16px; border: none; font-size: 15px; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s; }
+        .btn-dialog.btn-primary { background: var(--secondary); color: #000; }
+        .btn-dialog.btn-secondary { background: #3f3f46; color: #fff; }
+        .btn-dialog:active { transform: scale(0.95); }
 
-        /* Themes */
-        .bd-theme-1 { border-left: none; } 
+        /* Offline Screen */
+        #offline-screen h2 { font-weight: 900; font-size: 32px; margin-bottom: 10px; color: var(--primary); }
+        #offline-screen p { color: var(--text-muted); font-weight: 600; margin-bottom: 30px; }
     </style>
 </head>
 <body>
 
-    <div id="loading-overlay" style="display: flex;">
+    <div id="loading-overlay">
         <div class="spinner"></div>
-        <div style="color:#71717a; font-size:12px; font-weight:900; letter-spacing:3px; text-transform:uppercase;">KINE APP</div>
+        <p style="font-weight: 800; letter-spacing: 1px; color: var(--text-muted)">CARREGANDO...</p>
     </div>
 
-    <div id="offline-screen" style="display:none;">
-        <div style="font-size:50px; margin-bottom:20px">🐬</div>
-        <div style="color:#fff; font-weight:900; font-size:20px; text-transform:uppercase;">Sem Internet</div>
-        <div style="color:#a1a1aa; font-size:14px; margin-top:10px; font-weight:600;">O Kine precisa voar online.</div>
+    <div id="offline-screen" style="display:none">
+        <h2>OFFLINE</h2>
+        <p>Você precisa de internet para entrar.</p>
+        <button class="btn-main btn-primary" onclick="location.reload()" style="flex-grow:0; padding: 20px 40px;">TENTAR NOVAMENTE</button>
     </div>
 
-    <div class="version-label">VERSÃO: TAMANDUÁ-MIRIM</div>
-
+    <!-- Screen: Menu -->
     <div id="screen-menu" class="screen">
         <div class="header-bar">
-            <div class="app-title"><span class="app-logo"><img src="kine.png" class="app-logo-img" alt="logo"></span> KINE</div>
+            <div class="app-title"><img src="icon.png" class="app-logo-img">KINE</div>
             <div class="header-actions">
-                <button class="btn-icon" id="btn-edit-menu" onclick="window.app.toggleMenuEdit()"><span class="gradient-text">✎</span></button>
+                <button class="btn-icon" onclick="window.app.showHistory()"><span class="gradient-text">H</span></button>
+                <button id="btn-edit-menu" class="btn-icon" onclick="window.app.toggleMenuEdit()"><span class="gradient-text">✎</span></button>
             </div>
         </div>
         <div id="user-list"></div>
-        <button id="btn-add-user" class="btn-add-item" onclick="window.app.addUser()">+ NOVA PESSOA</button>
+        <div class="footer-action">
+            <button class="btn-add" onclick="window.app.addUser()">+</button>
+            <button class="btn-main btn-primary" onclick="window.app.addUser()">ADICIONAR PESSOA</button>
+        </div>
     </div>
 
+    <!-- Screen: Workout Selection -->
     <div id="screen-workout-select" class="screen">
         <div class="header-bar">
             <button class="btn-icon" onclick="window.app.goHome()"><span class="red-icon">←</span></button>
-            <span class="user-title" id="select-user-title">...</span>
-            <div class="header-actions">
-                <button class="btn-icon" onclick="window.app.showHistory()"><span class="red-icon">≡</span></button>
-                <button class="btn-icon" id="btn-edit-select" onclick="window.app.toggleSelectEditMode()"><span class="gradient-text">✎</span></button>
-            </div>
+            <span id="select-user-title" class="user-title">...</span>
+            <button id="btn-edit-select" class="btn-icon" onclick="window.app.toggleSelectEditMode()"><span class="gradient-text">✎</span></button>
         </div>
         <div id="workout-select-list"></div>
-        <button id="btn-add-workout" class="btn-add-item" onclick="window.app.addWorkout()">+ NOVO TREINO</button>
+        <div class="footer-action">
+            <button class="btn-add" onclick="window.app.addWorkout()">+</button>
+            <button class="btn-main btn-primary" onclick="window.app.addWorkout()">NOVO TREINO</button>
+        </div>
     </div>
 
+    <!-- Screen: Active Workout -->
     <div id="screen-active-workout" class="screen">
         <div class="header-bar">
             <button class="btn-icon" onclick="window.app.handleBack()"><span class="red-icon">←</span></button>
-            <span class="user-title" id="active-title">Treino</span>
+            <span id="active-title" class="user-title">...</span>
             <div class="header-actions">
-                <button class="btn-icon" onclick="window.app.confirmSpotify()"><img src="spotify.png" style="width:24px; height:24px; display:block;" alt="Spotify"></button>
-                <button class="btn-icon" id="btn-edit-active" onclick="window.app.toggleActiveEditMode()"><span class="gradient-text">✎</span></button>
+                <button class="btn-icon" onclick="window.app.confirmSpotify()"><img src="spotify.png" style="width:24px" alt="S"></button>
+                <button id="btn-edit-active" class="btn-icon" onclick="window.app.toggleActiveEditMode()"><span class="gradient-text">✎</span></button>
             </div>
         </div>
         <div id="active-workout-container" class="workout-container"></div>
-        <button id="btn-add-exercise" class="btn-add-item" onclick="window.app.addExercise()" style="margin-bottom: 80px;">+ NOVO EXERCÍCIO</button>
-        <div class="footer-fixed">
-            <button id="btn-finish-main" class="btn-finish" disabled onclick="window.app.finishWorkout()">TÁ PAGO!</button>
+        <div class="footer-action">
+            <button class="btn-add" onclick="window.app.addExercise()">+</button>
+            <button id="btn-finish-main" class="btn-main btn-primary" onclick="window.app.finishWorkout()" disabled>TÁ PAGO!</button>
         </div>
     </div>
 
+    <!-- Screen: History -->
     <div id="screen-history" class="screen">
         <div class="header-bar">
             <button class="btn-icon" onclick="window.app.navigate('screen-workout-select')"><span class="red-icon">←</span></button>
@@ -381,38 +380,45 @@
                 history.replaceState({ screen: 'screen-menu' }, '');
             }
             
-            // --- PROTEÇÃO TRINCHEIRA (ARARA-AZUL) ---
+            // --- PROTEÇÃO TRINCHEIRA REFORMULADA ---
             window.onpopstate = (event) => {
-                if (document.getElementById('input-modal').style.display === 'flex') {
-                    document.getElementById('input-modal').style.display = 'none';
+                // 1. Prioridade: Fechar modais de input
+                const inputModal = document.getElementById('input-modal');
+                if (inputModal.style.display === 'flex') {
+                    inputModal.style.display = 'none';
                     history.pushState(history.state, '');
                     return;
                 }
 
+                // 2. Se estiver em treino, aplicar lógica robusta
                 if (this.isTraining) {
-                    // SE O USUÁRIO TENTAR SAIR:
-                    // 1. Empurra imediatamente de volta para a trincheira segura
+                    const customModal = document.getElementById('custom-modal');
+                    const isModalOpen = customModal.style.display === 'flex';
+                    const modalTitle = document.getElementById('d-title').innerText;
+
+                    // SEMPRE empurra de volta para manter o histórico estável
                     history.pushState({ screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex }, '', '#active');
 
-                    // 2. Se já tinha modal, fecha (usuário cancelou a saída)
-                    if (document.getElementById('custom-modal').style.display === 'flex') {
-                        document.getElementById('custom-modal').style.display = 'none';
-                        return; 
+                    if (isModalOpen) {
+                        // Se for modal de Spotify/YouTube ou o próprio FUJÃO, o "voltar" apenas fecha
+                        customModal.style.display = 'none';
+                        return;
+                    } else {
+                        // Se não tem modal aberto, OBRIGATÓRIO abrir o FUJÃO
+                        const randomMsg = fujaoMessages[Math.floor(Math.random() * fujaoMessages.length)];
+                        this.showCustomModal('danger', 'FUJÃO?', `${randomMsg}`, () => {
+                            // SÓ SAI SE CLICAR EM SIM
+                            this.isTraining = false;
+                            window.onbeforeunload = null; 
+                            localStorage.removeItem('tempWorkoutState'); 
+                            location.replace(location.pathname);
+                            setTimeout(() => location.reload(), 100);
+                        });
+                        return;
                     }
-
-                    // 3. Se não tinha modal, mostra o Fujão
-                    const randomMsg = fujaoMessages[Math.floor(Math.random() * fujaoMessages.length)];
-                    this.showCustomModal('danger', 'FUJÃO?', `${randomMsg}`, () => {
-                        this.isTraining = false;
-                        window.onbeforeunload = null; 
-                        localStorage.removeItem('tempWorkoutState'); 
-                        // Limpa a URL e reseta para o menu
-                        location.replace(location.pathname);
-                        setTimeout(() => location.reload(), 100);
-                    });
-                    return;
                 }
 
+                // 3. Navegação normal fora do treino
                 const currentScreen = document.querySelector('.screen.visible')?.id;
                 if (currentScreen === 'screen-menu' || !event.state) {
                     history.pushState({ screen: 'screen-menu' }, '');
@@ -469,8 +475,12 @@
         },
 
         handleBack: function() { 
-            if (this.isTraining) history.back();
-            else window.history.back(); 
+            if (this.isTraining) {
+                // Simula o popstate para acionar a lógica do FUJÃO
+                window.dispatchEvent(new PopStateEvent('popstate', { state: history.state }));
+            } else {
+                window.history.back(); 
+            }
         },
 
         navigate: function(screenId, stateData = {}) {
@@ -498,10 +508,6 @@
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('visible'));
             document.getElementById(state.screen).classList.add('visible');
             window.scrollTo(0,0);
-            if (state.screen === 'screen-menu') { this.currentUser = null; this.renderMenu(); }
-            else if (state.screen === 'screen-workout-select') { this.currentUser = state.userId; this.renderWorkoutSelectScreen(); }
-            else if (state.screen === 'screen-active-workout') { this.currentUser = state.userId; this.currentWorkoutIndex = state.wIndex; this.renderActiveWorkout(); }
-            else if (state.screen === 'screen-history') { this.renderHistoryList(); }
         },
 
         showCustomModal: function(type, titleText, msgText, confirmCallback, cancelCallback) {
@@ -667,7 +673,6 @@
                 if(hasExercises) {
                     this.isTraining = true;
                     // --- PROTEÇÃO TRINCHEIRA: HASHES NA URL ---
-                    // Criamos um histórico "falso" mas robusto
                     const state = { screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex };
                     history.pushState(state, '', '#guard1');
                     history.pushState(state, '', '#guard2');
@@ -867,7 +872,6 @@
                         localStorage.removeItem('tempWorkoutState');
                         const randomMsg = monstroMessages[Math.floor(Math.random() * monstroMessages.length)];
                         this.showCustomModal('success', 'MONSTRO!', randomMsg, () => {
-                            // Limpa a URL e reseta para o menu
                             location.replace(location.pathname);
                         });
                     })
