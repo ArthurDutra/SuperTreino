@@ -101,7 +101,7 @@
         .suggested-workout { border: 1px solid var(--secondary); background: rgba(251, 191, 36, 0.05); }
         .suggested-badge { position: absolute; right: 20px; top: 24px; background: var(--secondary); color: #000; font-size: 10px; font-weight: 900; padding: 5px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 10px rgba(251, 191, 36, 0.2); }
 
-        /* EDICAO: Remove destaque */
+        /* AJUSTE TATU-BOLA: Remover destaque na edição */
         .editing .suggested-workout { border-color: transparent; background: var(--card); }
         .editing .suggested-badge { display: none; }
 
@@ -194,7 +194,7 @@
         <div style="color:#a1a1aa; font-size:14px; margin-top:10px; font-weight:600;">O Kine precisa voar online.</div>
     </div>
 
-    <div class="version-label">VERSÃO: MICO-LEÃO</div>
+    <div class="version-label">VERSÃO: TATU-BOLA</div>
 
     <div id="screen-menu" class="screen">
         <div class="header-bar">
@@ -301,7 +301,7 @@
             }
         }
 
-        // --- PROTOCOLO CAPIBARA v1.3 (MICO-LEÃO) ---
+        // --- PROTOCOLO CAPIBARA v1.1 (TATU-BOLA) ---
         const CapibaraProtocol = {
             state: { isActive: false, isMediaModalOpen: false, isFujaoModalOpen: false },
             _handler: null,
@@ -324,7 +324,7 @@
                 console.log("Capibara: PopState ->", destState);
 
                 // CENÁRIO 1: Voltou com FUJÃO aberto
-                // AJUSTE MICO-LEÃO: Segundo Back no Fujão -> SAIR CONFIRMADA (Igual ao SIM)
+                // AJUSTE TATU-BOLA: Segundo clique SAIA para a tela série
                 if (this.state.isFujaoModalOpen) {
                     console.log("Ação: Segundo Back no Fujão -> SAIR.");
                     this.confirmExit();
@@ -344,7 +344,6 @@
                 // CENÁRIO 3: Voltou no Treino (Trigger da Armadilha)
                 console.log("Ação: Fuga detectada! Acionando armadilha.");
                 this.openFujaoUI();
-                // Empurra o estado do modal para criar a camada consumível
                 window.history.pushState({ context: 'kine_modal_fujao_active' }, '');
             },
 
@@ -363,12 +362,13 @@
                 this.state.isFujaoModalOpen = true;
                 const randomMsg = getMsg('fujao');
                 window.app.showCustomModal('danger', 'FUJÃO?', randomMsg, () => {
-                     // Callback do SIM (Sair Realmente)
+                     // Callback do SIM (Sair)
                      this.confirmExit();
                 }, () => {
                     // Callback do NÃO (Ficar)
-                    // Aciona back para remover o estado do modal e voltar ao guarda
-                    window.history.back();
+                    this.closeFujaoUI();
+                    // Restaura o guarda pois o back o consumiu
+                    window.history.replaceState({ context: 'kine_workout_guard' }, '');
                 });
             },
 
@@ -379,10 +379,15 @@
 
             confirmExit: function() {
                 console.log("Capibara: Saída confirmada.");
+                // Força o fechamento visual imediato
                 this.closeFujaoUI();
+                
+                // Limpa o listener e sai
                 if(this._handler) window.removeEventListener('popstate', this._handler);
                 this.state.isActive = false;
-                window.app.goHome(); // Volta para o menu mantendo o app aberto
+                
+                // Vai para a tela de séries
+                window.app.goHome(); 
             },
 
             destroy: function() {
