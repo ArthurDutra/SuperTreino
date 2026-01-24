@@ -154,7 +154,7 @@
         .edit-controls-floating { position: absolute; right: -8px; top: -8px; display: flex; flex-direction: column; gap: 8px; z-index: 10; animation: popIn 0.2s; pointer-events: none; opacity: 0; }
         .editing .edit-controls-floating { opacity: 1; pointer-events: auto; }
         
-        /* Floating Buttons Updated Colors - FORCED */
+        /* Floating Buttons - CORES FORÇADAS PARA EXCLUIR/REORDENAR */
         .btn-float { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 3px solid var(--bg); cursor: pointer; color: #fff; font-size: 14px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); }
         .btn-del { background-color: var(--danger) !important; color: #fff !important; border: none; }
         .btn-reorder { background-color: var(--secondary) !important; color: #000 !important; border: none; }
@@ -209,7 +209,7 @@
         <div style="color:#a1a1aa; font-size:14px; margin-top:10px; font-weight:600;">O Kine precisa voar online.</div>
     </div>
 
-    <div class="version-label">VERSÃO: TAMANDUÁ-BANDEIRA</div>
+    <div class="version-label">VERSÃO: GUAXINIM</div>
 
     <div id="screen-menu" class="screen">
         <div class="header-bar">
@@ -319,30 +319,10 @@
     </script>
 
     <script>
-    // --- FRASES DIVERTIDAS (MONSTRO, FUJÃO, PREGUIÇOSO) ---
-    const monstroMessages = [
-        "A lenda viva!", "Monstro sagrado!", "Hoje você humilhou!", "Tá pago e bem pago!", "Shape tá vindo!", "A fibra estalou!", "Orgulho da nutri!", "O Olimpo te espera!", "Hércules tá com inveja!", "Máquina de vencer!",
-        "Rasgou tudo!", "Isso é que é treino!", "Lendário!", "Brutalidade pura!", "Zero defeitos!", "Amanhã tem mais?", "Você é uma besta enjaulada!", "Destruiu!", "Missão cumprida, soldado!", "Agora pode comer!",
-        "O suor é sua glória!", "Nada te para!", "Focado no objetivo!", "Você é imparável!", "Digno de aplausos!", "O espelho vai agradecer!", "Evolução constante!", "Sem dor, sem ganho!", "Você venceu a preguiça!", "Exemplo a ser seguido!",
-        "Sangue no olho!", "Treino de gente grande!", "Gigante pela própria natureza!", "Sua melhor versão!", "Tá saindo da jaula o monstro!", "Booooora!", "Resultado vem!", "Disciplina inabalável!", "Fez o que tinha que ser feito!", "Guerreiro(a)!",
-        "Não foi fácil, mas foi feito!", "Superou os limites!", "Cada gota valeu a pena!", "Construindo um legado!", "Você é aço puro!", "Nada de mimimi aqui!", "Treino insano!", "Botou pra quebrar!", "Respeita o treino!", "Campeão(a)!"
-    ];
-
-    const fujaoMessages = [
-        "Já vai?", "Volta aqui covarde!", "Sofá te chamou?", "Vai comer pizza né?", "Deu medinho?", "Desistiu fácil assim?", "Tá fugindo de quê?", "Acha que engana quem?", "Hoje não tem shape...", "Vergonha da profissão!",
-        "Vai chorar?", "Tá doendo é?", "Não aguenta, bebe leite!", "Fujão detectado!", "Correu da raia!", "Vai inventar que desculpa?", "Sua mãe sabe disso?", "Frango não voa, mas corre!", "Tsc tsc tsc...", "Que decepção!",
-        "O verão tá chegando hein...", "Vai desistir agora?", "Cadê a coragem?", "Faltou ódio!", "Assim não cresce!", "Perdeu pro cansaço?", "Covardia tem nome!", "Vai pra casa dormir?", "Treino de turista?", "Desiste não, poxa!",
-        "Tá com pressa pra quê?", "O corpo esfriou?", "Mente fraca!", "Vai se arrepender!", "A saída é pros fracos!", "Volta e termina!", "Não me faça passar vergonha!", "Quem desiste não conquista!", "Isso não é atitude!", "Fraquejou!",
-        "Sério isso?", "Não acredito...", "Que feio!", "Sabia que não ia aguentar!", "O sofá venceu?", "Netflix tá chamando?", "Vai lá, perdedor!", "Sem foco, sem resultado!", "Tchau, mão de alface!", "Fujão!"
-    ];
-
-    const preguicosoMessages = [
-        "Só isso?", "Faltou gás?", "Vai deixar pela metade?", "O frango tá cantando!", "Desistiu no meio?", "Metade do caminho?", "Preguiça bateu?", "Treino de meia tigela!", "Fez corpo mole!", "Tá economizando energia?",
-        "Podia ser melhor...", "Quase lá, mas parou!", "Faltou vontade!", "Meia boca!", "Treino incompleto, shape incompleto!", "Assim não dá!", "Melhore!", "Tá cansado(a)?", "Faltou ódio no coração!", "Não completou por quê?",
-        "Vai ficar devendo!", "Inacabado!", "Serviço de porco!", "Preguiça reina!", "Cadê a disciplina?", "Não fez tudo!", "Pulou exercício né?", "Tô de olho!", "Enganando a si mesmo!", "Shape não aceita desaforo!",
-        "Fez o básico do básico!", "Podia ter ido além!", "Faltou garra!", "Treino fofo!", "Não suou o suficiente!", "Vai embora devendo!", "Conta pela metade!", "Não minta pra si mesmo!", "Preguiça é pecado!", "Vai pagar amanhã!",
-        "Deixou a desejar!", "Incompleto!", "Faltou pouco!", "Não desiste, poxa!", "Era pra ser completo!", "Tá com dó de si mesmo?", "Sem desculpas!", "Podia mais!", "Nota 5!", "Meio treino, zero resultado!"
-    ];
+    // --- FRASES DIVERTIDAS ---
+    const monstroMessages = ["A lenda viva!", "Monstro sagrado!", "Hoje você humilhou!", "Tá pago e bem pago!", "Shape tá vindo!", "A fibra estalou!", "Orgulho da nutri!", "O Olimpo te espera!", "Hércules tá com inveja!", "Máquina de vencer!", "Rasgou tudo!", "Isso é que é treino!", "Lendário!", "Brutalidade pura!", "Zero defeitos!", "Amanhã tem mais?", "Você é uma besta enjaulada!", "Destruiu!", "Missão cumprida, soldado!", "Agora pode comer!", "O suor é sua glória!", "Nada te para!", "Focado no objetivo!", "Você é imparável!", "Digno de aplausos!", "O espelho vai agradecer!", "Evolução constante!", "Sem dor, sem ganho!", "Você venceu a preguiça!", "Exemplo a ser seguido!", "Sangue no olho!", "Treino de gente grande!", "Gigante pela própria natureza!", "Sua melhor versão!", "Tá saindo da jaula o monstro!", "Booooora!", "Resultado vem!", "Disciplina inabalável!", "Fez o que tinha que ser feito!", "Guerreiro(a)!", "Não foi fácil, mas foi feito!", "Superou os limites!", "Cada gota valeu a pena!", "Construindo um legado!", "Você é aço puro!", "Nada de mimimi aqui!", "Treino insano!", "Botou pra quebrar!", "Respeita o treino!", "Campeão(a)!"];
+    const fujaoMessages = ["Já vai?", "Volta aqui covarde!", "Sofá te chamou?", "Vai comer pizza né?", "Deu medinho?", "Desistiu fácil assim?", "Tá fugindo de quê?", "Acha que engana quem?", "Hoje não tem shape...", "Vergonha da profissão!", "Vai chorar?", "Tá doendo é?", "Não aguenta, bebe leite!", "Fujão detectado!", "Correu da raia!", "Vai inventar que desculpa?", "Sua mãe sabe disso?", "Frango não voa, mas corre!", "Tsc tsc tsc...", "Que decepção!", "O verão tá chegando hein...", "Vai desistir agora?", "Cadê a coragem?", "Faltou ódio!", "Assim não cresce!", "Perdeu pro cansaço?", "Covardia tem nome!", "Vai pra casa dormir?", "Treino de turista?", "Desiste não, poxa!", "Tá com pressa pra quê?", "O corpo esfriou?", "Mente fraca!", "Vai se arrepender!", "A saída é pros fracos!", "Volta e termina!", "Não me faça passar vergonha!", "Quem desiste não conquista!", "Isso não é atitude!", "Fraquejou!", "Sério isso?", "Não acredito...", "Que feio!", "Sabia que não ia aguentar!", "O sofá venceu?", "Netflix tá chamando?", "Vai lá, perdedor!", "Sem foco, sem resultado!", "Tchau, mão de alface!", "Fujão!"];
+    const preguicosoMessages = ["Só isso?", "Faltou gás?", "Vai deixar pela metade?", "O frango tá cantando!", "Desistiu no meio?", "Metade do caminho?", "Preguiça bateu?", "Treino de meia tigela!", "Fez corpo mole!", "Tá economizando energia?", "Podia ser melhor...", "Quase lá, mas parou!", "Faltou vontade!", "Meia boca!", "Treino incompleto, shape incompleto!", "Assim não dá!", "Melhore!", "Tá cansado(a)?", "Faltou ódio no coração!", "Não completou por quê?", "Vai ficar devendo!", "Inacabado!", "Serviço de porco!", "Preguiça reina!", "Cadê a disciplina?", "Não fez tudo!", "Pulou exercício né?", "Tô de olho!", "Enganando a si mesmo!", "Shape não aceita desaforo!", "Fez o básico do básico!", "Podia ter ido além!", "Faltou garra!", "Treino fofo!", "Não suou o suficiente!", "Vai embora devendo!", "Conta pela metade!", "Não minta pra si mesmo!", "Preguiça é pecado!", "Vai pagar amanhã!", "Deixou a desejar!", "Incompleto!", "Faltou pouco!", "Não desiste, poxa!", "Era pra ser completo!", "Tá com dó de si mesmo?", "Sem desculpas!", "Podia mais!", "Nota 5!", "Meio treino, zero resultado!"];
 
     window.app = {
         data: {}, historyData: [], currentUser: null, currentWorkoutIndex: null, isTraining: false,
@@ -356,36 +336,40 @@
                 history.replaceState({ screen: 'screen-menu' }, '');
             }
             
+            // --- BLINDAGEM DE VOLTAR (HISTORY TRAP) ---
             window.onpopstate = (event) => {
-                // 1. INPUT MODAL (Prioridade)
+                // 1. INPUT MODAL (Prioridade) - Se estiver digitando, fecha o modal e mantém a tela
                 if (document.getElementById('input-modal').style.display === 'flex') {
                     document.getElementById('input-modal').style.display = 'none';
-                    history.pushState(history.state, ''); // Mantém estado
+                    history.pushState(history.state, ''); // Recoloca o estado para não sair
                     return;
                 }
 
-                // 2. CUSTOM MODAL (Fujão, YouTube, Spotify) - Fecha e fica na tela
-                if (document.getElementById('custom-modal').style.display === 'flex') {
-                    document.getElementById('custom-modal').style.display = 'none';
-                    // Re-empurra o estado atual para "anular" a ação de voltar do navegador
-                    // assim o usuário permanece na tela de exercícios sem o modal.
-                    history.pushState({ screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex }, '');
-                    return;
-                }
-
-                // 3. TREINO ATIVO - Chama o Fujão
+                // 2. SE ESTIVER TREINANDO (Blindagem Total)
                 if (this.isTraining) {
+                    // **TRAP IMEDIATA**: Empurra o estado DE VOLTA para a pilha.
+                    // Isso anula o clique "voltar" do navegador instantaneamente.
+                    // O usuário clica em voltar, mas o JS o joga para frente de novo.
                     history.pushState({ screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex }, '');
+
+                    // Se já tiver modal aberto (YouTube, Spotify, Fujão), FECHA ele.
+                    if (document.getElementById('custom-modal').style.display === 'flex') {
+                        document.getElementById('custom-modal').style.display = 'none';
+                        return; // Só fecha o modal e fica na tela de treino
+                    }
+
+                    // Se não tiver modal nenhum, ABRE O FUJÃO
                     const randomMsg = fujaoMessages[Math.floor(Math.random() * fujaoMessages.length)];
                     this.showCustomModal('danger', 'FUJÃO!', `${randomMsg}`, () => {
                         this.isTraining = false;
                         window.onbeforeunload = null; 
                         localStorage.removeItem('tempWorkoutState'); 
-                        this.goHome();
+                        this.goHome(); // O goHome reseta a navegação limpa
                     });
                     return;
                 }
 
+                // 3. Navegação normal (Menu -> Seleção -> Menu)
                 const currentScreen = document.querySelector('.screen.visible')?.id;
                 if (currentScreen === 'screen-menu' || !event.state) {
                     history.pushState({ screen: 'screen-menu' }, '');
@@ -442,6 +426,7 @@
         },
 
         handleBack: function() { 
+            // Botão voltar da UI chama o voltar do navegador, que cai no onpopstate blindado
             if (this.isTraining) history.back();
             else window.history.back(); 
         },
@@ -483,7 +468,6 @@
             if(type === 'danger') color = 'var(--danger)'; 
             if(type === 'warning') color = 'var(--secondary)'; 
             if(type === 'success') color = 'var(--success)'; 
-            if(type === 'info') color = '#38bdf8'; 
             
             title.style.color = color;
 
@@ -499,6 +483,8 @@
                 const btnNo = document.createElement('button');
                 btnNo.className = 'btn-dialog btn-secondary';
                 btnNo.innerText = "NÃO";
+                // Quando clica em NÃO, apenas fecha o modal. 
+                // IMPORTANTE: Como estamos no modo treino, o History Trap já recolocou o estado.
                 btnNo.onclick = () => { modal.style.display = 'none'; if(cancelCallback) cancelCallback(); };
                 actions.appendChild(btnNo);
 
@@ -561,6 +547,7 @@
                 btn.onclick = () => this.navigate('screen-workout-select', { userId: id });
                 if(this.isMenuEditing) {
                     const ctrl = document.createElement('div'); ctrl.className = 'edit-controls-floating';
+                    // BOTÃO EXCLUIR - VERMELHO (class btn-del)
                     ctrl.innerHTML = `<div class="btn-float btn-del" onclick="window.app.deleteUser(event, '${id}')">✕</div>`;
                     wrap.appendChild(ctrl);
                 }
@@ -608,6 +595,7 @@
                 
                 if(this.isSelectEditing) {
                     const ctrl = document.createElement('div'); ctrl.className = 'edit-controls-floating';
+                    // BOTÃO REORDENAR - AMARELO (class btn-reorder) | EXCLUIR - VERMELHO (class btn-del)
                     const btnUp = idx > 0 ? `<div class="btn-float btn-reorder" onclick="window.app.reorderWorkout(${idx}, -1)">↑</div>` : '';
                     const btnDown = idx < u.workouts.length - 1 ? `<div class="btn-float btn-reorder" onclick="window.app.reorderWorkout(${idx}, 1)">↓</div>` : '';
                     ctrl.innerHTML = `<div class="btn-float btn-del" onclick="window.app.deleteWorkout(event, ${idx})">✕</div>${btnUp}${btnDown}`;
@@ -631,6 +619,14 @@
                 if(hasExercises) {
                     this.isTraining = true;
                     window.onbeforeunload = function() { return "Treino rodando."; };
+                    // --- BUFFER DE HISTÓRICO ---
+                    // Adicionamos estados EXTRAS no histórico. 
+                    // Se o usuário clicar voltar 2x rápido, ele só volta nos estados buffer
+                    // e a "armadilha" (onpopstate) tem tempo de reagir.
+                    const state = { screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex };
+                    history.pushState(state, '');
+                    history.pushState(state, '');
+                    history.pushState(state, '');
                 }
             }
             
@@ -661,7 +657,6 @@
                 const weightText = weightVal === 0 ? '<span class="no-load">CARGA</span>' : `${weightVal} KG`;
                 const isChecked = myState[i] ? 'checked' : ''; 
                 
-                // YOUTUBE BUTTON PNG
                 let exInfo = `<span class="ex-name">${ex.name}</span><div class="ex-meta"><span class="badge">${ex.sets}x${ex.reps}</span> <button class="btn-video" onclick="window.app.confirmYouTube('${vid}')"><img src="youtube.png" alt="Ver"></button></div>`;
                 
                 if(this.isActiveEditing) {
@@ -670,6 +665,7 @@
                 
                 let controls = '';
                 if(this.isActiveEditing) {
+                    // BOTÃO REORDENAR - AMARELO (class btn-reorder) | EXCLUIR - VERMELHO (class btn-del)
                     const btnUp = i > 0 ? `<div class="btn-float btn-reorder" onclick="window.app.reorderEx(${i}, -1)">↑</div>` : '';
                     const btnDown = i < w.exercises.length - 1 ? `<div class="btn-float btn-reorder" onclick="window.app.reorderEx(${i}, 1)">↓</div>` : '';
                     controls = `<div class="edit-controls-floating" style="top:-5px; right:-5px;"><div class="btn-float btn-del" onclick="window.app.deleteEx(${i})">✕</div>${btnUp}${btnDown}</div>`;
@@ -710,7 +706,6 @@
                         skippedText = `<div class="skipped-list">Pulou: ${h.skipped.join(', ')}</div>`;
                     }
                 }
-                // TRASH ICON SUBSTITUÍDO POR 'X'
                 div.innerHTML = `<div class="hist-top"><div><div class="hist-date">${h.date}</div><div class="hist-workout">${h.workoutTitle}</div></div><div style="text-align:right"><button style="background:none;border:none;margin-top:5px;cursor:pointer;opacity:1" onclick="window.app.delHist(${h.id}, '${h.firebaseId||''}')"><span class="red-icon" style="font-size:20px">✕</span></button></div></div>${skippedText}`;
                 list.appendChild(div);
             });
@@ -784,7 +779,6 @@
             const chks = document.querySelectorAll('.ex-check'); let p = false;
             for(let c of chks) if(!c.checked) p = true;
             if(p) {
-                // Aqui selecionamos uma mensagem PREGUIÇOSA
                 const randomMsg = preguicosoMessages[Math.floor(Math.random() * preguicosoMessages.length)];
                 this.showCustomModal('warning', 'PREGUIÇOSO!', `${randomMsg}\n\nFinalizar assim?`, () => this.processFinish(true));
             } else { this.processFinish(false); }
@@ -807,7 +801,6 @@
                         this.isTraining = false; 
                         window.onbeforeunload = null; 
                         localStorage.removeItem('tempWorkoutState');
-                        // Aqui selecionamos uma mensagem MONSTRO
                         const randomMsg = monstroMessages[Math.floor(Math.random() * monstroMessages.length)];
                         this.showCustomModal('success', 'MONSTRO!', randomMsg, () => this.goHome());
                     })
@@ -823,13 +816,11 @@
             }
         },
 
-        // Usando 'danger' para ter as cores do FUJÃO nas confirmações
         confirmSpotify: function() { this.showCustomModal('danger', 'SPOTIFY', 'Abrir Spotify?', () => window.open('https://open.spotify.com', '_blank')); },
         confirmYouTube: function(url) { this.showCustomModal('danger', 'YOUTUBE', 'Ver vídeo?', () => window.open(url, '_blank')); },
         
         toggleScreen: function(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('visible')); document.getElementById(id).classList.add('visible'); },
         
-        // CHECK ICON (Save Mode): Ícone de CHECK Vermelho
         updateEditIcon: function(bid, sid, isE) { const b=document.getElementById(bid); const s=document.getElementById(sid); if(isE) { b.innerHTML='<span class="red-icon">✓</span>'; b.classList.add('icon-active'); s.classList.add('editing'); } else { b.innerHTML='<span class="gradient-text">✎</span>'; b.classList.remove('icon-active'); s.classList.remove('editing'); } }
     };
     window.onload = function() { if(window.app && window.app.init) window.app.init(); };
