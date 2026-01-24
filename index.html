@@ -194,7 +194,7 @@
         <div style="color:#a1a1aa; font-size:14px; margin-top:10px; font-weight:600;">O Kine precisa voar online.</div>
     </div>
 
-    <div class="version-label">VERSÃO: GAMBÁ</div>
+    <div class="version-label">VERSÃO: MOSCA</div>
 
     <div id="screen-menu" class="screen">
         <div class="header-bar">
@@ -301,7 +301,7 @@
             }
         }
 
-        // --- PROTOCOLO CAPIBARA v1.1 (GAMBÁ) ---
+        // --- PROTOCOLO CAPIBARA v1.1 (MOSCA) ---
         const CapibaraProtocol = {
             state: { isActive: false, isMediaModalOpen: false, isFujaoModalOpen: false },
             _handler: null,
@@ -700,6 +700,9 @@
                 this.showCustomModal('warning', 'Excluir registro?', '', () => { 
                     if(window.dbFunctions && fid) { 
                         this.toggleLoading(true); 
+                        // FECHA O MODAL IMEDIATAMENTE
+                        document.getElementById('custom-modal').style.display = 'none';
+
                         window.dbFunctions.remove(window.dbFunctions.ref(window.dbFunctions.db, `history/${fid}`))
                             .then(() => {
                                 this.toggleLoading(false);
@@ -737,6 +740,9 @@
 
             saveHist: function(t, l, c, s, incomplete) {
                 this.toggleLoading(true); 
+                // FECHA O MODAL IMEDIATAMENTE
+                document.getElementById('custom-modal').style.display = 'none';
+
                 const reg = { id: Date.now(), date: new Date().toLocaleDateString('pt-BR'), user: this.data[this.currentUser].name, workoutTitle: t, location: null, cheat: c, skipped: s };
                 if(window.dbFunctions) {
                     window.dbFunctions.push(window.dbFunctions.ref(window.dbFunctions.db, 'history'), reg)
@@ -746,8 +752,8 @@
                             CapibaraProtocol.destroy();
                             
                             if (incomplete) {
-                                // Se for incompleto, não mostra o modal Monstro, apenas fecha.
-                                this.navigate('screen-workout-select', { userId: this.currentUser });
+                                // FORÇA O RECARREGAMENTO IGUAL AO FINALIZAR (MONSTRO)
+                                location.replace(location.pathname);
                             } else {
                                 this.showCustomModal('success', 'MONSTRO!', getMsg('monstro'), () => location.replace(location.pathname));
                             }
