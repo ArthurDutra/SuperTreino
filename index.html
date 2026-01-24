@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Super Treino - Lobo Guara</title>
+    <title>Super Treino - Onça Pintada</title>
     
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/jpeg" href="icon.jpg">
@@ -135,7 +135,7 @@
         .ex-name { font-size: 18px; font-weight: 600; display: block; margin-bottom: 6px; color: #fff; word-wrap: break-word; }
         .ex-meta { display: flex; gap: 10px; align-items: center; font-size: 14px; color: #bbb; font-weight: 500; flex-wrap: wrap; }
         .badge { background: #333; padding: 4px 12px; border-radius: 8px; font-weight: 700; font-size: 12px; color: #fff; }
-        .btn-video { color: var(--secondary); text-decoration: none; font-weight: 800; border: 2px solid var(--secondary); padding: 2px 10px; border-radius: 8px; font-size: 10px; text-transform: uppercase; transition: 0.2s; }
+        .btn-video { color: var(--secondary); text-decoration: none; font-weight: 800; border: 2px solid var(--secondary); padding: 2px 10px; border-radius: 8px; font-size: 10px; text-transform: uppercase; transition: 0.2s; cursor: pointer; background: transparent; }
         
         .weight-control { margin-top: 15px; background: #151515; padding: 10px; border-radius: 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; border: 1px solid #333; }
         .weight-label { color: #666; font-size: 11px; margin-right: auto; padding-left: 5px; font-weight: 700; letter-spacing: 1px; }
@@ -202,7 +202,7 @@
     </div>
 
     <div id="db-status">⚪ Conectando...</div>
-    <div class="version-label">Versão: Lobo Guara</div>
+    <div class="version-label">Versão: Onça Pintada 🐆</div>
 
     <div id="screen-menu" class="screen">
         <div class="header-bar">
@@ -498,6 +498,7 @@
             if(type === 'danger') color = 'var(--danger)';
             if(type === 'warning') color = 'var(--accent)';
             if(type === 'success') color = 'var(--success)';
+            if(type === 'info') color = '#2196F3'; // Azul para info
 
             modal.querySelector('.msg-content').style.borderColor = color;
             title.style.color = color;
@@ -526,9 +527,22 @@
             modal.style.display = 'flex';
         },
 
+        // --- MUDANÇAS SOLICITADAS ---
+        
         confirmSpotify: function() {
-            this.showCustomModal('info', 'SPOTIFY', 'Deseja abrir o aplicativo do Spotify?', () => { window.location.href = 'spotify:'; });
+            this.showCustomModal('info', 'SPOTIFY', 'Deseja abrir o aplicativo do Spotify?', () => {
+                // Link antigo que evita confirmação de saída do navegador
+                window.open('https://open.spotify.com', '_blank');
+            });
         },
+
+        confirmYouTube: function(url) {
+            this.showCustomModal('info', 'YOUTUBE', 'Ver a execução no YouTube?', () => {
+                window.open(url, '_blank');
+            });
+        },
+
+        // ---------------------------
 
         openGamification: function() { this.navigate('screen-gamification'); },
 
@@ -598,12 +612,11 @@
 
         renderMenu: function() {
             const list = document.getElementById('user-list'); 
-            if (!list) return; // Proteção contra crash
+            if (!list) return; 
             list.innerHTML = '';
             
             const userKeys = Object.keys(this.data || {});
             
-            // MENSAGEM DE VAZIO CORRIGIDA
             if (userKeys.length === 0) {
                 list.innerHTML = '<span class="empty-msg">Nenhum usuário encontrado.<br>Toque na caneta ✏️ e no + para começar.</span>';
                 return;
@@ -711,7 +724,10 @@
                 const weightVal = parseInt(ex.weight) || 0;
                 const weightText = weightVal === 0 ? '<span class="no-load">SEM CARGA</span>' : `${weightVal} KG`;
                 const isChecked = myState[i] ? 'checked' : ''; 
-                let exInfo = `<span class="ex-name">${ex.name}</span><div class="ex-meta"><span class="badge">${ex.sets}x${ex.reps}</span> <a href="${vid}" target="_blank" class="btn-video">🎥</a></div>`;
+                
+                // MUDANÇA: Link do YouTube agora chama função confirmYouTube
+                let exInfo = `<span class="ex-name">${ex.name}</span><div class="ex-meta"><span class="badge">${ex.sets}x${ex.reps}</span> <button class="btn-video" onclick="window.app.confirmYouTube('${vid}')">🎥</button></div>`;
+                
                 if(this.isActiveEditing) {
                     exInfo = `<input type="text" class="edit-input" value="${ex.name}" style="margin-bottom:5px" onchange="window.app.renameEx(${i}, this.value)"><div class="ex-meta"><input type="text" class="edit-input edit-input-inline" value="${ex.sets}" onchange="window.app.updateExMeta(${i}, 'sets', this.value)"> x <input type="text" class="edit-input edit-input-inline" value="${ex.reps}" onchange="window.app.updateExMeta(${i}, 'reps', this.value)"></div>`;
                 }
