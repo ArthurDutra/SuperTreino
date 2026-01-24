@@ -153,7 +153,23 @@
         /* Editing & Inputs */
         .edit-input { background: #18181b; border: 1px solid #3f3f46; color: #fff; padding: 14px; border-radius: 12px; font-family: inherit; font-size: 16px; width: 100%; box-sizing: border-box; font-weight: 600; margin-bottom: 5px; }
         .edit-input:focus { border-color: var(--secondary); outline: none; }
-        .edit-input-inline { width: 50px; text-align: center; margin: 0 4px; background: #27272a; border: none; display: inline-block; }
+        
+        /* NOVO ESTILO DE INPUT INLINE (Refeito) */
+        .edit-row-meta { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+        .edit-label-small { font-size: 10px; color: var(--text-muted); font-weight: 800; text-transform: uppercase; margin-bottom: 4px; display: block; letter-spacing: 1px; }
+        .edit-input-box {
+            background: #18181b; 
+            border: 1px solid #3f3f46; 
+            color: #fff; 
+            padding: 10px; 
+            border-radius: 12px; 
+            font-family: inherit; 
+            font-size: 16px; 
+            width: 80px; 
+            text-align: center; 
+            font-weight: 800;
+        }
+        .edit-input-box:focus { border-color: var(--secondary); outline: none; }
 
         /* BOTÕES FLUTUANTES: Centralizados à direita */
         .edit-controls-floating { 
@@ -180,7 +196,7 @@
         .editing .btn-add-item { display: block; width: 100%; max-width: 400px; padding: 22px; background: rgba(251, 191, 36, 0.05); border: 2px dashed #3f3f46; color: var(--secondary); border-radius: 16px; cursor: pointer; font-size: 14px; font-weight: 800; margin-top: 15px; text-align: center; letter-spacing: 1px; transition: 0.2s; }
         .editing .btn-add-item:active { background: rgba(251, 191, 36, 0.1); border-color: var(--secondary); }
         .editing .btn-large, .editing .workout-select-card, .editing .exercise-card { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
-        .editing .edit-input, .editing .edit-controls-floating, .editing .weight-display, .editing .btn-video { pointer-events: auto; }
+        .editing .edit-input, .editing .edit-controls-floating, .editing .weight-display, .editing .btn-video, .editing .edit-input-box { pointer-events: auto; }
 
         /* Footer */
         .footer-fixed { position: fixed; bottom: 0; left: 0; width: 100%; padding: 20px 20px 30px 20px; background: linear-gradient(to top, var(--bg) 80%, transparent); display: flex; justify-content: center; z-index: 90; pointer-events: none; }
@@ -226,7 +242,7 @@
         <div style="color:#a1a1aa; font-size:14px; margin-top:10px; font-weight:600;">O Kine precisa voar online.</div>
     </div>
 
-    <div class="version-label">VERSÃO: TATU-BOLA</div>
+    <div class="version-label">VERSÃO: ZEBRA</div>
 
     <div id="screen-menu" class="screen">
         <div class="header-bar">
@@ -352,7 +368,6 @@
                 history.replaceState({ screen: 'screen-menu' }, '');
             }
             
-            // --- BLINDAGEM CAMADA 1: HISTORY TRAP ---
             window.onpopstate = (event) => {
                 if (document.getElementById('input-modal').style.display === 'flex') {
                     document.getElementById('input-modal').style.display = 'none';
@@ -361,7 +376,6 @@
                 }
 
                 if (this.isTraining) {
-                    // Empurra de volta imediatamente
                     history.pushState({ screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex }, '');
 
                     if (document.getElementById('custom-modal').style.display === 'flex') {
@@ -624,10 +638,9 @@
                 localStorage.removeItem('tempWorkoutState');
                 if(hasExercises) {
                     this.isTraining = true;
-                    // --- BLINDAGEM CAMADA 2: BEFOREUNLOAD ---
                     window.onbeforeunload = function(e) {
                         e.preventDefault();
-                        e.returnValue = ''; // Exibe mensagem do sistema se tentar fechar
+                        e.returnValue = ''; 
                         return '';
                     };
                     const state = { screen: 'screen-active-workout', userId: this.currentUser, wIndex: this.currentWorkoutIndex };
@@ -663,10 +676,27 @@
                 const weightText = weightVal === 0 ? 'SEM CARGA' : `${weightVal} KG`;
                 const isChecked = myState[i] ? 'checked' : ''; 
                 
+                // --- MODO NORMAL ---
                 let exInfo = `<span class="ex-name">${ex.name}</span><div class="ex-meta"><span class="badge">${ex.sets}x${ex.reps}</span> <button class="btn-video" onclick="window.app.confirmYouTube('${vid}')"><img src="youtube.png" alt="Ver"></button></div>`;
                 
+                // --- MODO EDIÇÃO (REFEITO - ZEBRA) ---
                 if(this.isActiveEditing) {
-                    exInfo = `<input type="text" class="edit-input" value="${ex.name}" style="margin-bottom:5px" onchange="window.app.renameEx(${i}, this.value)"><div class="ex-meta"><input type="text" class="edit-input edit-input-inline" value="${ex.sets}" onchange="window.app.updateExMeta(${i}, 'sets', this.value)"> x <input type="text" class="edit-input edit-input-inline" value="${ex.reps}" onchange="window.app.updateExMeta(${i}, 'reps', this.value)"></div>`;
+                    exInfo = `
+                        <div>
+                           <label class="edit-label-small">NOME DO EXERCÍCIO</label>
+                           <input type="text" class="edit-input" value="${ex.name}" onchange="window.app.renameEx(${i}, this.value)">
+                        </div>
+                        <div class="edit-row-meta">
+                            <div>
+                                <label class="edit-label-small">SÉRIES</label>
+                                <input type="text" class="edit-input-box" value="${ex.sets}" onchange="window.app.updateExMeta(${i}, 'sets', this.value)">
+                            </div>
+                            <div>
+                                <label class="edit-label-small">REPS</label>
+                                <input type="text" class="edit-input-box" value="${ex.reps}" onchange="window.app.updateExMeta(${i}, 'reps', this.value)">
+                            </div>
+                        </div>
+                    `;
                 }
                 
                 let controls = '';
@@ -676,7 +706,13 @@
                     controls = `<div class="edit-controls-floating"><div class="btn-float btn-del" onclick="window.app.deleteEx(${i})">✕</div>${btnUp}${btnDown}</div>`;
                 }
 
-                div.innerHTML = `<div class="exercise-header"><div class="chk-container"><input type="checkbox" class="ex-check" data-index="${i}" onchange="window.app.autoSaveState()" ${isChecked}><span class="custom-chk"></span></div><div class="ex-info">${exInfo}</div></div>${controls}<div class="weight-control"><span class="weight-label">CARGA</span><button class="btn-weight" onclick="window.app.chgWeight(${i}, -1)">-</button><div class="weight-display">${weightText}</div><button class="btn-weight" onclick="window.app.chgWeight(${i}, 1)">+</button></div>`;
+                if (this.isActiveEditing) {
+                    // Sem checkbox no modo edição para limpar a visualização
+                     div.innerHTML = `<div class="exercise-header"><div class="ex-info">${exInfo}</div></div>${controls}`;
+                } else {
+                     div.innerHTML = `<div class="exercise-header"><div class="chk-container"><input type="checkbox" class="ex-check" data-index="${i}" onchange="window.app.autoSaveState()" ${isChecked}><span class="custom-chk"></span></div><div class="ex-info">${exInfo}</div></div>${controls}<div class="weight-control"><span class="weight-label">CARGA</span><button class="btn-weight" onclick="window.app.chgWeight(${i}, -1)">-</button><div class="weight-display">${weightText}</div><button class="btn-weight" onclick="window.app.chgWeight(${i}, 1)">+</button></div>`;
+                }
+               
                 cont.appendChild(div);
             });
             this.updateEditIcon('btn-edit-active', 'screen-active-workout', this.isActiveEditing);
