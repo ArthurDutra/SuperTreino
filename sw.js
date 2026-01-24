@@ -1,8 +1,8 @@
-/* SERVICE WORKER - KINE VERSÃO TAMANDUÁ
-   Estratégia: Stale-While-Revalidate para melhor performance
+/* SERVICE WORKER - KINE VERSÃO TATU-BOLA
+   Estratégia: Stale-While-Revalidate
 */
 
-const CACHE_NAME = 'kine-tamandua-v1';
+const CACHE_NAME = 'kine-tatu-bola-v1';
 const urlsToCache = [
   './',
   './index.html',
