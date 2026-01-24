@@ -166,7 +166,10 @@
         }
         .edit-input-box:focus { border-color: var(--secondary); outline: none; }
 
-        /* NOVA CLASSE PADRÃO PARA BOTÕES FLUTUANTES (Excluir/Mover) */
+        /* --- CORREÇÃO: REMOVIDA A OPACIDADE DOS CARDS DE EXERCÍCIO --- */
+        /* Opacidade só se aplica a menus e seleção, não ao treino ativo */
+        .editing .btn-large, .editing .workout-select-card { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
+        
         .edit-controls-floating { 
             position: absolute; 
             right: 0px; 
@@ -174,15 +177,14 @@
             transform: translateY(-50%); 
             display: flex; 
             flex-direction: column; 
-            gap: 12px; /* Mais espaçamento entre botões */
-            z-index: 10; 
+            gap: 12px;
+            z-index: 100; /* Z-Index aumentado para garantir clique */
             animation: popIn 0.2s; 
             pointer-events: none; 
             opacity: 0; 
         }
         .editing .edit-controls-floating { opacity: 1; pointer-events: auto; }
         
-        /* ESTILO UNIFICADO - CINZA/BRANCO (Minimalista) */
         .btn-float { 
             width: 40px; 
             height: 40px; 
@@ -196,14 +198,15 @@
             color: #fff; 
             font-size: 18px; 
             box-shadow: 0 4px 10px rgba(0,0,0,0.5); 
-            background-color: #3f3f46 !important; /* Cor Cinza Padrão */
+            background-color: #3f3f46 !important;
         }
         .btn-float:active { transform: scale(0.9); background-color: #52525b !important; }
 
         .btn-add-item { display: none; } 
         .editing .btn-add-item { display: block; width: 100%; max-width: 400px; padding: 22px; background: rgba(251, 191, 36, 0.05); border: 2px dashed #3f3f46; color: var(--secondary); border-radius: 16px; cursor: pointer; font-size: 14px; font-weight: 800; margin-top: 15px; text-align: center; letter-spacing: 1px; transition: 0.2s; }
         .editing .btn-add-item:active { background: rgba(251, 191, 36, 0.1); border-color: var(--secondary); }
-        .editing .btn-large, .editing .workout-select-card, .editing .exercise-card { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
+        .editing .btn-large, .editing .workout-select-card, .editing .exercise-card { /* REMOVIDO OPACITY DAQUI */ }
+        
         .editing .edit-input, .editing .edit-controls-floating, .editing .weight-display, .editing .btn-video, .editing .edit-input-box { pointer-events: auto; }
 
         /* Footer */
@@ -250,7 +253,7 @@
         <div style="color:#a1a1aa; font-size:14px; margin-top:10px; font-weight:600;">O Kine precisa voar online.</div>
     </div>
 
-    <div class="version-label">VERSÃO: QUATI</div>
+    <div class="version-label">VERSÃO: QUOKKA</div>
 
     <div id="screen-menu" class="screen">
         <div class="header-bar">
@@ -475,12 +478,10 @@
         },
 
         restoreScreen: function(state) {
-            // CORREÇÃO: CANCELA EDIÇÃO AO NAVEGAR/VOLTAR
             this.isMenuEditing = false;
             this.isSelectEditing = false;
             this.isActiveEditing = false;
             
-            // Reseta visual dos botões de edição também, caso estejam ativos
             const btns = ['btn-edit-menu', 'btn-edit-select', 'btn-edit-active'];
             const screens = ['screen-menu', 'screen-workout-select', 'screen-active-workout'];
             btns.forEach((b, i) => this.updateEditIcon(b, screens[i], false));
@@ -586,7 +587,6 @@
                 if(this.isMenuEditing) {
                     const ctrl = document.createElement('div'); ctrl.className = 'edit-controls-floating';
                     ctrl.style.right = '0';
-                    // BOTÃO FLUTUANTE PADRÃO
                     ctrl.innerHTML = `<div class="btn-float" onclick="window.app.deleteUser(event, '${id}')">✕</div>`;
                     wrap.appendChild(ctrl);
                 }
@@ -635,7 +635,6 @@
                 if(this.isSelectEditing) {
                     const ctrl = document.createElement('div'); ctrl.className = 'edit-controls-floating';
                     ctrl.style.right = '0';
-                    // BOTÕES FLUTUANTES PADRÃO
                     const btnUp = idx > 0 ? `<div class="btn-float" onclick="window.app.reorderWorkout(${idx}, -1)">↑</div>` : '';
                     const btnDown = idx < u.workouts.length - 1 ? `<div class="btn-float" onclick="window.app.reorderWorkout(${idx}, 1)">↓</div>` : '';
                     ctrl.innerHTML = `<div class="btn-float" onclick="window.app.deleteWorkout(event, ${idx})">✕</div>${btnUp}${btnDown}`;
@@ -696,10 +695,8 @@
                 const weightText = weightVal === 0 ? 'SEM CARGA' : `${weightVal} KG`;
                 const isChecked = myState[i] ? 'checked' : ''; 
                 
-                // --- MODO NORMAL ---
                 let exInfo = `<span class="ex-name">${ex.name}</span><div class="ex-meta"><span class="badge">${ex.sets}x${ex.reps}</span> <button class="btn-video" onclick="window.app.confirmYouTube('${vid}')"><img src="youtube.png" alt="Ver"></button></div>`;
                 
-                // --- MODO EDIÇÃO ---
                 if(this.isActiveEditing) {
                     exInfo = `
                         <div>
@@ -721,7 +718,6 @@
                 
                 let controls = '';
                 if(this.isActiveEditing) {
-                    // BOTÕES FLUTUANTES PADRÃO
                     const btnUp = i > 0 ? `<div class="btn-float" onclick="window.app.reorderEx(${i}, -1)">↑</div>` : '';
                     const btnDown = i < w.exercises.length - 1 ? `<div class="btn-float" onclick="window.app.reorderEx(${i}, 1)">↓</div>` : '';
                     controls = `<div class="edit-controls-floating"><div class="btn-float" onclick="window.app.deleteEx(${i})">✕</div>${btnUp}${btnDown}</div>`;
