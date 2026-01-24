@@ -1,8 +1,8 @@
-/* SERVICE WORKER - KINE CAPIVARA
+/* SERVICE WORKER - KINE TATU v2
    Estratégia: Network First para arquivos principais (HTML/Data)
 */
 
-const CACHE_NAME = 'kine-capivara-v1';
+const CACHE_NAME = 'kine-tatu-v2';
 const urlsToCache = [
   './icon.png',
   './manifest.json'
@@ -32,7 +32,6 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  // Estratégia Network First: Tenta rede, se falhar, vai pro cache
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request)
@@ -41,8 +40,6 @@ self.addEventListener('fetch', event => {
         })
     );
   } else {
-    // Para outros recursos, Cache First (opcional, ou mantemos Network First para garantir)
-    // Mantendo Network First geral para garantir update
     event.respondWith(
         fetch(event.request)
           .catch(() => caches.match(event.request))
