@@ -510,8 +510,9 @@
                     const btnNo = document.createElement('button');
                     btnNo.className = 'btn-dialog btn-secondary'; btnNo.innerText = "NÃO";
                     btnNo.onclick = () => { 
-                        if(confirmCallback && cancelCallback) cancelCallback();
-                        else modal.style.display = 'none';
+                        // FIX: Always close modal first
+                        modal.style.display = 'none';
+                        if(cancelCallback) cancelCallback();
                     };
                     actions.appendChild(btnNo);
                     const btnYes = document.createElement('button');
@@ -519,8 +520,9 @@
                     btnYes.style.background = colors[type];
                     btnYes.style.color = (type === 'warning' || type === 'success') ? '#000' : '#fff';
                     btnYes.onclick = () => { 
+                        // FIX: Always close modal first
+                        modal.style.display = 'none';
                         if(confirmCallback) confirmCallback();
-                        else modal.style.display = 'none'; 
                     };
                     actions.appendChild(btnYes);
                 }
