@@ -1,15 +1,15 @@
-/* SERVICE WORKER - KINE FORMIGA
-   Atualização visual.
+/* SERVICE WORKER - KINE FORMIGA (FIX)
+   Versão corrigida para instalação PWA.
 */
 
-const CACHE_NAME = 'kine-formiga-v1';
+const CACHE_NAME = 'kine-formiga-fix-v2';
 
-// Arquivos da interface gráfica para cache
+// CORREÇÃO: Caminhos com /Kine/
 const urlsToCache = [
-  './',
-  './index.html',
-  './manifest.json',
-  './icon.jpg'
+  '/Kine/',
+  '/Kine/index.html',
+  '/Kine/manifest.json',
+  '/Kine/icon.png'
 ];
 
 self.addEventListener('install', event => {
